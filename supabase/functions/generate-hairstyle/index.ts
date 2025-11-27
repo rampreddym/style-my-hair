@@ -21,12 +21,12 @@ serve(async (req) => {
 
     console.log('Generating hairstyle with prompt:', stylePrompt);
 
-    // Generate multiple hairstyle variations
+    // Generate multiple hairstyle variations using the user's photo
     const variations = [];
     const prompts = [
-      `Professional salon-quality photo of a person with ${stylePrompt}, studio lighting, high resolution, elegant styling`,
-      `Modern ${stylePrompt} hairstyle, professional photography, clean background, front view`,
-      `Stylish ${stylePrompt} haircut, contemporary salon photo, natural lighting, side angle view`,
+      `Transform this person's hairstyle to: ${stylePrompt}. Keep their face exactly the same, only change the hair. Professional salon quality, studio lighting, high resolution.`,
+      `Apply this hairstyle to the person in the image: ${stylePrompt}. Maintain facial features, modern styling, clean professional look.`,
+      `Give this person a ${stylePrompt}. Keep their face and features identical, only modify the hair. Contemporary salon photo, natural lighting.`,
     ];
 
     for (const prompt of prompts) {
@@ -41,7 +41,18 @@ serve(async (req) => {
           messages: [
             {
               role: 'user',
-              content: prompt
+              content: [
+                {
+                  type: 'text',
+                  text: prompt
+                },
+                {
+                  type: 'image_url',
+                  image_url: {
+                    url: userPhotoUrl
+                  }
+                }
+              ]
             }
           ],
           modalities: ['image', 'text']

@@ -103,10 +103,14 @@ const BookingStep = ({ stylist, selectedImage, userId, stylePrompt, onBack }: Bo
             </div>
           </div>
           <Button
-            onClick={() => navigate("/")}
+            onClick={() => {
+              setBooked(false);
+              onBack();
+              onBack();
+            }}
             className="w-full rounded-xl h-12 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
           >
-            Done
+            Try Another Style
           </Button>
         </div>
       </div>
