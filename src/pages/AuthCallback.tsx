@@ -35,7 +35,7 @@ const AuthCallback = () => {
           navigate(role === 'stylist' ? '/stylist' : '/customer');
         }
       } else {
-        navigate('/auth');
+        navigate('/');
       }
     };
 
