@@ -68,17 +68,17 @@ const Auth = () => {
     
     setIsSubmitting(true);
     const { error } = await signIn(email, password);
-    setIsSubmitting(false);
 
     if (error) {
+      setIsSubmitting(false);
       if (error.message.includes("Invalid login")) {
         toast({ title: "Login failed", description: "Invalid email or password", variant: "destructive" });
       } else {
         toast({ title: "Login failed", description: error.message, variant: "destructive" });
       }
     } else {
-      toast({ title: "Welcome back!", description: "Successfully signed in" });
-      // The useEffect will handle navigation once userRole is fetched
+      toast({ title: "Welcome back!", description: "Redirecting..." });
+      // Keep isSubmitting true - the useEffect will handle navigation once userRole is fetched
     }
   };
 
