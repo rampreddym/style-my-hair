@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Camera, ArrowRight, CreditCard, MapPin, LogOut, X, Upload } from "lucide-react";
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
-import { Camera as CapacitorCamera, CameraResultType, CameraSource } from "@capacitor/camera";
 
 const photoTypes = [
   { id: "front", label: "Front View" },
@@ -177,6 +176,9 @@ const CustomerProfile = () => {
     try {
       setUploadingPhoto(photoType);
       
+      // Dynamically import Capacitor Camera to avoid breaking web builds
+      const { Camera: CapacitorCamera, CameraResultType, CameraSource } = await import("@capacitor/camera");
+      
       const image = await CapacitorCamera.getPhoto({
         quality: 80,
         allowEditing: false,
@@ -216,7 +218,19 @@ const CustomerProfile = () => {
 
       setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
     } catch (error: any) {
-      if (error.message !== "User cancelled photos app") {
+      // If Capacitor is not available (web browser), fall back to file input with capture
+      if (error.message?.includes("not implemented") || error.message?.includes("not available")) {
+        // Trigger file input with camera capture for mobile web
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.capture = "environment";
+        input.onchange = (e) => {
+          const file = (e.target as HTMLInputElement).files?.[0];
+          if (file) handlePhotoUpload(photoType, file);
+        };
+        input.click();
+      } else if (error.message !== "User cancelled photos app") {
         toast({ title: "Camera error", description: error.message, variant: "destructive" });
       }
     } finally {
