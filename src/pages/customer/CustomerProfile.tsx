@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Camera, ArrowRight, CreditCard, MapPin, LogOut } from "lucide-react";
+import { Camera, ArrowRight, CreditCard, MapPin, LogOut, X } from "lucide-react";
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
 
 const photoTypes = [
@@ -170,6 +170,15 @@ const CustomerProfile = () => {
 
     setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
     setUploadingPhoto(null);
+  };
+
+  const handleDeletePhoto = (photoType: string) => {
+    setPhotos((prev) => {
+      const updated = { ...prev };
+      delete updated[photoType];
+      return updated;
+    });
+    toast({ title: "Photo removed", description: "Remember to save your profile" });
   };
 
   const handleSubmit = async () => {
@@ -366,28 +375,43 @@ const CustomerProfile = () => {
               {photoTypes.map((type) => (
                 <div key={type.id} className="space-y-2">
                   <Label>{type.label}</Label>
-                  <label className="block cursor-pointer">
-                    <div className={`aspect-square rounded-lg border-2 border-dashed flex items-center justify-center transition-colors ${
-                      photos[type.id] ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
-                    }`}>
-                      {photos[type.id] ? (
-                        <img src={photos[type.id]} alt={type.label} className="w-full h-full object-cover rounded-lg" />
-                      ) : uploadingPhoto === type.id ? (
-                        <div className="animate-pulse text-muted-foreground">Uploading...</div>
-                      ) : (
-                        <Camera className="w-8 h-8 text-muted-foreground" />
-                      )}
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handlePhotoUpload(type.id, file);
-                      }}
-                    />
-                  </label>
+                  <div className="relative">
+                    <label className="block cursor-pointer">
+                      <div className={`aspect-square rounded-lg border-2 border-dashed flex items-center justify-center transition-colors ${
+                        photos[type.id] ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                      }`}>
+                        {photos[type.id] ? (
+                          <img src={photos[type.id]} alt={type.label} className="w-full h-full object-cover rounded-lg" />
+                        ) : uploadingPhoto === type.id ? (
+                          <div className="animate-pulse text-muted-foreground">Uploading...</div>
+                        ) : (
+                          <Camera className="w-8 h-8 text-muted-foreground" />
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handlePhotoUpload(type.id, file);
+                        }}
+                      />
+                    </label>
+                    {photos[type.id] && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDeletePhoto(type.id);
+                        }}
+                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 shadow-md hover:bg-destructive/90 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
