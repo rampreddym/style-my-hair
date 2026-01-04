@@ -251,10 +251,10 @@ const CustomerStyle = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3">
               <Button 
                 variant="outline" 
-                className="h-12 border-2 font-medium"
+                className="h-12 border-2 font-medium text-sm"
                 onClick={() => {
                   const basePrompts = [
                     "Style: Modern Bob, Length: Chin; Color: Natural; Texture: Sleek",
@@ -269,38 +269,38 @@ const CustomerStyle = () => {
               <Button 
                 onClick={generateStyle}
                 disabled={generating}
-                className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm"
               >
                 {generating ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating
+                    <Loader2 className="w-4 h-4 shrink-0 animate-spin" />
+                    <span>Generating...</span>
                   </>
                 ) : (
                   <>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Regenerate Preview
+                    <RefreshCw className="w-4 h-4 shrink-0" />
+                    <span>Regenerate</span>
                   </>
                 )}
               </Button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 pt-2">
               <Button 
                 variant="outline" 
                 onClick={() => navigate("/customer")}
-                className="h-12 border-2 font-medium"
+                className="h-12 border-2 font-medium text-sm"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Go Back
+                <ArrowLeft className="w-4 h-4 shrink-0" />
+                <span>Go Back</span>
               </Button>
               <Button
                 onClick={continueToBooking}
                 disabled={!selectedImage}
-                className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm"
               >
-                Approve & Continue
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <span>Approve</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </Button>
             </div>
           </CardContent>
