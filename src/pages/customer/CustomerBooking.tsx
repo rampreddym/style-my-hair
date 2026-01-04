@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Star, Clock, DollarSign, ArrowLeft, Calendar, Check, CreditCard } from "lucide-react";
+import { MapPin, Star, Clock, ArrowLeft, Calendar } from "lucide-react";
+import { EnhancedStylistCard } from "@/components/stylist/EnhancedStylistCard";
+import { PriceBreakdown } from "@/components/booking/PriceBreakdown";
+import { BookingConfirmation } from "@/components/booking/BookingConfirmation";
+import { CardSkeleton } from "@/components/ui/skeleton-loader";
 
 const CustomerBooking = () => {
   const navigate = useNavigate();
@@ -146,65 +149,31 @@ const CustomerBooking = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Finding stylists near you...</div>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-foreground">Book Your Appointment</h1>
+            <p className="text-muted-foreground">Finding stylists near you...</p>
+          </div>
+          <CardSkeleton count={3} />
+        </div>
       </div>
     );
   }
 
   if (booked && bookingDetails) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4">
-        <div className="max-w-lg mx-auto">
-          <Card className="text-center">
-            <CardContent className="pt-8 space-y-6">
-              <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                <Check className="w-10 h-10 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Booking Confirmed!</h2>
-                <p className="text-muted-foreground mt-2">Your appointment has been scheduled</p>
-              </div>
-              
-              <div className="space-y-4 text-left bg-secondary/50 rounded-lg p-4">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Stylist:</span>
-                  <span className="font-medium">{bookingDetails.stylist.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Service:</span>
-                  <span className="font-medium">{bookingDetails.service.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Date:</span>
-                  <span className="font-medium">
-                    {new Date(bookingDetails.appointment_date).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Time:</span>
-                  <span className="font-medium">
-                    {new Date(bookingDetails.appointment_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Price:</span>
-                  <span className="font-medium">${bookingDetails.price}</span>
-                </div>
-              </div>
-
-              <div className="pt-4 space-y-3">
-                <Button className="w-full bg-gradient-to-r from-primary to-accent" onClick={() => navigate("/")}>
-                  Done
-                </Button>
-                <Button variant="outline" className="w-full" onClick={() => navigate("/customer/style")}>
-                  Try Another Style
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <BookingConfirmation
+        booking={{
+          id: bookingDetails.id,
+          appointment_date: bookingDetails.appointment_date,
+          price: bookingDetails.price,
+          stylist: bookingDetails.stylist,
+          service: bookingDetails.service,
+        }}
+        onDone={() => navigate("/")}
+        onTryAnotherStyle={() => navigate("/customer/style")}
+      />
     );
   }
 
@@ -360,27 +329,10 @@ const CustomerBooking = () => {
               </Card>
 
               {selectedService && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <CreditCard className="w-5 h-5" />
-                      Payment Summary
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">{selectedService.name}</span>
-                      <span>${selectedService.price}</span>
-                    </div>
-                    <div className="border-t pt-4 flex justify-between font-semibold">
-                      <span>Total</span>
-                      <span className="text-primary">${selectedService.price}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Payment will be processed when you confirm the booking
-                    </p>
-                  </CardContent>
-                </Card>
+                <PriceBreakdown 
+                  service={selectedService}
+                  platformFeePercent={0}
+                />
               )}
 
               <Button
