@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowRight, CreditCard, MapPin, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, CreditCard, MapPin, LogOut, ChevronLeft } from "lucide-react";
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
 import { GuidedPhotoCapture } from "@/components/customer/GuidedPhotoCapture";
+import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
@@ -353,34 +353,15 @@ const CustomerProfile = () => {
             />
           </div>
 
-          {/* Hair Style Selection */}
-          {formData.gender && (
-            <div className="border-2 border-primary rounded-xl overflow-hidden">
-              <Select
-                value={formData.preferred_style_category}
-                onValueChange={(v) => setFormData({ ...formData, preferred_style_category: v })}
-              >
-                <SelectTrigger className="h-14 border-0 text-left">
-                  <div className="flex items-center justify-between w-full">
-                    <span className="font-medium text-primary">
-                      {formData.preferred_style_category || "Select Hair Style"}
-                    </span>
-                    <ChevronRight className="w-5 h-5 text-primary" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {hairStyles.map((style) => (
-                    <SelectItem key={style.id} value={style.name}>
-                      {style.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {formData.preferred_style_category && (
-                <div className="px-4 pb-4 text-sm text-muted-foreground">
-                  {hairStyles.find(s => s.name === formData.preferred_style_category)?.description || "Fade, Textured, Long Layers"}
-                </div>
-              )}
+          {/* Visual Hair Style Selection */}
+          {formData.gender && hairStyles.length > 0 && (
+            <div className="space-y-2">
+              <Label className="font-medium">Choose Your Style</Label>
+              <HairStyleSelector
+                styles={hairStyles}
+                selectedStyle={formData.preferred_style_category}
+                onSelect={(styleName) => setFormData({ ...formData, preferred_style_category: styleName })}
+              />
             </div>
           )}
 

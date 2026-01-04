@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2 } from "lucide-react";
+import { RefreshCw, ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2 } from "lucide-react";
+import { AIPreviewGenerator } from "@/components/ai/AIPreviewGenerator";
+import { SkeletonLoader } from "@/components/ui/skeleton-loader";
 
 const CustomerStyle = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState(0);
   const [customer, setCustomer] = useState<any>(null);
   const [hairStyles, setHairStyles] = useState<any[]>([]);
   const [photos, setPhotos] = useState<any[]>([]);
@@ -90,6 +92,12 @@ const CustomerStyle = () => {
     }
 
     setGenerating(true);
+    setGenerationProgress(0);
+    
+    // Simulate progress for UX
+    const progressInterval = setInterval(() => {
+      setGenerationProgress(prev => Math.min(prev + Math.random() * 15, 90));
+    }, 1000);
 
     try {
       const fullPrompt = `${selectedStyle ? selectedStyle + ": " : ""}${stylePrompt}`;
@@ -135,7 +143,12 @@ const CustomerStyle = () => {
     } catch (error: any) {
       toast({ title: "Generation failed", description: error.message, variant: "destructive" });
     } finally {
-      setGenerating(false);
+      clearInterval(progressInterval);
+      setGenerationProgress(100);
+      setTimeout(() => {
+        setGenerating(false);
+        setGenerationProgress(0);
+      }, 500);
     }
   };
 
@@ -164,8 +177,8 @@ const CustomerStyle = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className="min-h-screen bg-background p-4">
+        <SkeletonLoader stage="loading" className="min-h-[80vh]" />
       </div>
     );
   }
@@ -188,42 +201,13 @@ const CustomerStyle = () => {
           </h1>
         </div>
 
-        {/* Preview Image Area */}
-        <div className="relative">
-          <div className="aspect-square bg-muted/30 rounded-2xl overflow-hidden border-2 border-border">
-            {generating ? (
-              <div className="w-full h-full flex flex-col items-center justify-center">
-                {photos.find(p => p.photo_type === "front") && (
-                  <img 
-                    src={photos.find(p => p.photo_type === "front")?.photo_url} 
-                    alt="Your photo" 
-                    className="w-full h-full object-cover opacity-50"
-                  />
-                )}
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50">
-                  <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-                  <p className="text-lg font-medium text-foreground">Generating...</p>
-                </div>
-              </div>
-            ) : selectedGeneratedImage ? (
-              <img 
-                src={selectedGeneratedImage.generated_image_url} 
-                alt="Generated style" 
-                className="w-full h-full object-cover"
-              />
-            ) : photos.find(p => p.photo_type === "front") ? (
-              <img 
-                src={photos.find(p => p.photo_type === "front")?.photo_url} 
-                alt="Your photo" 
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                No photo available
-              </div>
-            )}
-          </div>
-        </div>
+        {/* AI Preview Generator with comparison slider */}
+        <AIPreviewGenerator
+          isGenerating={generating}
+          progress={generationProgress}
+          beforeImage={photos.find(p => p.photo_type === "front")?.photo_url}
+          afterImage={selectedGeneratedImage?.generated_image_url}
+        />
 
         {/* Generated Thumbnails */}
         {generatedImages.length > 0 && (

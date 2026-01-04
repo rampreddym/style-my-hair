@@ -7,7 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Clock, User, Check, X, ArrowLeft, DollarSign, Image, MessageSquare } from "lucide-react";
+import { 
+  Calendar, Clock, User, Check, X, ArrowLeft, DollarSign, 
+  Image, MessageSquare, MapPin, Phone, ChevronRight, History,
+  Sparkles
+} from "lucide-react";
+import { CardSkeleton } from "@/components/ui/skeleton-loader";
+import { cn } from "@/lib/utils";
 
 const StylistAppointments = () => {
   const navigate = useNavigate();
@@ -17,6 +23,8 @@ const StylistAppointments = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
   const [notes, setNotes] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
+  const [customerHistory, setCustomerHistory] = useState<any[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   const stylistId = sessionStorage.getItem("stylistId");
 
@@ -33,7 +41,7 @@ const StylistAppointments = () => {
       .from("appointments")
       .select(`
         *,
-        customer:customers(name, email, phone),
+        customer:customers(id, name, email, phone, gender, age, preferred_style_description),
         service:stylist_services(name, duration_minutes, price),
         generated_style:customer_generated_styles(style_prompt, generated_image_url)
       `)
@@ -42,6 +50,22 @@ const StylistAppointments = () => {
 
     if (data) setAppointments(data);
     setLoading(false);
+  };
+
+  const fetchCustomerHistory = async (customerId: string) => {
+    const { data } = await supabase
+      .from("appointments")
+      .select(`
+        *,
+        service:stylist_services(name)
+      `)
+      .eq("customer_id", customerId)
+      .eq("stylist_id", stylistId)
+      .eq("status", "completed")
+      .order("appointment_date", { ascending: false })
+      .limit(5);
+
+    if (data) setCustomerHistory(data);
   };
 
   const updateStatus = async (appointmentId: string, status: string) => {
@@ -89,20 +113,40 @@ const StylistAppointments = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-green-500/10 text-green-500";
+        return "bg-green-500/10 text-green-600 border-green-200";
       case "completed":
-        return "bg-blue-500/10 text-blue-500";
+        return "bg-blue-500/10 text-blue-600 border-blue-200";
       case "cancelled":
-        return "bg-red-500/10 text-red-500";
+        return "bg-red-500/10 text-red-600 border-red-200";
       default:
-        return "bg-yellow-500/10 text-yellow-500";
+        return "bg-amber-500/10 text-amber-600 border-amber-200";
     }
+  };
+
+  // Calculate travel time estimate (rough: 3 min per km)
+  const getTravelTime = (lat1?: number, lon1?: number, lat2?: number, lon2?: number) => {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const km = R * c;
+    return Math.round(km * 3);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading appointments...</div>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Your Appointments</h1>
+            <p className="text-muted-foreground">Loading your schedule...</p>
+          </div>
+          <CardSkeleton count={3} />
+        </div>
       </div>
     );
   }
@@ -115,8 +159,9 @@ const StylistAppointments = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4">
+    <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Your Appointments</h1>
@@ -128,10 +173,11 @@ const StylistAppointments = () => {
           </Button>
         </div>
 
-        <Card>
+        {/* Upcoming Appointments */}
+        <Card className="border-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
+              <Calendar className="w-5 h-5 text-primary" />
               Upcoming ({upcomingAppointments.length})
             </CardTitle>
           </CardHeader>
@@ -143,52 +189,61 @@ const StylistAppointments = () => {
                 {upcomingAppointments.map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="p-4 border rounded-lg space-y-3"
+                    className="p-4 border-2 rounded-xl space-y-4 hover:border-primary/50 transition-colors"
                   >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <User className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-medium">{appointment.customer?.name || "Unknown"}</span>
-                          <Badge className={getStatusColor(appointment.status)}>
-                            {appointment.status}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {new Date(appointment.appointment_date).toLocaleDateString()}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {new Date(appointment.appointment_date).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <DollarSign className="w-3 h-3" />
-                            {appointment.price}
+                    {/* Header row */}
+                    <div className="flex items-start justify-between gap-4">
+                      {/* Customer info with photo */}
+                      <div className="flex gap-3">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-lg font-bold text-primary">
+                            {appointment.customer?.name?.charAt(0) || "?"}
                           </span>
                         </div>
-                        <p className="text-sm mt-1">{appointment.service?.name}</p>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-foreground">
+                              {appointment.customer?.name || "Unknown"}
+                            </span>
+                            <Badge className={cn("text-xs", getStatusColor(appointment.status))}>
+                              {appointment.status}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(appointment.appointment_date).toLocaleDateString()}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {new Date(appointment.appointment_date).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                          <p className="text-sm mt-1 text-foreground">
+                            {appointment.service?.name} · ${appointment.price}
+                          </p>
+                        </div>
                       </div>
 
+                      {/* AI preview image */}
                       {appointment.generated_style?.generated_image_url && (
                         <Dialog>
                           <DialogTrigger asChild>
-                            <button className="relative w-16 h-16 rounded-lg overflow-hidden border">
+                            <button className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-primary/20 hover:border-primary transition-colors flex-shrink-0">
                               <img
                                 src={appointment.generated_style.generated_image_url}
                                 alt="Requested style"
                                 className="w-full h-full object-cover"
                               />
-                              <div className="absolute inset-0 bg-background/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                <Image className="w-4 h-4" />
+                              <div className="absolute bottom-1 right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                                <Sparkles className="w-3 h-3 text-primary-foreground" />
                               </div>
                             </button>
                           </DialogTrigger>
-                          <DialogContent>
+                          <DialogContent className="max-w-lg">
                             <DialogHeader>
                               <DialogTitle>Requested Style</DialogTitle>
                             </DialogHeader>
@@ -197,20 +252,33 @@ const StylistAppointments = () => {
                               alt="Requested style"
                               className="w-full rounded-lg"
                             />
-                            <p className="text-muted-foreground">
-                              {appointment.ai_style_description || appointment.generated_style.style_prompt}
-                            </p>
+                            <div className="bg-muted/50 rounded-lg p-4">
+                              <p className="text-sm font-medium mb-1">AI Description:</p>
+                              <p className="text-muted-foreground text-sm">
+                                {appointment.ai_style_description || appointment.generated_style.style_prompt}
+                              </p>
+                            </div>
                           </DialogContent>
                         </Dialog>
                       )}
                     </div>
 
-                    <div className="flex gap-2">
+                    {/* Previous notes preview */}
+                    {appointment.stylist_notes && (
+                      <div className="bg-muted/30 rounded-lg p-3 text-sm">
+                        <p className="text-xs text-muted-foreground mb-1">Your previous notes:</p>
+                        <p className="text-foreground line-clamp-2">{appointment.stylist_notes}</p>
+                      </div>
+                    )}
+
+                    {/* Quick actions */}
+                    <div className="flex flex-wrap gap-2">
                       {appointment.status === "pending" && (
                         <>
                           <Button
                             size="sm"
                             onClick={() => updateStatus(appointment.id, "confirmed")}
+                            className="bg-primary"
                           >
                             <Check className="w-4 h-4 mr-1" />
                             Confirm
@@ -218,6 +286,7 @@ const StylistAppointments = () => {
                           <Button
                             size="sm"
                             variant="outline"
+                            className="border-destructive text-destructive hover:bg-destructive/10"
                             onClick={() => updateStatus(appointment.id, "cancelled")}
                           >
                             <X className="w-4 h-4 mr-1" />
@@ -229,11 +298,73 @@ const StylistAppointments = () => {
                         <Button
                           size="sm"
                           onClick={() => updateStatus(appointment.id, "completed")}
+                          className="bg-primary"
                         >
                           <Check className="w-4 h-4 mr-1" />
                           Mark Complete
                         </Button>
                       )}
+
+                      {/* Message customer */}
+                      {appointment.customer?.phone && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => window.open(`sms:${appointment.customer.phone}`, '_blank')}
+                        >
+                          <MessageSquare className="w-4 h-4 mr-1" />
+                          Message
+                        </Button>
+                      )}
+
+                      {/* View history */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              if (appointment.customer?.id) {
+                                fetchCustomerHistory(appointment.customer.id);
+                                setShowHistory(true);
+                              }
+                            }}
+                          >
+                            <History className="w-4 h-4 mr-1" />
+                            History
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Customer History</DialogTitle>
+                          </DialogHeader>
+                          {customerHistory.length === 0 ? (
+                            <p className="text-muted-foreground text-center py-4">
+                              No previous appointments
+                            </p>
+                          ) : (
+                            <div className="space-y-3">
+                              {customerHistory.map((hist) => (
+                                <div key={hist.id} className="p-3 border rounded-lg">
+                                  <div className="flex justify-between">
+                                    <span className="font-medium">{hist.service?.name}</span>
+                                    <span className="text-sm text-muted-foreground">
+                                      {new Date(hist.appointment_date).toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                  {hist.stylist_notes && (
+                                    <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                                      Notes: {hist.stylist_notes}
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+
+                      {/* Notes */}
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
@@ -255,8 +386,9 @@ const StylistAppointments = () => {
                           <Textarea
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Add notes about this client's preferences, hair type, cut details..."
+                            placeholder="Add notes about this client's preferences, hair type, cut details, products used..."
                             rows={6}
+                            className="border-2"
                           />
                           <Button onClick={saveNotes} disabled={savingNotes}>
                             {savingNotes ? "Saving..." : "Save Notes"}
@@ -271,23 +403,33 @@ const StylistAppointments = () => {
           </CardContent>
         </Card>
 
+        {/* Past Appointments */}
         {pastAppointments.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Past Appointments ({pastAppointments.length})</CardTitle>
+              <CardTitle className="text-muted-foreground">
+                Past Appointments ({pastAppointments.length})
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {pastAppointments.slice(0, 5).map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="p-3 border rounded-lg flex items-center justify-between opacity-70"
+                    className="p-3 border rounded-lg flex items-center justify-between opacity-70 hover:opacity-100 transition-opacity"
                   >
-                    <div>
-                      <span className="font-medium">{appointment.customer?.name}</span>
-                      <span className="text-sm text-muted-foreground ml-2">
-                        {appointment.service?.name}
-                      </span>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                        <span className="text-sm font-medium">
+                          {appointment.customer?.name?.charAt(0) || "?"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="font-medium">{appointment.customer?.name}</span>
+                        <span className="text-sm text-muted-foreground ml-2">
+                          {appointment.service?.name}
+                        </span>
+                      </div>
                     </div>
                     <span className="text-sm text-muted-foreground">
                       {new Date(appointment.appointment_date).toLocaleDateString()}
@@ -299,6 +441,7 @@ const StylistAppointments = () => {
           </Card>
         )}
 
+        {/* Navigation */}
         <div className="flex gap-4">
           <Button variant="outline" onClick={() => navigate("/stylist/services")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
