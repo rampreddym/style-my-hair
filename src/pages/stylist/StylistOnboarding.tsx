@@ -276,12 +276,17 @@ const StylistOnboarding = () => {
       return;
     }
 
-    const success = await saveProgress(currentStep + 1);
-    if (success) {
-      if (currentStep === 5) {
+    if (currentStep === 5) {
+      // Final step - complete onboarding
+      const success = await saveProgress(5);
+      if (success) {
         toast({ title: "Onboarding complete!" });
         navigate("/stylist/services");
-      } else {
+      }
+    } else {
+      // Move to next step
+      const success = await saveProgress(currentStep + 1);
+      if (success) {
         setCurrentStep(currentStep + 1);
       }
     }
