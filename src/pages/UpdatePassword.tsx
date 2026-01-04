@@ -24,27 +24,62 @@ const UpdatePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [isValidSession, setIsValidSession] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user has a valid recovery session
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsValidSession(true);
-      } else {
-        toast({ 
-          title: "Invalid or expired link", 
-          description: "Please request a new password reset link.", 
-          variant: "destructive" 
-        });
-        navigate("/reset-password");
+    // Listen for the PASSWORD_RECOVERY event from Supabase
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        // User clicked the recovery link and token is valid
+        setIsReady(true);
+        setIsLoading(false);
+      } else if (event === 'SIGNED_IN' && session) {
+        // Check if this is a recovery session by checking the URL hash
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const type = hashParams.get('type');
+        if (type === 'recovery') {
+          setIsReady(true);
+          setIsLoading(false);
+        } else {
+          // Regular sign in, not a recovery
+          setIsLoading(false);
+        }
       }
+    });
+
+    // Also check if there's already a session (user might have refreshed)
+    const checkExistingSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Check URL hash for recovery type
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const type = hashParams.get('type');
+      const accessToken = hashParams.get('access_token');
+      
+      if (type === 'recovery' && accessToken) {
+        // There's a recovery token in the URL, let Supabase handle it
+        // The onAuthStateChange will fire with PASSWORD_RECOVERY
+        return;
+      }
+      
+      if (session) {
+        // User has a session but no recovery token - they might have refreshed
+        // Allow password update if they're authenticated
+        setIsReady(true);
+      }
+      
       setIsLoading(false);
     };
-    checkSession();
-  }, [navigate, toast]);
+
+    // Small delay to allow onAuthStateChange to fire first
+    const timer = setTimeout(checkExistingSession, 500);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
+  }, []);
 
   const handleUpdatePassword = async () => {
     const result = passwordSchema.safeParse({ password, confirmPassword });
@@ -72,7 +107,7 @@ const UpdatePassword = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
-        <div className="animate-pulse text-muted-foreground">Verifying...</div>
+        <div className="animate-pulse text-muted-foreground">Verifying reset link...</div>
       </div>
     );
   }
@@ -95,8 +130,27 @@ const UpdatePassword = () => {
     );
   }
 
-  if (!isValidSession) {
-    return null;
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center space-y-4">
+            <CardTitle className="text-2xl">Invalid or Expired Link</CardTitle>
+            <CardDescription>
+              This password reset link is invalid or has expired. Please request a new one.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              className="w-full" 
+              onClick={() => navigate("/reset-password")}
+            >
+              Request New Link
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
