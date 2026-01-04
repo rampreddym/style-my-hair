@@ -11,6 +11,7 @@ import { EnhancedStylistCard } from "@/components/stylist/EnhancedStylistCard";
 import { PriceBreakdown } from "@/components/booking/PriceBreakdown";
 import { BookingConfirmation } from "@/components/booking/BookingConfirmation";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
+import { PaymentTimingSelector, PaymentTiming } from "@/components/booking/PaymentTimingSelector";
 
 const CustomerBooking = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const CustomerBooking = () => {
   const [appointmentTime, setAppointmentTime] = useState("");
   const [booked, setBooked] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
+  const [paymentTiming, setPaymentTiming] = useState<PaymentTiming>("pay_now");
 
   const customerId = sessionStorage.getItem("customerId");
 
@@ -125,7 +127,7 @@ const CustomerBooking = () => {
           appointment_date: appointmentDateTime,
           price: selectedService.price,
           status: "pending",
-          payment_status: "unpaid",
+          payment_status: paymentTiming === "pay_now" ? "pending" : "pay_later",
           ai_style_description: selectedStyle?.style_prompt,
         })
         .select()
@@ -329,10 +331,19 @@ const CustomerBooking = () => {
               </Card>
 
               {selectedService && (
-                <PriceBreakdown 
-                  service={selectedService}
-                  platformFeePercent={0}
-                />
+                <>
+                  <PaymentTimingSelector
+                    value={paymentTiming}
+                    onChange={setPaymentTiming}
+                    servicePrice={selectedService.price}
+                  />
+
+                  <PriceBreakdown 
+                    service={selectedService}
+                    platformFeePercent={0}
+                    paymentTiming={paymentTiming}
+                  />
+                </>
               )}
 
               <Button
@@ -340,7 +351,7 @@ const CustomerBooking = () => {
                 disabled={booking || !selectedService || !appointmentDate || !appointmentTime}
                 className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
               >
-                {booking ? "Booking..." : "Confirm & Pay"}
+                {booking ? "Booking..." : paymentTiming === "pay_now" ? "Confirm & Pay" : "Confirm Booking"}
               </Button>
             </div>
           )}

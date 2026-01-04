@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreditCard, Info, Shield } from "lucide-react";
+import { CreditCard, Info, Shield, Clock } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { PaymentTiming } from "./PaymentTimingSelector";
 
 interface PriceBreakdownProps {
   service: {
@@ -15,12 +16,14 @@ interface PriceBreakdownProps {
   };
   tip?: number;
   platformFeePercent?: number;
+  paymentTiming?: PaymentTiming;
 }
 
 export const PriceBreakdown = ({ 
   service, 
   tip = 0, 
-  platformFeePercent = 0 
+  platformFeePercent = 0,
+  paymentTiming = "pay_now"
 }: PriceBreakdownProps) => {
   const subtotal = service.price + tip;
   const platformFee = subtotal * (platformFeePercent / 100);
@@ -85,20 +88,34 @@ export const PriceBreakdown = ({
         {/* Total */}
         <div className="flex justify-between items-center pt-3 border-t-2 border-border font-semibold text-lg">
           <span>Total</span>
-          <span className="text-primary">${total.toFixed(2)}</span>
+          <div className="text-right">
+            <span className="text-primary">${total.toFixed(2)}</span>
+            {paymentTiming === "pay_later" && (
+              <p className="text-xs font-normal text-muted-foreground flex items-center gap-1 justify-end">
+                <Clock className="w-3 h-3" />
+                Due at salon
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Trust badges */}
         <div className="flex items-center gap-2 pt-2 text-xs text-muted-foreground">
           <Shield className="w-4 h-4 text-primary" />
-          <span>Secure payment · Free cancellation up to 24h before</span>
+          <span>
+            {paymentTiming === "pay_now" 
+              ? "Secure payment · Full refund if cancelled 24h+ before" 
+              : "No charge now · Pay after your service"}
+          </span>
         </div>
 
         {/* Refund policy */}
         <p className="text-xs text-muted-foreground">
           By confirming, you agree to our{" "}
           <button className="text-primary underline">cancellation policy</button>.
-          Full refund available if cancelled 24+ hours before appointment.
+          {paymentTiming === "pay_now" 
+            ? " Full refund available if cancelled 24+ hours before appointment."
+            : " Cancellation fee may apply for no-shows."}
         </p>
       </CardContent>
     </Card>
