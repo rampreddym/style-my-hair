@@ -4,14 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Star, Clock, ArrowLeft, Calendar } from "lucide-react";
+import { MapPin, Star, Clock, ArrowLeft, Calendar, MessageSquare, Image } from "lucide-react";
 import { EnhancedStylistCard } from "@/components/stylist/EnhancedStylistCard";
 import { PriceBreakdown } from "@/components/booking/PriceBreakdown";
 import { BookingConfirmation } from "@/components/booking/BookingConfirmation";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { PaymentTimingSelector, PaymentTiming } from "@/components/booking/PaymentTimingSelector";
+import { DistanceSlider } from "@/components/booking/DistanceSlider";
+import { ChatWindow } from "@/components/messaging/ChatWindow";
 
 const CustomerBooking = () => {
   const navigate = useNavigate();
@@ -28,6 +31,8 @@ const CustomerBooking = () => {
   const [booked, setBooked] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [paymentTiming, setPaymentTiming] = useState<PaymentTiming>("pay_now");
+  const [maxDistance, setMaxDistance] = useState(50);
+  const [portfolioPhotos, setPortfolioPhotos] = useState<any[]>([]);
 
   const customerId = sessionStorage.getItem("customerId");
 
@@ -104,7 +109,20 @@ const CustomerBooking = () => {
       .eq("stylist_id", stylist.id);
 
     if (servicesData) setServices(servicesData);
+    
+    // Fetch portfolio photos
+    const { data: portfolioData } = await supabase
+      .from("stylist_portfolio")
+      .select("*")
+      .eq("stylist_id", stylist.id);
+      
+    if (portfolioData) setPortfolioPhotos(portfolioData);
   };
+
+  // Filter stylists by distance
+  const filteredStylists = stylists.filter(s => 
+    s.distance === null || s.distance === undefined || s.distance <= maxDistance
+  );
 
   const handleBooking = async () => {
     if (!selectedService || !appointmentDate || !appointmentTime) {
@@ -205,68 +223,68 @@ const CustomerBooking = () => {
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Available Stylists</h2>
-            {stylists.length === 0 ? (
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Available Stylists</h2>
+              <span className="text-sm text-muted-foreground">
+                {filteredStylists.length} found
+              </span>
+            </div>
+            
+            {/* Distance Slider */}
+            <Card className="p-4">
+              <DistanceSlider value={maxDistance} onChange={setMaxDistance} maxDistance={50} />
+            </Card>
+            
+            {filteredStylists.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
-                  No stylists available yet. Check back soon!
+                  No stylists within {maxDistance} km. Try increasing the distance.
                 </CardContent>
               </Card>
             ) : (
-              stylists.map((stylist) => (
-                <Card
+              filteredStylists.map((stylist) => (
+                <EnhancedStylistCard
                   key={stylist.id}
-                  onClick={() => selectStylist(stylist)}
-                  className={`cursor-pointer transition-all ${
-                    selectedStylist?.id === stylist.id ? "ring-2 ring-primary" : "hover:border-primary/50"
-                  }`}
-                >
-                  <CardContent className="p-4 flex gap-4">
-                    <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
-                      {stylist.photo_url ? (
-                        <img src={stylist.photo_url} alt={stylist.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-2xl font-bold text-muted-foreground">
-                          {stylist.name.charAt(0)}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold">{stylist.name}</h3>
-                      {stylist.business_name && (
-                        <p className="text-sm text-muted-foreground">{stylist.business_name}</p>
-                      )}
-                      <div className="flex items-center gap-4 mt-1 text-sm">
-                        <span className="flex items-center gap-1 text-amber-500">
-                          <Star className="w-4 h-4 fill-current" />
-                          {stylist.rating || "New"}
-                        </span>
-                        {stylist.distance !== null && (
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <MapPin className="w-4 h-4" />
-                            {stylist.distance.toFixed(1)} km
-                          </span>
-                        )}
-                      </div>
-                      {stylist.specialties?.length > 0 && (
-                        <div className="flex gap-1 mt-2 flex-wrap">
-                          {stylist.specialties.slice(0, 3).map((s: string, i: number) => (
-                            <span key={i} className="text-xs bg-secondary px-2 py-0.5 rounded">
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                  stylist={stylist}
+                  isSelected={selectedStylist?.id === stylist.id}
+                  onSelect={() => selectStylist(stylist)}
+                  recentWork={portfolioPhotos.filter(p => p.stylist_id === stylist.id).map(p => p.image_url).slice(0, 4)}
+                />
               ))
             )}
           </div>
 
           {selectedStylist && (
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Book with {selectedStylist.name}</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Book with {selectedStylist.name}</h2>
+                {/* Portfolio preview */}
+                {portfolioPhotos.length > 0 && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Image className="w-4 h-4 mr-1" />
+                        Portfolio ({portfolioPhotos.length})
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>{selectedStylist.name}'s Portfolio</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid grid-cols-3 gap-2">
+                        {portfolioPhotos.map((photo, i) => (
+                          <img
+                            key={photo.id || i}
+                            src={photo.image_url}
+                            alt="Portfolio work"
+                            className="aspect-square rounded-lg object-cover"
+                          />
+                        ))}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
               
               <Card>
                 <CardHeader>
