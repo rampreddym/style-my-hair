@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Camera, ArrowRight, CreditCard, MapPin, LogOut, X, Upload } from "lucide-react";
+import { Camera, ArrowRight, CreditCard, MapPin, LogOut, X, Upload, ChevronLeft, ChevronRight } from "lucide-react";
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
 
 const photoTypes = [
@@ -58,14 +58,12 @@ const CustomerProfile = () => {
     const loadExistingProfile = async () => {
       if (!user) return;
       
-      // First try to find by user_id
       let { data: existingCustomer } = await supabase
         .from("customers")
         .select("*, customer_photos(*)")
         .eq("user_id", user.id)
         .maybeSingle();
       
-      // If not found by user_id, check by email (in case profile was created before auth link)
       if (!existingCustomer && user.email) {
         const { data: customerByEmail } = await supabase
           .from("customers")
@@ -74,7 +72,6 @@ const CustomerProfile = () => {
           .maybeSingle();
         
         if (customerByEmail) {
-          // Link this customer to the auth user
           await supabase
             .from("customers")
             .update({ user_id: user.id })
@@ -96,7 +93,6 @@ const CustomerProfile = () => {
           preferred_style_category: existingCustomer.preferred_style_category || "",
         });
         
-        // Load existing photos
         if (existingCustomer.customer_photos) {
           const photoMap: Record<string, string> = {};
           existingCustomer.customer_photos.forEach((p: any) => {
@@ -105,7 +101,6 @@ const CustomerProfile = () => {
           setPhotos(photoMap);
         }
       } else {
-        // Pre-fill email from auth
         setFormData(prev => ({ ...prev, email: user.email || "" }));
       }
     };
@@ -114,7 +109,6 @@ const CustomerProfile = () => {
   }, [user]);
 
   useEffect(() => {
-    // Request geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -176,7 +170,6 @@ const CustomerProfile = () => {
     try {
       setUploadingPhoto(photoType);
       
-      // Dynamically import Capacitor Camera to avoid breaking web builds
       const { Camera: CapacitorCamera, CameraResultType, CameraSource } = await import("@capacitor/camera");
       
       const image = await CapacitorCamera.getPhoto({
@@ -190,7 +183,6 @@ const CustomerProfile = () => {
         throw new Error("No image captured");
       }
 
-      // Convert base64 to blob
       const byteCharacters = atob(image.base64String);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
@@ -218,9 +210,7 @@ const CustomerProfile = () => {
 
       setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
     } catch (error: any) {
-      // If Capacitor is not available (web browser), fall back to file input with capture
       if (error.message?.includes("not implemented") || error.message?.includes("not available")) {
-        // Trigger file input with camera capture for mobile web
         const input = document.createElement("input");
         input.type = "file";
         input.accept = "image/*";
@@ -269,7 +259,6 @@ const CustomerProfile = () => {
       let customerId: string;
 
       if (existingCustomerId) {
-        // Update existing customer
         const { error } = await supabase
           .from("customers")
           .update({
@@ -287,7 +276,6 @@ const CustomerProfile = () => {
         if (error) throw error;
         customerId = existingCustomerId;
       } else {
-        // Create new customer linked to auth user
         const { data: newCustomer, error } = await supabase
           .from("customers")
           .insert({
@@ -310,7 +298,6 @@ const CustomerProfile = () => {
         setExistingCustomerId(customerId);
       }
 
-      // Delete existing photos and add new ones
       await supabase.from("customer_photos").delete().eq("customer_id", customerId);
 
       const photoInserts = Object.entries(photos).map(([type, url]) => ({
@@ -321,7 +308,6 @@ const CustomerProfile = () => {
 
       await supabase.from("customer_photos").insert(photoInserts);
 
-      // Store customer ID in session storage for the flow
       sessionStorage.setItem("customerId", customerId);
 
       toast({ title: "Profile saved!", description: "Let's generate your new look" });
@@ -335,246 +321,227 @@ const CustomerProfile = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="flex justify-between items-start">
-          <div className="text-center flex-1 space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">{existingCustomerId ? "Edit Your Profile" : "Create Your Profile"}</h1>
-            <p className="text-muted-foreground">Tell us about yourself and your hair goals</p>
+    <div className="min-h-screen bg-background p-4">
+      <div className="max-w-lg mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <button 
+            onClick={() => navigate(-1)}
+            className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <div className="text-center flex-1">
+            <h1 className="text-xl font-bold uppercase tracking-wide text-foreground">
+              {existingCustomerId ? "Edit Your Profile" : "Create Your Profile"}
+            </h1>
+            <p className="text-sm text-muted-foreground">Page 1 "Profile Creation"</p>
           </div>
-          <Button variant="ghost" size="icon" onClick={signOut}>
+          <Button variant="ghost" size="icon" onClick={signOut} className="text-muted-foreground hover:text-foreground">
             <LogOut className="w-5 h-5" />
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-primary" />
-              Basic Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Your name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="gender">Gender *</Label>
-                <Select value={formData.gender} onValueChange={(v) => setFormData({ ...formData, gender: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+        {/* Basic Info Form */}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="font-medium">Full Name</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Enter your fullname"
+              className="h-12 border-2 focus:border-primary"
+            />
+          </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={user?.email || formData.email}
-                  disabled
-                  className="bg-muted"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+1 234 567 8900"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                type="number"
-                value={formData.age}
-                onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                placeholder="Your age"
-                className="w-32"
-              />
-            </div>
-
-            {location && (
-              <p className="text-sm text-muted-foreground flex items-center gap-1">
-                <MapPin className="w-4 h-4" /> Location detected for finding nearby stylists
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Camera className="w-5 h-5 text-primary" />
-              Your Hair Photos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {photoTypes.map((type) => (
-                <div key={type.id} className="space-y-2">
-                  <Label>{type.label}</Label>
-                  <div className="relative">
-                    <div className={`aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center transition-colors ${
-                      photos[type.id] ? "border-primary bg-primary/5" : "border-border"
-                    }`}>
-                      {photos[type.id] ? (
-                        <img src={photos[type.id]} alt={type.label} className="w-full h-full object-cover rounded-lg" />
-                      ) : uploadingPhoto === type.id ? (
-                        <div className="animate-pulse text-muted-foreground">Uploading...</div>
-                      ) : (
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-12 w-12"
-                            onClick={() => handleCameraCapture(type.id)}
-                          >
-                            <Camera className="w-6 h-6 text-muted-foreground" />
-                          </Button>
-                          <label className="cursor-pointer">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="h-12 w-12 pointer-events-none"
-                              asChild
-                            >
-                              <span>
-                                <Upload className="w-6 h-6 text-muted-foreground" />
-                              </span>
-                            </Button>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handlePhotoUpload(type.id, file);
-                              }}
-                            />
-                          </label>
-                        </div>
-                      )}
-                    </div>
-                    {photos[type.id] && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleDeletePhoto(type.id);
-                        }}
-                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 shadow-md hover:bg-destructive/90 transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
+          {/* Gender Selection - Pill Style */}
+          <div className="space-y-2">
+            <Label className="font-medium">Gender</Label>
+            <div className="flex items-center justify-center gap-4">
+              {["male", "female", "other"].map((gender) => (
+                <button
+                  key={gender}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, gender })}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all capitalize ${
+                    formData.gender === gender
+                      ? 'text-primary'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                    formData.gender === gender 
+                      ? 'border-primary bg-primary' 
+                      : 'border-muted-foreground'
+                  }`}>
+                    {formData.gender === gender && (
+                      <span className="w-2 h-2 bg-primary-foreground rounded-full" />
                     )}
-                  </div>
-                </div>
+                  </span>
+                  {gender === "male" ? "Male" : gender === "female" ? "Female" : "Other"}
+                </button>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Style Preferences</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {formData.gender && (
-              <div className="space-y-2">
-                <Label>Preferred Style</Label>
-                <Select
-                  value={formData.preferred_style_category}
-                  onValueChange={(v) => setFormData({ ...formData, preferred_style_category: v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a style" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {hairStyles.map((style) => (
-                      <SelectItem key={style.id} value={style.name}>
-                        {style.name} - {style.description}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          {/* Photo Upload Area - Dashed Border Style */}
+          <div className="space-y-2">
+            <div 
+              className="border-2 border-dashed border-primary rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors"
+              onClick={() => document.getElementById('main-photo-input')?.click()}
+            >
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
+                <Camera className="w-8 h-8 text-primary" />
               </div>
-            )}
-
-            <div className="space-y-2">
-              <Label>Describe Your Ideal Style</Label>
-              <Textarea
-                value={formData.preferred_style_description}
-                onChange={(e) => setFormData({ ...formData, preferred_style_description: e.target.value })}
-                placeholder="Describe your dream hairstyle in detail... e.g., 'A modern fade with textured top, slightly longer on the sides'"
-                rows={4}
+              <p className="font-semibold text-foreground">Upload Hair Photos</p>
+              <p className="text-sm text-muted-foreground">(Front, Sides, Back, Top)</p>
+              <input
+                id="main-photo-input"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const nextEmptySlot = photoTypes.find(t => !photos[t.id]);
+                    if (nextEmptySlot) handlePhotoUpload(nextEmptySlot.id, file);
+                  }
+                }}
               />
             </div>
-          </CardContent>
-        </Card>
+            
+            {/* Photo Grid */}
+            {Object.keys(photos).length > 0 && (
+              <div className="grid grid-cols-5 gap-2 mt-4">
+                {photoTypes.map((type) => (
+                  <div key={type.id} className="relative">
+                    {photos[type.id] ? (
+                      <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary">
+                        <img 
+                          src={photos[type.id]} 
+                          alt={type.label} 
+                          className="w-full h-full object-cover" 
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleDeletePhoto(type.id)}
+                          className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full p-0.5 shadow-md hover:bg-destructive/90 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div 
+                        className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors"
+                        onClick={() => {
+                          const input = document.createElement("input");
+                          input.type = "file";
+                          input.accept = "image/*";
+                          input.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (file) handlePhotoUpload(type.id, file);
+                          };
+                          input.click();
+                        }}
+                      >
+                        <Camera className="w-4 h-4 text-muted-foreground/50" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-primary" />
-              Payment Method
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowPayment(true)}
-            >
-              Add Payment Method
-            </Button>
-            {showPayment && <PaymentMethodUI onClose={() => setShowPayment(false)} />}
-          </CardContent>
-        </Card>
+          {/* Age Input */}
+          <div className="space-y-2">
+            <Label htmlFor="age" className="font-medium">Age</Label>
+            <Input
+              id="age"
+              type="number"
+              value={formData.age}
+              onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+              placeholder="Enter your age"
+              className="h-12 border-2 focus:border-primary"
+            />
+          </div>
 
-        <div className="flex gap-4">
-          <Button variant="outline" onClick={() => navigate("/")} className="flex-1">
-            Back
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-          >
-            {loading ? "Saving..." : "Continue"}
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          {/* Style Description */}
+          <div className="space-y-2">
+            <Textarea
+              value={formData.preferred_style_description}
+              onChange={(e) => setFormData({ ...formData, preferred_style_description: e.target.value })}
+              placeholder="Describe your ideal hair style..."
+              className="border-2 focus:border-primary min-h-[80px]"
+            />
+          </div>
+
+          {/* Hair Style Selection */}
+          {formData.gender && (
+            <div className="border-2 border-primary rounded-xl overflow-hidden">
+              <Select
+                value={formData.preferred_style_category}
+                onValueChange={(v) => setFormData({ ...formData, preferred_style_category: v })}
+              >
+                <SelectTrigger className="h-14 border-0 text-left">
+                  <div className="flex items-center justify-between w-full">
+                    <span className="font-medium text-primary">
+                      {formData.preferred_style_category || "Select Hair Style"}
+                    </span>
+                    <ChevronRight className="w-5 h-5 text-primary" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {hairStyles.map((style) => (
+                    <SelectItem key={style.id} value={style.name}>
+                      {style.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formData.preferred_style_category && (
+                <div className="px-4 pb-4 text-sm text-muted-foreground">
+                  {hairStyles.find(s => s.name === formData.preferred_style_category)?.description || "Fade, Textured, Long Layers"}
+                </div>
+              )}
+            </div>
+          )}
+
+          {location && (
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              <MapPin className="w-4 h-4 text-primary" /> Location detected for finding nearby stylists
+            </p>
+          )}
         </div>
+
+        {/* Payment Button */}
+        <Button
+          onClick={showPayment ? () => setShowPayment(false) : () => setShowPayment(true)}
+          className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
+        >
+          <CreditCard className="w-5 h-5 mr-2" />
+          {showPayment ? "Hide Payment" : "Connect to Stripe"}
+        </Button>
+
+        {showPayment && <PaymentMethodUI onClose={() => setShowPayment(false)} />}
+
+        {/* Continue Button */}
+        <Button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
+        >
+          {loading ? "Saving..." : "Continue"}
+          <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
       </div>
     </div>
   );

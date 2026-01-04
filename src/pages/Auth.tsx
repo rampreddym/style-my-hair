@@ -4,11 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Scissors, User, Mail, Lock, Chrome } from "lucide-react";
+import { Scissors, User, Mail, Lock, Chrome, ChevronLeft } from "lucide-react";
 import { z } from "zod";
 
 const authSchema = z.object({
@@ -78,7 +77,6 @@ const Auth = () => {
       }
     } else {
       toast({ title: "Welcome back!", description: "Redirecting..." });
-      // Keep isSubmitting true - the useEffect will handle navigation once userRole is fetched
     }
   };
 
@@ -91,40 +89,55 @@ const Auth = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            {isStylist ? (
-              <Scissors className="w-8 h-8 text-primary" />
-            ) : (
-              <User className="w-8 h-8 text-primary" />
-            )}
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md shadow-lg border-0">
+        <CardHeader className="text-center space-y-4 pb-2">
+          <div className="flex items-center justify-center gap-2">
+            <button className="absolute left-4 top-4 p-2 text-primary hover:bg-primary/10 rounded-full transition-colors">
+              <ChevronLeft className="w-6 h-6" />
+            </button>
           </div>
-          <CardTitle className="text-2xl">Welcome to StyleMatch</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl font-bold uppercase tracking-wide">Welcome to StyleMatch</CardTitle>
+          <CardDescription className="text-muted-foreground">
             Sign in or create an account to continue
           </CardDescription>
           
-          {/* Role Toggle */}
-          <div className="flex items-center justify-center gap-4 p-4 bg-muted/50 rounded-lg">
-            <span className={`text-sm font-medium transition-colors ${!isStylist ? 'text-primary' : 'text-muted-foreground'}`}>
-              Customer
+          {/* Role Toggle - Teal Pill Buttons */}
+          <div className="flex items-center justify-center gap-2 py-4">
+            <span className="text-sm font-medium text-primary">
+              {isStylist ? 'Stylist' : 'Customer'}
             </span>
-            <Switch
-              checked={isStylist}
-              onCheckedChange={setIsStylist}
-            />
-            <span className={`text-sm font-medium transition-colors ${isStylist ? 'text-primary' : 'text-muted-foreground'}`}>
-              Stylist
-            </span>
+            <div className="flex bg-muted rounded-full p-1">
+              <button
+                onClick={() => setIsStylist(false)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  !isStylist 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <User className="w-4 h-4" />
+                Customer
+              </button>
+              <button
+                onClick={() => setIsStylist(true)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  isStylist 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Scissors className="w-4 h-4" />
+                Stylist
+              </button>
+            </div>
           </div>
         </CardHeader>
 
@@ -132,7 +145,7 @@ const Auth = () => {
           {/* Google Login */}
           <Button 
             variant="outline" 
-            className="w-full gap-2" 
+            className="w-full gap-2 h-12 border-2 hover:bg-muted/50" 
             onClick={handleGoogleLogin}
             disabled={isSubmitting}
           >
@@ -142,93 +155,93 @@ const Auth = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
+              <span className="bg-card px-4 text-muted-foreground">Or continue with email</span>
             </div>
           </div>
 
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-muted/50">
+              <TabsTrigger value="signin" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign In</TabsTrigger>
+              <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign Up</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="signin" className="space-y-4 mt-4">
+            <TabsContent value="signin" className="space-y-4 mt-6">
               <div className="space-y-2">
-                <Label htmlFor="signin-email">Email</Label>
+                <Label htmlFor="signin-email" className="font-medium">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signin-email"
                     type="email"
                     placeholder="you@example.com"
-                    className="pl-10"
+                    className="pl-10 h-12 border-2 focus:border-primary"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signin-password">Password</Label>
+                <Label htmlFor="signin-password" className="font-medium">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signin-password"
                     type="password"
                     placeholder="••••••••"
-                    className="pl-10"
+                    className="pl-10 h-12 border-2 focus:border-primary"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
               </div>
               <Button 
-                className="w-full" 
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium" 
                 onClick={handleSignIn}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Signing in..." : "Sign In"}
               </Button>
               <div className="text-center">
-                <Link to="/reset-password" className="text-sm text-primary hover:underline">
+                <Link to="/reset-password" className="text-sm text-primary hover:underline font-medium">
                   Forgot your password?
                 </Link>
               </div>
             </TabsContent>
 
-            <TabsContent value="signup" className="space-y-4 mt-4">
+            <TabsContent value="signup" className="space-y-4 mt-6">
               <div className="space-y-2">
-                <Label htmlFor="signup-email">Email</Label>
+                <Label htmlFor="signup-email" className="font-medium">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signup-email"
                     type="email"
                     placeholder="you@example.com"
-                    className="pl-10"
+                    className="pl-10 h-12 border-2 focus:border-primary"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signup-password">Password</Label>
+                <Label htmlFor="signup-password" className="font-medium">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signup-password"
                     type="password"
                     placeholder="••••••••"
-                    className="pl-10"
+                    className="pl-10 h-12 border-2 focus:border-primary"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
               </div>
               <Button 
-                className="w-full" 
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium" 
                 onClick={handleSignUp}
                 disabled={isSubmitting}
               >
