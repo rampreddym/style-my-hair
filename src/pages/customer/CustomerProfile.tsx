@@ -11,6 +11,7 @@ import { ArrowRight, CreditCard, MapPin, LogOut, ChevronLeft } from "lucide-reac
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
 import { GuidedPhotoCapture } from "@/components/customer/GuidedPhotoCapture";
 import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
+import { NotificationToggle } from "@/components/notifications/NotificationToggle";
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
@@ -370,6 +371,15 @@ const CustomerProfile = () => {
               <MapPin className="w-4 h-4 text-primary" /> Location detected for finding nearby stylists
             </p>
           )}
+        </div>
+
+        {/* Notification Settings */}
+        <div className="p-4 border-2 border-primary/20 rounded-xl bg-card">
+          <h3 className="text-sm font-medium text-foreground mb-3">Appointment Reminders</h3>
+          <NotificationToggle variant="switch" showLabel={true} />
+          <p className="text-xs text-muted-foreground mt-2">
+            Get push notifications 1 hour before your appointments
+          </p>
         </div>
 
         {/* Payment Button */}
