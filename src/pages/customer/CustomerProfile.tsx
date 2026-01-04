@@ -58,11 +58,31 @@ const CustomerProfile = () => {
     const loadExistingProfile = async () => {
       if (!user) return;
       
-      const { data: existingCustomer } = await supabase
+      // First try to find by user_id
+      let { data: existingCustomer } = await supabase
         .from("customers")
         .select("*, customer_photos(*)")
         .eq("user_id", user.id)
         .maybeSingle();
+      
+      // If not found by user_id, check by email (in case profile was created before auth link)
+      if (!existingCustomer && user.email) {
+        const { data: customerByEmail } = await supabase
+          .from("customers")
+          .select("*, customer_photos(*)")
+          .eq("email", user.email)
+          .maybeSingle();
+        
+        if (customerByEmail) {
+          // Link this customer to the auth user
+          await supabase
+            .from("customers")
+            .update({ user_id: user.id })
+            .eq("id", customerByEmail.id);
+          
+          existingCustomer = customerByEmail;
+        }
+      }
       
       if (existingCustomer) {
         setExistingCustomerId(existingCustomer.id);
