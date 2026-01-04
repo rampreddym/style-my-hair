@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, ArrowRight, CreditCard, MapPin } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Camera, ArrowRight, CreditCard, MapPin, LogOut } from "lucide-react";
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
 
 const photoTypes = [
@@ -22,11 +23,13 @@ const photoTypes = [
 const CustomerProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, userRole, loading: authLoading, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [hairStyles, setHairStyles] = useState<any[]>([]);
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
+  const [existingCustomerId, setExistingCustomerId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     email: "",
@@ -39,6 +42,56 @@ const CustomerProfile = () => {
   });
 
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  // Redirect if not authenticated or wrong role
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+    }
+    if (!authLoading && userRole && userRole !== 'customer') {
+      navigate('/stylist');
+    }
+  }, [user, userRole, authLoading, navigate]);
+
+  // Load existing customer profile
+  useEffect(() => {
+    const loadExistingProfile = async () => {
+      if (!user) return;
+      
+      const { data: existingCustomer } = await supabase
+        .from("customers")
+        .select("*, customer_photos(*)")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (existingCustomer) {
+        setExistingCustomerId(existingCustomer.id);
+        setFormData({
+          email: existingCustomer.email || user.email || "",
+          phone: existingCustomer.phone || "",
+          name: existingCustomer.name || "",
+          gender: existingCustomer.gender || "",
+          age: existingCustomer.age?.toString() || "",
+          preferred_style_description: existingCustomer.preferred_style_description || "",
+          preferred_style_category: existingCustomer.preferred_style_category || "",
+        });
+        
+        // Load existing photos
+        if (existingCustomer.customer_photos) {
+          const photoMap: Record<string, string> = {};
+          existingCustomer.customer_photos.forEach((p: any) => {
+            photoMap[p.photo_type] = p.photo_url;
+          });
+          setPhotos(photoMap);
+        }
+      } else {
+        // Pre-fill email from auth
+        setFormData(prev => ({ ...prev, email: user.email || "" }));
+      }
+    };
+    
+    loadExistingProfile();
+  }, [user]);
 
   useEffect(() => {
     // Request geolocation
@@ -100,8 +153,13 @@ const CustomerProfile = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.email || !formData.name || !formData.gender) {
-      toast({ title: "Required fields missing", description: "Please fill in email, name, and gender", variant: "destructive" });
+    if (!user) {
+      toast({ title: "Not authenticated", variant: "destructive" });
+      return;
+    }
+    
+    if (!formData.name || !formData.gender) {
+      toast({ title: "Required fields missing", description: "Please fill in name and gender", variant: "destructive" });
       return;
     }
 
@@ -113,16 +171,9 @@ const CustomerProfile = () => {
     setLoading(true);
 
     try {
-      // Check if customer exists
-      const { data: existingCustomer } = await supabase
-        .from("customers")
-        .select("id")
-        .eq("email", formData.email)
-        .maybeSingle();
-
       let customerId: string;
 
-      if (existingCustomer) {
+      if (existingCustomerId) {
         // Update existing customer
         const { error } = await supabase
           .from("customers")
@@ -136,16 +187,17 @@ const CustomerProfile = () => {
             latitude: location?.lat,
             longitude: location?.lng,
           })
-          .eq("id", existingCustomer.id);
+          .eq("id", existingCustomerId);
 
         if (error) throw error;
-        customerId = existingCustomer.id;
+        customerId = existingCustomerId;
       } else {
-        // Create new customer
+        // Create new customer linked to auth user
         const { data: newCustomer, error } = await supabase
           .from("customers")
           .insert({
-            email: formData.email,
+            user_id: user.id,
+            email: user.email || formData.email,
             phone: formData.phone,
             name: formData.name,
             gender: formData.gender,
@@ -160,6 +212,7 @@ const CustomerProfile = () => {
 
         if (error) throw error;
         customerId = newCustomer.id;
+        setExistingCustomerId(customerId);
       }
 
       // Delete existing photos and add new ones
@@ -185,12 +238,25 @@ const CustomerProfile = () => {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4">
       <div className="max-w-2xl mx-auto space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Create Your Profile</h1>
-          <p className="text-muted-foreground">Tell us about yourself and your hair goals</p>
+        <div className="flex justify-between items-start">
+          <div className="text-center flex-1 space-y-2">
+            <h1 className="text-3xl font-bold text-foreground">{existingCustomerId ? "Edit Your Profile" : "Create Your Profile"}</h1>
+            <p className="text-muted-foreground">Tell us about yourself and your hair goals</p>
+          </div>
+          <Button variant="ghost" size="icon" onClick={signOut}>
+            <LogOut className="w-5 h-5" />
+          </Button>
         </div>
 
         <Card>
@@ -228,13 +294,13 @@ const CustomerProfile = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="your@email.com"
+                  value={user?.email || formData.email}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div className="space-y-2">

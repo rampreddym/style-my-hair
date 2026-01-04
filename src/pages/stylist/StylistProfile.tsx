@@ -8,15 +8,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, ArrowRight, MapPin, Sparkles, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Camera, ArrowRight, MapPin, Sparkles, X, LogOut } from "lucide-react";
 
 const StylistProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, userRole, loading: authLoading, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [existingStylistId, setExistingStylistId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     email: "",
@@ -30,6 +33,48 @@ const StylistProfile = () => {
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [newSpecialty, setNewSpecialty] = useState("");
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  // Redirect if not authenticated or wrong role
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+    }
+    if (!authLoading && userRole && userRole !== 'stylist') {
+      navigate('/customer');
+    }
+  }, [user, userRole, authLoading, navigate]);
+
+  // Load existing stylist profile
+  useEffect(() => {
+    const loadExistingProfile = async () => {
+      if (!user) return;
+      
+      const { data: existingStylist } = await supabase
+        .from("stylists")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (existingStylist) {
+        setExistingStylistId(existingStylist.id);
+        setFormData({
+          email: existingStylist.email || user.email || "",
+          phone: existingStylist.phone || "",
+          name: existingStylist.name || "",
+          business_name: existingStylist.business_name || "",
+          bio: existingStylist.bio || "",
+          address: existingStylist.address || "",
+        });
+        setSpecialties(existingStylist.specialties || []);
+        setPhotoUrl(existingStylist.photo_url || "");
+      } else {
+        // Pre-fill email from auth
+        setFormData(prev => ({ ...prev, email: user.email || "" }));
+      }
+    };
+    
+    loadExistingProfile();
+  }, [user]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -114,23 +159,22 @@ const StylistProfile = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.email || !formData.name) {
-      toast({ title: "Required fields missing", description: "Please fill in email and name", variant: "destructive" });
+    if (!user) {
+      toast({ title: "Not authenticated", variant: "destructive" });
+      return;
+    }
+
+    if (!formData.name) {
+      toast({ title: "Required fields missing", description: "Please fill in your name", variant: "destructive" });
       return;
     }
 
     setLoading(true);
 
     try {
-      const { data: existingStylist } = await supabase
-        .from("stylists")
-        .select("id")
-        .eq("email", formData.email)
-        .maybeSingle();
-
       let stylistId: string;
 
-      if (existingStylist) {
+      if (existingStylistId) {
         const { error } = await supabase
           .from("stylists")
           .update({
@@ -144,15 +188,16 @@ const StylistProfile = () => {
             latitude: location?.lat,
             longitude: location?.lng,
           })
-          .eq("id", existingStylist.id);
+          .eq("id", existingStylistId);
 
         if (error) throw error;
-        stylistId = existingStylist.id;
+        stylistId = existingStylistId;
       } else {
         const { data: newStylist, error } = await supabase
           .from("stylists")
           .insert({
-            email: formData.email,
+            user_id: user.id,
+            email: user.email || formData.email,
             phone: formData.phone,
             name: formData.name,
             business_name: formData.business_name,
@@ -168,6 +213,7 @@ const StylistProfile = () => {
 
         if (error) throw error;
         stylistId = newStylist.id;
+        setExistingStylistId(stylistId);
       }
 
       sessionStorage.setItem("stylistId", stylistId);
@@ -180,12 +226,25 @@ const StylistProfile = () => {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4">
       <div className="max-w-2xl mx-auto space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Create Your Stylist Profile</h1>
-          <p className="text-muted-foreground">Showcase your skills and attract new clients</p>
+        <div className="flex justify-between items-start">
+          <div className="text-center flex-1 space-y-2">
+            <h1 className="text-3xl font-bold text-foreground">{existingStylistId ? "Edit Your Profile" : "Create Your Stylist Profile"}</h1>
+            <p className="text-muted-foreground">Showcase your skills and attract new clients</p>
+          </div>
+          <Button variant="ghost" size="icon" onClick={signOut}>
+            <LogOut className="w-5 h-5" />
+          </Button>
         </div>
 
         <Card>
@@ -249,13 +308,13 @@ const StylistProfile = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="your@email.com"
+                  value={user?.email || formData.email}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div className="space-y-2">
