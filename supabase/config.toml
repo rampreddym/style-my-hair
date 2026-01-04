@@ -1,4 +1,4 @@
 project_id = "nkarycrvlmtuuyqzvyvt"
 
 [functions.generate-hairstyle]
-verify_jwt = true
+verify_jwt = false

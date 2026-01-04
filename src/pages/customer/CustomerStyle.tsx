@@ -105,26 +105,37 @@ const CustomerStyle = () => {
       });
 
       if (error) throw error;
+      
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
-      // Save generated images
-      if (data?.images) {
-        const inserts = data.images.map((img: string) => ({
+      // Save generated images - the API returns "variations" array
+      if (data?.variations && data.variations.length > 0) {
+        const inserts = data.variations.map((img: string) => ({
           customer_id: customerId,
           style_prompt: fullPrompt,
           generated_image_url: img,
         }));
 
-        const { data: saved } = await supabase
+        const { data: saved, error: saveError } = await supabase
           .from("customer_generated_styles")
           .insert(inserts)
           .select();
 
+        if (saveError) {
+          console.error("Error saving generated styles:", saveError);
+          throw saveError;
+        }
+
         if (saved) {
           setGeneratedImages([...saved, ...generatedImages]);
         }
+        
+        toast({ title: "Styles generated!", description: `${data.variations.length} new looks created` });
+      } else {
+        toast({ title: "No images generated", description: "Please try again with a different description", variant: "destructive" });
       }
-
-      toast({ title: "Styles generated!", description: "Select your favorite look" });
     } catch (error: any) {
       toast({ title: "Generation failed", description: error.message, variant: "destructive" });
     } finally {
