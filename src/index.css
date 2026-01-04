@@ -4,99 +4,94 @@
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
+Teal/Turquoise color palette inspired by salon/styling marketplace design.
 */
 
 @layer base {
   :root {
-    --background: 20 20% 98%;
-    --foreground: 20 10% 15%;
+    --background: 0 0% 96%;
+    --foreground: 220 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 20 10% 15%;
+    --card-foreground: 220 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 20 10% 15%;
+    --popover-foreground: 220 15% 15%;
 
-    --primary: 340 75% 55%;
+    --primary: 174 56% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 20 30% 95%;
-    --secondary-foreground: 20 10% 20%;
+    --secondary: 0 0% 97%;
+    --secondary-foreground: 220 15% 20%;
 
-    --muted: 20 15% 92%;
-    --muted-foreground: 20 5% 50%;
+    --muted: 220 10% 94%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 340 80% 60%;
+    --accent: 174 60% 40%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 20 20% 88%;
-    --input: 20 20% 88%;
-    --ring: 340 75% 55%;
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 174 56% 45%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
     
-    --gradient-primary: linear-gradient(135deg, hsl(340 75% 55%), hsl(350 80% 65%));
-    --gradient-soft: linear-gradient(180deg, hsl(20 30% 98%), hsl(340 20% 95%));
-    --shadow-soft: 0 8px 24px -8px hsl(340 40% 70% / 0.2);
-    --shadow-card: 0 2px 16px -4px hsl(20 10% 50% / 0.1);
+    --gradient-primary: linear-gradient(135deg, hsl(174 56% 45%), hsl(174 60% 55%));
+    --gradient-soft: linear-gradient(180deg, hsl(0 0% 98%), hsl(0 0% 96%));
+    --shadow-soft: 0 8px 24px -8px hsl(220 15% 50% / 0.15);
+    --shadow-card: 0 4px 20px -4px hsl(220 10% 40% / 0.12);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-foreground: 220 15% 26%;
+    --sidebar-primary: 174 56% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 174 30% 95%;
+    --sidebar-accent-foreground: 174 56% 35%;
+    --sidebar-border: 220 15% 91%;
+    --sidebar-ring: 174 56% 45%;
   }
 
   .dark {
-    --background: 20 15% 8%;
-    --foreground: 20 10% 95%;
+    --background: 220 15% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 20 12% 10%;
-    --card-foreground: 20 10% 95%;
+    --card: 220 12% 10%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 20 12% 10%;
-    --popover-foreground: 20 10% 95%;
+    --popover: 220 12% 10%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 340 75% 55%;
+    --primary: 174 56% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 20 10% 15%;
-    --secondary-foreground: 20 10% 95%;
+    --secondary: 220 10% 15%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 20 8% 18%;
-    --muted-foreground: 20 5% 65%;
+    --muted: 220 8% 18%;
+    --muted-foreground: 220 5% 65%;
 
-    --accent: 340 70% 50%;
+    --accent: 174 50% 40%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 50%;
+    --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 20 8% 20%;
-    --input: 20 8% 20%;
-    --ring: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 220 8% 20%;
+    --input: 220 8% 20%;
+    --ring: 174 56% 45%;
+
+    --sidebar-background: 220 15% 10%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 174 56% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 220 10% 15%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 220 8% 18%;
+    --sidebar-ring: 174 56% 45%;
   }
 }
 
@@ -107,5 +102,12 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+@layer utilities {
+  .border-dashed-primary {
+    border: 2px dashed hsl(var(--primary));
   }
 }

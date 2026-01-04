@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { Sparkles, RefreshCw, ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2 } from "lucide-react";
 
 const CustomerStyle = () => {
   const navigate = useNavigate();
@@ -47,7 +47,6 @@ const CustomerStyle = () => {
       setStylePrompt(customerData.preferred_style_description || "");
       setSelectedStyle(customerData.preferred_style_category || "");
       
-      // Fetch hair styles based on gender
       const { data: styles } = await supabase
         .from("hair_styles")
         .select("*")
@@ -56,7 +55,6 @@ const CustomerStyle = () => {
       if (styles) setHairStyles(styles);
     }
 
-    // Fetch customer photos
     const { data: photoData } = await supabase
       .from("customer_photos")
       .select("*")
@@ -64,7 +62,6 @@ const CustomerStyle = () => {
 
     if (photoData) setPhotos(photoData);
 
-    // Fetch existing generated styles
     const { data: existingStyles } = await supabase
       .from("customer_generated_styles")
       .select("*")
@@ -110,7 +107,6 @@ const CustomerStyle = () => {
         throw new Error(data.error);
       }
 
-      // Save generated images - the API returns "variations" array
       if (data?.variations && data.variations.length > 0) {
         const inserts = data.variations.map((img: string) => ({
           customer_id: customerId,
@@ -144,7 +140,6 @@ const CustomerStyle = () => {
   };
 
   const selectImage = async (imageId: string) => {
-    // Deselect all, then select the chosen one
     await supabase
       .from("customer_generated_styles")
       .update({ selected: false })
@@ -169,140 +164,163 @@ const CustomerStyle = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );
   }
 
+  const selectedGeneratedImage = generatedImages.find(img => img.id === selectedImage);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Generate Your New Look</h1>
-          <p className="text-muted-foreground">See yourself with your dream hairstyle using AI</p>
+    <div className="min-h-screen bg-background p-4">
+      <div className="max-w-lg mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center">
+          <button 
+            onClick={() => navigate("/customer")}
+            className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <h1 className="flex-1 text-center text-xl font-bold text-foreground pr-8">
+            Preview Your New Look
+          </h1>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Current Look</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-2">
-                {photos.map((photo) => (
-                  <div key={photo.id} className="aspect-square rounded-lg overflow-hidden">
-                    <img src={photo.photo_url} alt={photo.photo_type} className="w-full h-full object-cover" />
-                  </div>
-                ))}
+        {/* Preview Image Area */}
+        <div className="relative">
+          <div className="aspect-square bg-muted/30 rounded-2xl overflow-hidden border-2 border-border">
+            {generating ? (
+              <div className="w-full h-full flex flex-col items-center justify-center">
+                {photos.find(p => p.photo_type === "front") && (
+                  <img 
+                    src={photos.find(p => p.photo_type === "front")?.photo_url} 
+                    alt="Your photo" 
+                    className="w-full h-full object-cover opacity-50"
+                  />
+                )}
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50">
+                  <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+                  <p className="text-lg font-medium text-foreground">Generating...</p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
-                Style Generator
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Choose a Base Style</Label>
-                <Select value={selectedStyle} onValueChange={setSelectedStyle}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a style" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {hairStyles.map((style) => (
-                      <SelectItem key={style.id} value={style.name}>
-                        {style.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            ) : selectedGeneratedImage ? (
+              <img 
+                src={selectedGeneratedImage.generated_image_url} 
+                alt="Generated style" 
+                className="w-full h-full object-cover"
+              />
+            ) : photos.find(p => p.photo_type === "front") ? (
+              <img 
+                src={photos.find(p => p.photo_type === "front")?.photo_url} 
+                alt="Your photo" 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                No photo available
               </div>
+            )}
+          </div>
+        </div>
 
-              <div className="space-y-2">
-                <Label>Describe Your Style</Label>
-                <Textarea
-                  value={stylePrompt}
-                  onChange={(e) => setStylePrompt(e.target.value)}
-                  placeholder="Add specific details... e.g., 'with highlights, textured layers, swept to the side'"
-                  rows={4}
+        {/* Generated Thumbnails */}
+        {generatedImages.length > 0 && (
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {generatedImages.slice(0, 4).map((img) => (
+              <button
+                key={img.id}
+                onClick={() => selectImage(img.id)}
+                className={`relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden transition-all ${
+                  selectedImage === img.id 
+                    ? 'ring-2 ring-primary ring-offset-2' 
+                    : 'opacity-70 hover:opacity-100'
+                }`}
+              >
+                <img
+                  src={img.generated_image_url}
+                  alt="Generated style"
+                  className="w-full h-full object-cover"
                 />
-              </div>
+                {selectedImage === img.id && (
+                  <div className="absolute top-1 right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="w-3 h-3 text-primary-foreground" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
 
-              <Button
+        {/* Style Description Card */}
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-4 space-y-4">
+            <div>
+              <Label className="font-semibold text-foreground">Hair Style Description</Label>
+              <Textarea
+                value={stylePrompt}
+                onChange={(e) => setStylePrompt(e.target.value)}
+                placeholder="Style: Wavy Bob, Length: Shoulder; Color: Blonde; Texture: Loose Waves; Occasion: Casual"
+                className="mt-2 border-2 focus:border-primary min-h-[80px]"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button 
+                variant="outline" 
+                className="h-12 border-2 font-medium"
+                onClick={() => {
+                  const basePrompts = [
+                    "Style: Modern Bob, Length: Chin; Color: Natural; Texture: Sleek",
+                    "Style: Layered Cut, Length: Medium; Color: Highlights; Texture: Wavy",
+                    "Style: Pixie, Length: Short; Color: Bold; Texture: Textured",
+                  ];
+                  setStylePrompt(basePrompts[Math.floor(Math.random() * basePrompts.length)]);
+                }}
+              >
+                Adjust Description
+              </Button>
+              <Button 
                 onClick={generateStyle}
                 disabled={generating}
-                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
               >
                 {generating ? (
                   <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    Generating...
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Generate Style
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Regenerate Preview
                   </>
                 )}
               </Button>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
 
-        {generatedImages.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Generated Looks</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {generatedImages.map((img) => (
-                  <div
-                    key={img.id}
-                    onClick={() => selectImage(img.id)}
-                    className={`relative aspect-square rounded-lg overflow-hidden cursor-pointer transition-all ${
-                      selectedImage === img.id ? "ring-4 ring-primary" : "hover:ring-2 hover:ring-primary/50"
-                    }`}
-                  >
-                    <img
-                      src={img.generated_image_url}
-                      alt="Generated style"
-                      className="w-full h-full object-cover"
-                    />
-                    {selectedImage === img.id && (
-                      <div className="absolute top-2 right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                        <Check className="w-5 h-5 text-primary-foreground" />
-                      </div>
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 to-transparent p-2">
-                      <p className="text-xs text-foreground truncate">{img.style_prompt}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        <div className="flex gap-4">
-          <Button variant="outline" onClick={() => navigate("/customer")} className="flex-1">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Profile
-          </Button>
-          <Button
-            onClick={continueToBooking}
-            disabled={!selectedImage}
-            className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-          >
-            Find Stylists
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </div>
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <Button 
+                variant="outline" 
+                onClick={() => navigate("/customer")}
+                className="h-12 border-2 font-medium"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Go Back
+              </Button>
+              <Button
+                onClick={continueToBooking}
+                disabled={!selectedImage}
+                className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+              >
+                Approve & Continue
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
