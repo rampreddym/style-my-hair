@@ -31,16 +31,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserRole = async (userId: string) => {
-    const { data } = await supabase
+  const fetchUserRole = async (userId: string): Promise<UserRole> => {
+    const { data, error } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', userId)
       .single();
     
-    if (data) {
-      setUserRole(data.role as UserRole);
+    if (data && !error) {
+      const role = data.role as UserRole;
+      setUserRole(role);
+      return role;
     }
+    return null;
   };
 
   useEffect(() => {
