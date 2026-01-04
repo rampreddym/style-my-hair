@@ -16,41 +16,73 @@ export type Database = {
     Tables: {
       appointments: {
         Row: {
+          ai_style_description: string | null
           appointment_date: string
-          created_at: string | null
+          created_at: string
+          customer_id: string
+          generated_style_id: string | null
           id: string
-          price: number | null
-          request_id: string
-          status: string | null
+          payment_status: string | null
+          price: number
+          service_id: string
+          status: string
+          stripe_payment_intent_id: string | null
           stylist_id: string
-          user_id: string
+          stylist_notes: string | null
+          updated_at: string
         }
         Insert: {
+          ai_style_description?: string | null
           appointment_date: string
-          created_at?: string | null
+          created_at?: string
+          customer_id: string
+          generated_style_id?: string | null
           id?: string
-          price?: number | null
-          request_id: string
-          status?: string | null
+          payment_status?: string | null
+          price: number
+          service_id: string
+          status?: string
+          stripe_payment_intent_id?: string | null
           stylist_id: string
-          user_id: string
+          stylist_notes?: string | null
+          updated_at?: string
         }
         Update: {
+          ai_style_description?: string | null
           appointment_date?: string
-          created_at?: string | null
+          created_at?: string
+          customer_id?: string
+          generated_style_id?: string | null
           id?: string
-          price?: number | null
-          request_id?: string
-          status?: string | null
+          payment_status?: string | null
+          price?: number
+          service_id?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
           stylist_id?: string
-          user_id?: string
+          stylist_notes?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "appointments_request_id_fkey"
-            columns: ["request_id"]
+            foreignKeyName: "appointments_customer_id_fkey"
+            columns: ["customer_id"]
             isOneToOne: false
-            referencedRelation: "hairstyle_requests"
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_generated_style_id_fkey"
+            columns: ["generated_style_id"]
+            isOneToOne: false
+            referencedRelation: "customer_generated_styles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "stylist_services"
             referencedColumns: ["id"]
           },
           {
@@ -62,108 +94,304 @@ export type Database = {
           },
         ]
       }
-      hairstyle_requests: {
+      customer_generated_styles: {
         Row: {
-          created_at: string | null
+          created_at: string
+          customer_id: string
+          generated_image_url: string | null
           id: string
-          selected_image_url: string | null
+          selected: boolean | null
           style_prompt: string
-          user_id: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
+          customer_id: string
+          generated_image_url?: string | null
           id?: string
-          selected_image_url?: string | null
+          selected?: boolean | null
           style_prompt: string
-          user_id: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
+          customer_id?: string
+          generated_image_url?: string | null
           id?: string
-          selected_image_url?: string | null
+          selected?: boolean | null
           style_prompt?: string
-          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customer_generated_styles_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      profiles: {
+      customer_photos: {
         Row: {
-          created_at: string | null
+          created_at: string
+          customer_id: string
+          id: string
+          photo_type: string
+          photo_url: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          photo_type: string
+          photo_url: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          photo_type?: string
+          photo_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_photos_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          age: number | null
+          created_at: string
           email: string
           gender: string
           id: string
+          latitude: number | null
+          longitude: number | null
           name: string
-          phone: string
-          user_id: string | null
+          phone: string | null
+          preferred_style_category: string | null
+          preferred_style_description: string | null
+          stripe_customer_id: string | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          age?: number | null
+          created_at?: string
           email: string
           gender: string
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           name: string
-          phone: string
-          user_id?: string | null
+          phone?: string | null
+          preferred_style_category?: string | null
+          preferred_style_description?: string | null
+          stripe_customer_id?: string | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          age?: number | null
+          created_at?: string
           email?: string
           gender?: string
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           name?: string
-          phone?: string
-          user_id?: string | null
+          phone?: string | null
+          preferred_style_category?: string | null
+          preferred_style_description?: string | null
+          stripe_customer_id?: string | null
+          updated_at?: string
         }
         Relationships: []
+      }
+      hair_styles: {
+        Row: {
+          created_at: string
+          description: string | null
+          gender: string
+          id: string
+          image_url: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          gender: string
+          id?: string
+          image_url?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          gender?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          appointment_id: string | null
+          comment: string | null
+          created_at: string
+          customer_id: string
+          google_review_id: string | null
+          id: string
+          is_google_review: boolean | null
+          rating: number
+          stylist_id: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          comment?: string | null
+          created_at?: string
+          customer_id: string
+          google_review_id?: string | null
+          id?: string
+          is_google_review?: boolean | null
+          rating: number
+          stylist_id: string
+        }
+        Update: {
+          appointment_id?: string | null
+          comment?: string | null
+          created_at?: string
+          customer_id?: string
+          google_review_id?: string | null
+          id?: string
+          is_google_review?: boolean | null
+          rating?: number
+          stylist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stylist_services: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          name: string
+          price: number
+          stylist_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          name: string
+          price: number
+          stylist_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          name?: string
+          price?: number
+          stylist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stylist_services_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stylists: {
         Row: {
-          created_at: string | null
+          address: string | null
+          bio: string | null
+          business_name: string | null
+          created_at: string
+          email: string
+          google_place_id: string | null
           id: string
-          location: string
+          latitude: number | null
+          longitude: number | null
           name: string
+          phone: string | null
           photo_url: string | null
           rating: number | null
           specialties: string[] | null
+          stripe_account_id: string | null
+          stripe_onboarded: boolean | null
+          total_reviews: number | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          address?: string | null
+          bio?: string | null
+          business_name?: string | null
+          created_at?: string
+          email: string
+          google_place_id?: string | null
           id?: string
-          location: string
+          latitude?: number | null
+          longitude?: number | null
           name: string
+          phone?: string | null
           photo_url?: string | null
           rating?: number | null
           specialties?: string[] | null
+          stripe_account_id?: string | null
+          stripe_onboarded?: boolean | null
+          total_reviews?: number | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          address?: string | null
+          bio?: string | null
+          business_name?: string | null
+          created_at?: string
+          email?: string
+          google_place_id?: string | null
           id?: string
-          location?: string
+          latitude?: number | null
+          longitude?: number | null
           name?: string
+          phone?: string | null
           photo_url?: string | null
           rating?: number | null
           specialties?: string[] | null
-        }
-        Relationships: []
-      }
-      user_photos: {
-        Row: {
-          created_at: string | null
-          id: string
-          photo_url: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          photo_url: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          photo_url?: string
-          user_id?: string
+          stripe_account_id?: string | null
+          stripe_onboarded?: boolean | null
+          total_reviews?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
