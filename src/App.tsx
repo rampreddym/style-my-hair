@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
+import ResetPassword from "./pages/ResetPassword";
+import UpdatePassword from "./pages/UpdatePassword";
 import CustomerProfile from "./pages/customer/CustomerProfile";
 import CustomerStyle from "./pages/customer/CustomerStyle";
 import CustomerBooking from "./pages/customer/CustomerBooking";
@@ -27,6 +29,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Auth />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/update-password" element={<UpdatePassword />} />
             
             {/* Customer Routes */}
             <Route path="/customer" element={<CustomerProfile />} />
