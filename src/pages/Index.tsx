@@ -1,12 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Scissors, User } from "lucide-react";
+import { Scissors, User, LogIn } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, userRole, loading } = useAuth();
   const [hoveredRole, setHoveredRole] = useState<string | null>(null);
+
+  // Redirect logged-in users to their dashboard
+  useEffect(() => {
+    if (!loading && user && userRole) {
+      navigate(userRole === 'stylist' ? '/stylist' : '/customer');
+    }
+  }, [user, userRole, loading, navigate]);
+
+  const handleRoleSelect = (role: 'customer' | 'stylist') => {
+    navigate('/auth');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 flex items-center justify-center p-4">
@@ -18,6 +31,14 @@ const Index = () => {
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Connect with the perfect hair stylist for your unique look. AI-powered style matching and seamless booking.
           </p>
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={() => navigate('/auth')}
+          >
+            <LogIn className="w-4 h-4" />
+            Sign In
+          </Button>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mt-12">
@@ -27,7 +48,7 @@ const Index = () => {
             }`}
             onMouseEnter={() => setHoveredRole('customer')}
             onMouseLeave={() => setHoveredRole(null)}
-            onClick={() => navigate('/customer')}
+            onClick={() => handleRoleSelect('customer')}
           >
             <CardHeader className="text-center pb-2">
               <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
@@ -54,7 +75,7 @@ const Index = () => {
                 </li>
               </ul>
               <Button className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90">
-                Get Started
+                Get Started as Customer
               </Button>
             </CardContent>
           </Card>
@@ -65,7 +86,7 @@ const Index = () => {
             }`}
             onMouseEnter={() => setHoveredRole('stylist')}
             onMouseLeave={() => setHoveredRole(null)}
-            onClick={() => navigate('/stylist')}
+            onClick={() => handleRoleSelect('stylist')}
           >
             <CardHeader className="text-center pb-2">
               <div className="mx-auto w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4">
