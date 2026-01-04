@@ -56,6 +56,15 @@ const StylistServices = () => {
       return;
     }
 
+    // Check for duplicate service name (case-insensitive)
+    const isDuplicate = services.some(
+      (s) => s.name.toLowerCase().trim() === newService.name.toLowerCase().trim()
+    );
+    if (isDuplicate) {
+      toast({ title: "Service already exists", description: "A service with this name has already been added", variant: "destructive" });
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -63,7 +72,7 @@ const StylistServices = () => {
         .from("stylist_services")
         .insert({
           stylist_id: stylistId,
-          name: newService.name,
+          name: newService.name.trim(),
           description: newService.description,
           duration_minutes: newService.duration_minutes,
           price: newService.price,
