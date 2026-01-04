@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Camera, ArrowRight, CreditCard, MapPin, LogOut, X } from "lucide-react";
+import { Camera, ArrowRight, CreditCard, MapPin, LogOut, X, Upload } from "lucide-react";
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
+import { Camera as CapacitorCamera, CameraResultType, CameraSource } from "@capacitor/camera";
 
 const photoTypes = [
   { id: "front", label: "Front View" },
@@ -170,6 +171,57 @@ const CustomerProfile = () => {
 
     setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
     setUploadingPhoto(null);
+  };
+
+  const handleCameraCapture = async (photoType: string) => {
+    try {
+      setUploadingPhoto(photoType);
+      
+      const image = await CapacitorCamera.getPhoto({
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera,
+      });
+
+      if (!image.base64String) {
+        throw new Error("No image captured");
+      }
+
+      // Convert base64 to blob
+      const byteCharacters = atob(image.base64String);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: `image/${image.format || 'jpeg'}` });
+      
+      const fileName = `${Date.now()}-${photoType}.${image.format || 'jpeg'}`;
+      const filePath = `customer-photos/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("user-photos")
+        .upload(filePath, blob);
+
+      if (uploadError) {
+        toast({ title: "Upload failed", description: uploadError.message, variant: "destructive" });
+        setUploadingPhoto(null);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("user-photos")
+        .getPublicUrl(filePath);
+
+      setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
+    } catch (error: any) {
+      if (error.message !== "User cancelled photos app") {
+        toast({ title: "Camera error", description: error.message, variant: "destructive" });
+      }
+    } finally {
+      setUploadingPhoto(null);
+    }
   };
 
   const handleDeletePhoto = (photoType: string) => {
@@ -376,28 +428,49 @@ const CustomerProfile = () => {
                 <div key={type.id} className="space-y-2">
                   <Label>{type.label}</Label>
                   <div className="relative">
-                    <label className="block cursor-pointer">
-                      <div className={`aspect-square rounded-lg border-2 border-dashed flex items-center justify-center transition-colors ${
-                        photos[type.id] ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
-                      }`}>
-                        {photos[type.id] ? (
-                          <img src={photos[type.id]} alt={type.label} className="w-full h-full object-cover rounded-lg" />
-                        ) : uploadingPhoto === type.id ? (
-                          <div className="animate-pulse text-muted-foreground">Uploading...</div>
-                        ) : (
-                          <Camera className="w-8 h-8 text-muted-foreground" />
-                        )}
-                      </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handlePhotoUpload(type.id, file);
-                        }}
-                      />
-                    </label>
+                    <div className={`aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center transition-colors ${
+                      photos[type.id] ? "border-primary bg-primary/5" : "border-border"
+                    }`}>
+                      {photos[type.id] ? (
+                        <img src={photos[type.id]} alt={type.label} className="w-full h-full object-cover rounded-lg" />
+                      ) : uploadingPhoto === type.id ? (
+                        <div className="animate-pulse text-muted-foreground">Uploading...</div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-12 w-12"
+                            onClick={() => handleCameraCapture(type.id)}
+                          >
+                            <Camera className="w-6 h-6 text-muted-foreground" />
+                          </Button>
+                          <label className="cursor-pointer">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-12 w-12 pointer-events-none"
+                              asChild
+                            >
+                              <span>
+                                <Upload className="w-6 h-6 text-muted-foreground" />
+                              </span>
+                            </Button>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handlePhotoUpload(type.id, file);
+                              }}
+                            />
+                          </label>
+                        </div>
+                      )}
+                    </div>
                     {photos[type.id] && (
                       <button
                         type="button"
