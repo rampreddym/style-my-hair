@@ -11,7 +11,8 @@ import UpdatePassword from "./pages/UpdatePassword";
 import CustomerProfile from "./pages/customer/CustomerProfile";
 import CustomerStyle from "./pages/customer/CustomerStyle";
 import CustomerBooking from "./pages/customer/CustomerBooking";
-import StylistProfile from "./pages/stylist/StylistProfile";
+import CustomerAppointments from "./pages/customer/CustomerAppointments";
+import StylistOnboarding from "./pages/stylist/StylistOnboarding";
 import StylistServices from "./pages/stylist/StylistServices";
 import StylistAppointments from "./pages/stylist/StylistAppointments";
 import StylistPayments from "./pages/stylist/StylistPayments";
@@ -36,9 +37,10 @@ const App = () => (
             <Route path="/customer" element={<CustomerProfile />} />
             <Route path="/customer/style" element={<CustomerStyle />} />
             <Route path="/customer/booking" element={<CustomerBooking />} />
+            <Route path="/customer/appointments" element={<CustomerAppointments />} />
             
             {/* Stylist Routes */}
-            <Route path="/stylist" element={<StylistProfile />} />
+            <Route path="/stylist" element={<StylistOnboarding />} />
             <Route path="/stylist/services" element={<StylistServices />} />
             <Route path="/stylist/appointments" element={<StylistAppointments />} />
             <Route path="/stylist/payments" element={<StylistPayments />} />

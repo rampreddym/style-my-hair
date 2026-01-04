@@ -7,17 +7,20 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Calendar, Clock, User, Check, X, ArrowLeft, DollarSign, 
   Image, MessageSquare, MapPin, Phone, ChevronRight, History,
-  Sparkles
+  Sparkles, AlertTriangle
 } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { cn } from "@/lib/utils";
+import { ChatWindow } from "@/components/messaging/ChatWindow";
 
 const StylistAppointments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
@@ -25,6 +28,7 @@ const StylistAppointments = () => {
   const [savingNotes, setSavingNotes] = useState(false);
   const [customerHistory, setCustomerHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showChat, setShowChat] = useState<string | null>(null);
 
   const stylistId = sessionStorage.getItem("stylistId");
 
@@ -305,16 +309,41 @@ const StylistAppointments = () => {
                         </Button>
                       )}
 
-                      {/* Message customer */}
-                      {appointment.customer?.phone && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => window.open(`sms:${appointment.customer.phone}`, '_blank')}
-                        >
-                          <MessageSquare className="w-4 h-4 mr-1" />
-                          Message
-                        </Button>
+                      {/* In-app chat */}
+                      <Dialog open={showChat === appointment.id} onOpenChange={(open) => setShowChat(open ? appointment.id : null)}>
+                        <DialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                          >
+                            <MessageSquare className="w-4 h-4 mr-1" />
+                            Chat
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-md p-0">
+                          {user && appointment.customer?.user_id && (
+                            <ChatWindow
+                              appointmentId={appointment.id}
+                              otherUserId={appointment.customer.user_id}
+                              otherUserName={appointment.customer?.name || "Customer"}
+                              onBack={() => setShowChat(null)}
+                            />
+                          )}
+                        </DialogContent>
+                      </Dialog>
+
+                      {/* Check-in status indicator */}
+                      {appointment.check_in_status === 'confirmed' && (
+                        <Badge variant="secondary" className="bg-green-100 text-green-700">
+                          <Check className="w-3 h-3 mr-1" />
+                          Confirmed
+                        </Badge>
+                      )}
+                      {appointment.check_in_status === 'no_show' && (
+                        <Badge variant="secondary" className="bg-red-100 text-red-700">
+                          <AlertTriangle className="w-3 h-3 mr-1" />
+                          No Show
+                        </Badge>
                       )}
 
                       {/* View history */}
