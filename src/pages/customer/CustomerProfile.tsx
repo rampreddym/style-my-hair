@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,16 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Camera, ArrowRight, CreditCard, MapPin, LogOut, X, Upload, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, CreditCard, MapPin, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
-
-const photoTypes = [
-  { id: "front", label: "Front View" },
-  { id: "left", label: "Left Side" },
-  { id: "right", label: "Right Side" },
-  { id: "back", label: "Back View" },
-  { id: "top", label: "Top View" },
-];
+import { GuidedPhotoCapture } from "@/components/customer/GuidedPhotoCapture";
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
@@ -164,68 +156,6 @@ const CustomerProfile = () => {
 
     setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
     setUploadingPhoto(null);
-  };
-
-  const handleCameraCapture = async (photoType: string) => {
-    try {
-      setUploadingPhoto(photoType);
-      
-      const { Camera: CapacitorCamera, CameraResultType, CameraSource } = await import("@capacitor/camera");
-      
-      const image = await CapacitorCamera.getPhoto({
-        quality: 80,
-        allowEditing: false,
-        resultType: CameraResultType.Base64,
-        source: CameraSource.Camera,
-      });
-
-      if (!image.base64String) {
-        throw new Error("No image captured");
-      }
-
-      const byteCharacters = atob(image.base64String);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: `image/${image.format || 'jpeg'}` });
-      
-      const fileName = `${Date.now()}-${photoType}.${image.format || 'jpeg'}`;
-      const filePath = `customer-photos/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("user-photos")
-        .upload(filePath, blob);
-
-      if (uploadError) {
-        toast({ title: "Upload failed", description: uploadError.message, variant: "destructive" });
-        setUploadingPhoto(null);
-        return;
-      }
-
-      const { data: urlData } = supabase.storage
-        .from("user-photos")
-        .getPublicUrl(filePath);
-
-      setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
-    } catch (error: any) {
-      if (error.message?.includes("not implemented") || error.message?.includes("not available")) {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.capture = "environment";
-        input.onchange = (e) => {
-          const file = (e.target as HTMLInputElement).files?.[0];
-          if (file) handlePhotoUpload(photoType, file);
-        };
-        input.click();
-      } else if (error.message !== "User cancelled photos app") {
-        toast({ title: "Camera error", description: error.message, variant: "destructive" });
-      }
-    } finally {
-      setUploadingPhoto(null);
-    }
   };
 
   const handleDeletePhoto = (photoType: string) => {
@@ -392,74 +322,13 @@ const CustomerProfile = () => {
             </div>
           </div>
 
-          {/* Photo Upload Area - Dashed Border Style */}
-          <div className="space-y-2">
-            <div 
-              className="border-2 border-dashed border-primary rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-colors"
-              onClick={() => document.getElementById('main-photo-input')?.click()}
-            >
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
-                <Camera className="w-8 h-8 text-primary" />
-              </div>
-              <p className="font-semibold text-foreground">Upload Hair Photos</p>
-              <p className="text-sm text-muted-foreground">(Front, Sides, Back, Top)</p>
-              <input
-                id="main-photo-input"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const nextEmptySlot = photoTypes.find(t => !photos[t.id]);
-                    if (nextEmptySlot) handlePhotoUpload(nextEmptySlot.id, file);
-                  }
-                }}
-              />
-            </div>
-            
-            {/* Photo Grid */}
-            {Object.keys(photos).length > 0 && (
-              <div className="grid grid-cols-5 gap-2 mt-4">
-                {photoTypes.map((type) => (
-                  <div key={type.id} className="relative">
-                    {photos[type.id] ? (
-                      <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary">
-                        <img 
-                          src={photos[type.id]} 
-                          alt={type.label} 
-                          className="w-full h-full object-cover" 
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleDeletePhoto(type.id)}
-                          className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full p-0.5 shadow-md hover:bg-destructive/90 transition-colors"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div 
-                        className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors"
-                        onClick={() => {
-                          const input = document.createElement("input");
-                          input.type = "file";
-                          input.accept = "image/*";
-                          input.onchange = (e) => {
-                            const file = (e.target as HTMLInputElement).files?.[0];
-                            if (file) handlePhotoUpload(type.id, file);
-                          };
-                          input.click();
-                        }}
-                      >
-                        <Camera className="w-4 h-4 text-muted-foreground/50" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Guided Photo Capture */}
+          <GuidedPhotoCapture
+            photos={photos}
+            onPhotoCapture={handlePhotoUpload}
+            onPhotoDelete={handleDeletePhoto}
+            uploadingPhoto={uploadingPhoto}
+          />
 
           {/* Age Input */}
           <div className="space-y-2">
