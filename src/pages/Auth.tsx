@@ -76,6 +76,9 @@ const Auth = () => {
       } else {
         toast({ title: "Login failed", description: error.message, variant: "destructive" });
       }
+    } else {
+      toast({ title: "Welcome back!", description: "Successfully signed in" });
+      // The useEffect will handle navigation once userRole is fetched
     }
   };
 
