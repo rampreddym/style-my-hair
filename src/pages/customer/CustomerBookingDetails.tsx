@@ -363,6 +363,9 @@ const CustomerBookingDetails = () => {
                   onSlotSelect={handleSlotSelect}
                   selectedDate={appointmentDate}
                   selectedTime={appointmentTime}
+                  customerId={customerId || undefined}
+                  serviceId={selectedService.id}
+                  serviceName={selectedService.name}
                 />
               </CardContent>
             </Card>

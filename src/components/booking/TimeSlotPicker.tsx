@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Bell, Loader2 } from "lucide-react";
 import { format, addDays, startOfDay, isSameDay, parseISO, setHours, setMinutes } from "date-fns";
 import { cn } from "@/lib/utils";
+import { WaitlistDialog } from "./WaitlistDialog";
 
 interface TimeSlotPickerProps {
   stylistId: string;
@@ -14,6 +15,9 @@ interface TimeSlotPickerProps {
   onSlotSelect: (date: string, time: string) => void;
   selectedDate?: string;
   selectedTime?: string;
+  customerId?: string;
+  serviceId?: string;
+  serviceName?: string;
 }
 
 interface Availability {
@@ -34,12 +38,16 @@ export function TimeSlotPicker({
   onSlotSelect,
   selectedDate,
   selectedTime,
+  customerId,
+  serviceId,
+  serviceName,
 }: TimeSlotPickerProps) {
   const [availability, setAvailability] = useState<Availability[]>([]);
   const [existingAppointments, setExistingAppointments] = useState<ExistingAppointment[]>([]);
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
   const [loading, setLoading] = useState(true);
   const [slots, setSlots] = useState<string[]>([]);
+  const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
 
   // Fetch stylist availability and existing appointments
   useEffect(() => {
@@ -277,6 +285,17 @@ export function TimeSlotPicker({
               <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p>No available slots for this day</p>
               <p className="text-xs mt-1">Try selecting another date</p>
+              {customerId && serviceId && serviceName && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => setShowWaitlistDialog(true)}
+                >
+                  <Bell className="w-4 h-4 mr-2" />
+                  Join Waitlist
+                </Button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -301,6 +320,18 @@ export function TimeSlotPicker({
             </div>
           )}
         </div>
+
+        {/* Waitlist Dialog */}
+        {customerId && serviceId && serviceName && (
+          <WaitlistDialog
+            open={showWaitlistDialog}
+            onOpenChange={setShowWaitlistDialog}
+            stylistId={stylistId}
+            serviceId={serviceId}
+            serviceName={serviceName}
+            customerId={customerId}
+          />
+        )}
       </CardContent>
     </Card>
   );
