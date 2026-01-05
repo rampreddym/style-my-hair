@@ -8,8 +8,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { PostAppointmentFeedback } from "@/components/feedback/PostAppointmentFeedback";
 import { AppointmentConfirmation } from "@/components/booking/AppointmentConfirmation";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
+import { CancelAppointmentDialog } from "@/components/booking/CancelAppointmentDialog";
+import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar, Clock, MessageSquare, Star, CheckCircle, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, MessageSquare, Star, CheckCircle, X, RefreshCw } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 
@@ -25,6 +27,8 @@ const CustomerAppointments = () => {
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState<string | null>(feedbackAppointmentId);
   const [showChat, setShowChat] = useState<string | null>(null);
+  const [cancelAppointment, setCancelAppointment] = useState<any>(null);
+  const [rescheduleAppointment, setRescheduleAppointment] = useState<any>(null);
 
   useEffect(() => {
     if (!user) {
@@ -218,7 +222,7 @@ const CustomerAppointments = () => {
                             <span className="font-semibold text-primary">${appointment.price}</span>
                           </div>
 
-                          <div className="flex gap-2 mt-3">
+                          <div className="flex flex-wrap gap-2 mt-3">
                             <Dialog>
                               <DialogTrigger asChild>
                                 <Button className="min-h-[44px]" variant="outline" onClick={() => setShowChat(appointment.id)}>
@@ -237,6 +241,24 @@ const CustomerAppointments = () => {
                                 )}
                               </DialogContent>
                             </Dialog>
+                            
+                            <Button
+                              className="min-h-[44px]"
+                              variant="outline"
+                              onClick={() => setRescheduleAppointment(appointment)}
+                            >
+                              <RefreshCw className="w-4 h-4 mr-1" />
+                              Reschedule
+                            </Button>
+                            
+                            <Button
+                              className="min-h-[44px] text-destructive hover:text-destructive hover:bg-destructive/10"
+                              variant="outline"
+                              onClick={() => setCancelAppointment(appointment)}
+                            >
+                              <X className="w-4 h-4 mr-1" />
+                              Cancel
+                            </Button>
                           </div>
                         </div>
                       )}
@@ -304,6 +326,38 @@ const CustomerAppointments = () => {
                 ))}
               </CardContent>
             </Card>
+          )}
+
+          {/* Cancel Dialog */}
+          {cancelAppointment && (
+            <CancelAppointmentDialog
+              open={!!cancelAppointment}
+              onOpenChange={(open) => !open && setCancelAppointment(null)}
+              appointmentId={cancelAppointment.id}
+              appointmentDate={cancelAppointment.appointment_date}
+              stylistName={cancelAppointment.stylist?.name || "Stylist"}
+              onCancelled={() => {
+                setCancelAppointment(null);
+                fetchCustomerAndAppointments();
+              }}
+            />
+          )}
+
+          {/* Reschedule Dialog */}
+          {rescheduleAppointment && (
+            <RescheduleDialog
+              open={!!rescheduleAppointment}
+              onOpenChange={(open) => !open && setRescheduleAppointment(null)}
+              appointmentId={rescheduleAppointment.id}
+              stylistId={rescheduleAppointment.stylist?.id}
+              stylistName={rescheduleAppointment.stylist?.name || "Stylist"}
+              serviceDuration={rescheduleAppointment.service?.duration_minutes || 30}
+              currentDate={rescheduleAppointment.appointment_date}
+              onRescheduled={() => {
+                setRescheduleAppointment(null);
+                fetchCustomerAndAppointments();
+              }}
+            />
           )}
         </div>
       </div>

@@ -12,6 +12,8 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { PaymentTimingSelector, PaymentTiming } from "@/components/booking/PaymentTimingSelector";
 import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
+import { CancelAppointmentDialog } from "@/components/booking/CancelAppointmentDialog";
+import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 
 const CustomerBookingDetails = () => {
   const navigate = useNavigate();
@@ -30,6 +32,8 @@ const CustomerBookingDetails = () => {
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [paymentTiming, setPaymentTiming] = useState<PaymentTiming>("pay_now");
   const [portfolioPhotos, setPortfolioPhotos] = useState<any[]>([]);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
 
   const customerId = sessionStorage.getItem("customerId");
 
@@ -173,6 +177,28 @@ const CustomerBookingDetails = () => {
           }}
           onDone={() => navigate("/customer/appointments")}
           onTryAnotherStyle={() => navigate("/customer/style")}
+          onCancel={() => setShowCancelDialog(true)}
+          onReschedule={() => setShowRescheduleDialog(true)}
+        />
+
+        <CancelAppointmentDialog
+          open={showCancelDialog}
+          onOpenChange={setShowCancelDialog}
+          appointmentId={bookingDetails.id}
+          appointmentDate={bookingDetails.appointment_date}
+          stylistName={bookingDetails.stylist.name}
+          onCancelled={() => navigate("/customer/appointments")}
+        />
+
+        <RescheduleDialog
+          open={showRescheduleDialog}
+          onOpenChange={setShowRescheduleDialog}
+          appointmentId={bookingDetails.id}
+          stylistId={stylist.id}
+          stylistName={bookingDetails.stylist.name}
+          serviceDuration={bookingDetails.service.duration_minutes}
+          currentDate={bookingDetails.appointment_date}
+          onRescheduled={() => navigate("/customer/appointments")}
         />
       </CustomerLayout>
     );
