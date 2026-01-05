@@ -12,6 +12,7 @@ import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
 import { GuidedPhotoCapture } from "@/components/customer/GuidedPhotoCapture";
 import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
 import { NotificationToggle } from "@/components/notifications/NotificationToggle";
+import { CustomerLayout } from "@/components/layout/CustomerLayout";
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
@@ -252,158 +253,170 @@ const CustomerProfile = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
-      </div>
+      <CustomerLayout>
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="animate-pulse text-muted-foreground">Loading...</div>
+        </div>
+      </CustomerLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-lg mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <button 
-            onClick={() => navigate(-1)}
-            className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <div className="text-center flex-1">
-            <h1 className="text-xl font-bold uppercase tracking-wide text-foreground">
-              {existingCustomerId ? "Edit Your Profile" : "Create Your Profile"}
-            </h1>
-            <p className="text-sm text-muted-foreground">Page 1 "Profile Creation"</p>
-          </div>
-          <Button variant="ghost" size="icon" onClick={signOut} className="text-muted-foreground hover:text-foreground">
-            <LogOut className="w-5 h-5" />
-          </Button>
-        </div>
-
-        {/* Basic Info Form */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="font-medium">Full Name</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter your fullname"
-              className="h-12 border-2 focus:border-primary"
-            />
-          </div>
-
-          {/* Gender Selection - Pill Style */}
-          <div className="space-y-2">
-            <Label className="font-medium">Gender</Label>
-            <div className="flex items-center justify-center gap-4">
-              {["male", "female", "other"].map((gender) => (
-                <button
-                  key={gender}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, gender })}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all capitalize ${
-                    formData.gender === gender
-                      ? 'text-primary'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                    formData.gender === gender 
-                      ? 'border-primary bg-primary' 
-                      : 'border-muted-foreground'
-                  }`}>
-                    {formData.gender === gender && (
-                      <span className="w-2 h-2 bg-primary-foreground rounded-full" />
-                    )}
-                  </span>
-                  {gender === "male" ? "Male" : gender === "female" ? "Female" : "Other"}
-                </button>
-              ))}
+    <CustomerLayout>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-lg mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <button 
+              onClick={() => navigate(-1)}
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors"
+              aria-label="Go back"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <div className="text-center flex-1">
+              <h1 className="text-xl font-bold uppercase tracking-wide text-foreground">
+                {existingCustomerId ? "Edit Your Profile" : "Create Your Profile"}
+              </h1>
+              <p className="text-sm text-muted-foreground">Page 1 "Profile Creation"</p>
             </div>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={signOut} 
+              className="min-w-[44px] min-h-[44px] text-muted-foreground hover:text-foreground"
+              aria-label="Sign out"
+            >
+              <LogOut className="w-5 h-5" />
+            </Button>
           </div>
 
-          {/* Guided Photo Capture */}
-          <GuidedPhotoCapture
-            photos={photos}
-            onPhotoCapture={handlePhotoUpload}
-            onPhotoDelete={handleDeletePhoto}
-            uploadingPhoto={uploadingPhoto}
-          />
-
-          {/* Age Input */}
-          <div className="space-y-2">
-            <Label htmlFor="age" className="font-medium">Age</Label>
-            <Input
-              id="age"
-              type="number"
-              value={formData.age}
-              onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-              placeholder="Enter your age"
-              className="h-12 border-2 focus:border-primary"
-            />
-          </div>
-
-          {/* Style Description */}
-          <div className="space-y-2">
-            <Textarea
-              value={formData.preferred_style_description}
-              onChange={(e) => setFormData({ ...formData, preferred_style_description: e.target.value })}
-              placeholder="Describe your ideal hair style..."
-              className="border-2 focus:border-primary min-h-[80px]"
-            />
-          </div>
-
-          {/* Visual Hair Style Selection */}
-          {formData.gender && hairStyles.length > 0 && (
+          {/* Basic Info Form */}
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="font-medium">Choose Your Style</Label>
-              <HairStyleSelector
-                styles={hairStyles}
-                selectedStyle={formData.preferred_style_category}
-                onSelect={(styleName) => setFormData({ ...formData, preferred_style_category: styleName })}
+              <Label htmlFor="name" className="font-medium">Full Name</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Enter your fullname"
+                className="h-12 border-2 focus:border-primary"
               />
             </div>
-          )}
 
-          {location && (
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <MapPin className="w-4 h-4 text-primary" /> Location detected for finding nearby stylists
+            {/* Gender Selection - Pill Style with proper touch targets */}
+            <div className="space-y-2">
+              <Label className="font-medium">Gender</Label>
+              <div className="flex items-center justify-center gap-2">
+                {["male", "female", "other"].map((gender) => (
+                  <button
+                    key={gender}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, gender })}
+                    className={`flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-full text-sm font-medium transition-all capitalize active:scale-95 ${
+                      formData.gender === gender
+                        ? 'text-primary'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                      formData.gender === gender 
+                        ? 'border-primary bg-primary' 
+                        : 'border-muted-foreground'
+                    }`}>
+                      {formData.gender === gender && (
+                        <span className="w-2 h-2 bg-primary-foreground rounded-full" />
+                      )}
+                    </span>
+                    {gender === "male" ? "Male" : gender === "female" ? "Female" : "Other"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Guided Photo Capture */}
+            <GuidedPhotoCapture
+              photos={photos}
+              onPhotoCapture={handlePhotoUpload}
+              onPhotoDelete={handleDeletePhoto}
+              uploadingPhoto={uploadingPhoto}
+            />
+
+            {/* Age Input */}
+            <div className="space-y-2">
+              <Label htmlFor="age" className="font-medium">Age</Label>
+              <Input
+                id="age"
+                type="number"
+                inputMode="numeric"
+                value={formData.age}
+                onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                placeholder="Enter your age"
+                className="h-12 border-2 focus:border-primary"
+              />
+            </div>
+
+            {/* Style Description */}
+            <div className="space-y-2">
+              <Textarea
+                value={formData.preferred_style_description}
+                onChange={(e) => setFormData({ ...formData, preferred_style_description: e.target.value })}
+                placeholder="Describe your ideal hair style..."
+                className="border-2 focus:border-primary min-h-[80px]"
+              />
+            </div>
+
+            {/* Visual Hair Style Selection */}
+            {formData.gender && hairStyles.length > 0 && (
+              <div className="space-y-2">
+                <Label className="font-medium">Choose Your Style</Label>
+                <HairStyleSelector
+                  styles={hairStyles}
+                  selectedStyle={formData.preferred_style_category}
+                  onSelect={(styleName) => setFormData({ ...formData, preferred_style_category: styleName })}
+                />
+              </div>
+            )}
+
+            {location && (
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <MapPin className="w-4 h-4 text-primary" /> Location detected for finding nearby stylists
+              </p>
+            )}
+          </div>
+
+          {/* Notification Settings */}
+          <div className="p-4 border-2 border-primary/20 rounded-xl bg-card">
+            <h3 className="text-sm font-medium text-foreground mb-3">Appointment Reminders</h3>
+            <NotificationToggle variant="switch" showLabel={true} />
+            <p className="text-xs text-muted-foreground mt-2">
+              Get push notifications 1 hour before your appointments
             </p>
-          )}
+          </div>
+
+          {/* Payment Button */}
+          <Button
+            onClick={showPayment ? () => setShowPayment(false) : () => setShowPayment(true)}
+            className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
+          >
+            <CreditCard className="w-5 h-5 mr-2" />
+            {showPayment ? "Hide Payment" : "Connect to Stripe"}
+          </Button>
+
+          {showPayment && <PaymentMethodUI onClose={() => setShowPayment(false)} />}
+
+          {/* Continue Button */}
+          <Button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
+          >
+            {loading ? "Saving..." : "Continue"}
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Button>
         </div>
-
-        {/* Notification Settings */}
-        <div className="p-4 border-2 border-primary/20 rounded-xl bg-card">
-          <h3 className="text-sm font-medium text-foreground mb-3">Appointment Reminders</h3>
-          <NotificationToggle variant="switch" showLabel={true} />
-          <p className="text-xs text-muted-foreground mt-2">
-            Get push notifications 1 hour before your appointments
-          </p>
-        </div>
-
-        {/* Payment Button */}
-        <Button
-          onClick={showPayment ? () => setShowPayment(false) : () => setShowPayment(true)}
-          className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
-        >
-          <CreditCard className="w-5 h-5 mr-2" />
-          {showPayment ? "Hide Payment" : "Connect to Stripe"}
-        </Button>
-
-        {showPayment && <PaymentMethodUI onClose={() => setShowPayment(false)} />}
-
-        {/* Continue Button */}
-        <Button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
-        >
-          {loading ? "Saving..." : "Continue"}
-          <ArrowRight className="w-5 h-5 ml-2" />
-        </Button>
       </div>
-    </div>
+    </CustomerLayout>
   );
 };
 

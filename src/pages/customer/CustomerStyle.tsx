@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2 } from "lucide-react";
 import { AIPreviewGenerator } from "@/components/ai/AIPreviewGenerator";
 import { SkeletonLoader } from "@/components/ui/skeleton-loader";
+import { CustomerLayout } from "@/components/layout/CustomerLayout";
 
 const CustomerStyle = () => {
   const navigate = useNavigate();
@@ -177,136 +178,149 @@ const CustomerStyle = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-4">
-        <SkeletonLoader stage="loading" className="min-h-[80vh]" />
-      </div>
+      <CustomerLayout>
+        <div className="min-h-screen bg-background p-4">
+          <SkeletonLoader stage="loading" className="min-h-[80vh]" />
+        </div>
+      </CustomerLayout>
     );
   }
 
   const selectedGeneratedImage = generatedImages.find(img => img.id === selectedImage);
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-lg mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center">
-          <button 
-            onClick={() => navigate("/customer")}
-            className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <h1 className="flex-1 text-center text-xl font-bold text-foreground pr-8">
-            Preview Your New Look
-          </h1>
-        </div>
-
-        {/* AI Preview Generator with comparison slider */}
-        <AIPreviewGenerator
-          isGenerating={generating}
-          progress={generationProgress}
-          beforeImage={photos.find(p => p.photo_type === "front")?.photo_url}
-          afterImage={selectedGeneratedImage?.generated_image_url}
-        />
-
-        {/* Generated Thumbnails */}
-        {generatedImages.length > 0 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {generatedImages.slice(0, 4).map((img) => (
-              <button
-                key={img.id}
-                onClick={() => selectImage(img.id)}
-                className={`relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden transition-all ${
-                  selectedImage === img.id 
-                    ? 'ring-2 ring-primary ring-offset-2' 
-                    : 'opacity-70 hover:opacity-100'
-                }`}
-              >
-                <img
-                  src={img.generated_image_url}
-                  alt="Generated style"
-                  className="w-full h-full object-cover"
-                />
-                {selectedImage === img.id && (
-                  <div className="absolute top-1 right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                    <Check className="w-3 h-3 text-primary-foreground" />
-                  </div>
-                )}
-              </button>
-            ))}
+    <CustomerLayout>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-lg mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex items-center">
+            <button 
+              onClick={() => navigate("/customer")}
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors"
+              aria-label="Go back"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <h1 className="flex-1 text-center text-xl font-bold text-foreground pr-8">
+              Preview Your New Look
+            </h1>
           </div>
-        )}
 
-        {/* Style Description Card */}
-        <Card className="border-0 shadow-lg">
-          <CardContent className="p-4 space-y-4">
-            <div>
-              <Label className="font-semibold text-foreground">Hair Style Description</Label>
-              <Textarea
-                value={stylePrompt}
-                onChange={(e) => setStylePrompt(e.target.value)}
-                placeholder="Style: Wavy Bob, Length: Shoulder; Color: Blonde; Texture: Loose Waves; Occasion: Casual"
-                className="mt-2 border-2 focus:border-primary min-h-[80px]"
-              />
+          {/* AI Preview Generator with comparison slider */}
+          <AIPreviewGenerator
+            isGenerating={generating}
+            progress={generationProgress}
+            beforeImage={photos.find(p => p.photo_type === "front")?.photo_url}
+            afterImage={selectedGeneratedImage?.generated_image_url}
+          />
+
+          {/* Generated Thumbnails */}
+          {generatedImages.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {generatedImages.slice(0, 4).map((img) => (
+                <button
+                  key={img.id}
+                  onClick={() => selectImage(img.id)}
+                  className={`relative flex-shrink-0 w-20 h-20 min-w-[44px] min-h-[44px] rounded-xl overflow-hidden transition-all active:scale-95 ${
+                    selectedImage === img.id 
+                      ? "ring-2 ring-primary ring-offset-2" 
+                      : "opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img
+                    src={img.generated_image_url}
+                    alt="Generated style"
+                    className="w-full h-full object-cover"
+                  />
+                  {selectedImage === img.id && (
+                    <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                      <Check className="w-6 h-6 text-primary-foreground drop-shadow-lg" />
+                    </div>
+                  )}
+                </button>
+              ))}
             </div>
+          )}
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3">
-              <Button 
-                variant="outline" 
-                className="h-12 border-2 font-medium text-sm"
-                onClick={() => {
-                  const basePrompts = [
-                    "Style: Modern Bob, Length: Chin; Color: Natural; Texture: Sleek",
-                    "Style: Layered Cut, Length: Medium; Color: Highlights; Texture: Wavy",
-                    "Style: Pixie, Length: Short; Color: Bold; Texture: Textured",
-                  ];
-                  setStylePrompt(basePrompts[Math.floor(Math.random() * basePrompts.length)]);
-                }}
-              >
-                Adjust Description
-              </Button>
-              <Button 
+          {/* Style Selection */}
+          <Card>
+            <CardContent className="p-4 space-y-4">
+              <div className="space-y-2">
+                <Label className="font-medium">Style Category</Label>
+                <div className="flex flex-wrap gap-2">
+                  {hairStyles.map((style) => (
+                    <button
+                      key={style.id}
+                      onClick={() => setSelectedStyle(style.name)}
+                      className={`px-4 py-2 min-h-[44px] rounded-full text-sm font-medium transition-all active:scale-95 ${
+                        selectedStyle === style.name
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80"
+                      }`}
+                    >
+                      {style.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="stylePrompt" className="font-medium">Describe Your Style</Label>
+                <Textarea
+                  id="stylePrompt"
+                  value={stylePrompt}
+                  onChange={(e) => setStylePrompt(e.target.value)}
+                  placeholder="E.g., Short fade on sides, textured on top, modern look..."
+                  className="min-h-[80px] border-2 focus:border-primary"
+                />
+              </div>
+
+              <Button
                 onClick={generateStyle}
-                disabled={generating}
-                className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm"
+                disabled={generating || (!stylePrompt && !selectedStyle)}
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
               >
                 {generating ? (
                   <>
-                    <Loader2 className="w-4 h-4 shrink-0 animate-spin" />
-                    <span>Generating...</span>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating ({Math.round(generationProgress)}%)
                   </>
                 ) : (
                   <>
-                    <RefreshCw className="w-4 h-4 shrink-0" />
-                    <span>Regenerate</span>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Generate Preview
                   </>
                 )}
               </Button>
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 pt-2">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate("/customer")}
-                className="h-12 border-2 font-medium text-sm"
-              >
-                <ArrowLeft className="w-4 h-4 shrink-0" />
-                <span>Go Back</span>
-              </Button>
-              <Button
-                onClick={continueToBooking}
-                disabled={!selectedImage}
-                className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm"
-              >
-                <span>Approve</span>
-                <ArrowRight className="w-4 h-4 shrink-0" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Action Buttons */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/customer")}
+                  className="flex-1 h-12"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back
+                </Button>
+                <Button
+                  onClick={continueToBooking}
+                  disabled={!selectedImage}
+                  className="flex-1 h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                >
+                  Approve
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </CustomerLayout>
   );
 };
 

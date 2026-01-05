@@ -217,7 +217,7 @@ export function TimeSlotPicker({
                 onClick={() => available && setSelectedDay(day)}
                 disabled={!available}
                 className={cn(
-                  "flex-shrink-0 flex flex-col items-center p-3 rounded-xl border-2 transition-all min-w-[70px]",
+                  "flex-shrink-0 flex flex-col items-center p-3 rounded-xl border-2 transition-all min-w-[70px] min-h-[72px] active:scale-95",
                   isSelected
                     ? "border-primary bg-primary/10"
                     : available
@@ -244,7 +244,7 @@ export function TimeSlotPicker({
           {/* Calendar picker for more dates */}
           <Popover>
             <PopoverTrigger asChild>
-              <button className="flex-shrink-0 flex flex-col items-center justify-center p-3 rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-all min-w-[70px]">
+              <button className="flex-shrink-0 flex flex-col items-center justify-center p-3 rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-all min-w-[70px] min-h-[72px] active:scale-95">
                 <CalendarIcon className="w-5 h-5 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground mt-1">More</span>
               </button>
@@ -279,7 +279,7 @@ export function TimeSlotPicker({
               <p className="text-xs mt-1">Try selecting another date</p>
             </div>
           ) : (
-            <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {slots.map((time) => {
                 const isSelected = selectedDate === format(selectedDay, "yyyy-MM-dd") && selectedTime === time;
                 
@@ -288,7 +288,7 @@ export function TimeSlotPicker({
                     key={time}
                     onClick={() => handleSlotClick(time)}
                     className={cn(
-                      "py-2 px-3 rounded-lg border-2 text-sm font-medium transition-all",
+                      "py-3 px-4 min-h-[48px] rounded-lg border-2 text-sm font-medium transition-all active:scale-95",
                       isSelected
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border hover:border-primary/50 hover:bg-primary/5"

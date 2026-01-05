@@ -110,4 +110,15 @@ Teal/Turquoise color palette inspired by salon/styling marketplace design.
   .border-dashed-primary {
     border: 2px dashed hsl(var(--primary));
   }
+  
+  /* Safe area padding for bottom navigation on notched devices */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  
+  /* Minimum touch target size (44x44px) */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
 }
