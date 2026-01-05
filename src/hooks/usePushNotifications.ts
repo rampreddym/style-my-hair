@@ -58,14 +58,16 @@ export function usePushNotifications() {
         await navigator.serviceWorker.ready;
       }
 
-      // Get VAPID public key from environment
-      const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      // Fetch VAPID public key from edge function
+      const { data, error: fetchError } = await supabase.functions.invoke('get-vapid-key');
       
-      if (!vapidPublicKey) {
-        console.error('VAPID public key not configured');
+      if (fetchError || !data?.publicKey) {
+        console.error('Error fetching VAPID key:', fetchError);
         toast.error('Push notifications not configured');
         return false;
       }
+
+      const vapidPublicKey = data.publicKey;
 
       // Subscribe to push notifications
       const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey);
