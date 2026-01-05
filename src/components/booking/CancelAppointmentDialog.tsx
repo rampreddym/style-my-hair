@@ -18,6 +18,8 @@ interface CancelAppointmentDialogProps {
   appointmentId: string;
   appointmentDate: string;
   stylistName: string;
+  stylistId?: string;
+  serviceId?: string;
   onCancelled: () => void;
 }
 
@@ -27,6 +29,8 @@ export const CancelAppointmentDialog = ({
   appointmentId,
   appointmentDate,
   stylistName,
+  stylistId,
+  serviceId,
   onCancelled,
 }: CancelAppointmentDialogProps) => {
   const { toast } = useToast();
@@ -45,6 +49,13 @@ export const CancelAppointmentDialog = ({
         .eq("id", appointmentId);
 
       if (error) throw error;
+
+      // Notify waitlisted customers
+      if (stylistId && serviceId) {
+        supabase.functions.invoke("check-waitlist", {
+          body: { stylistId, serviceId, appointmentDate },
+        }).catch(console.error);
+      }
 
       toast({
         title: "Appointment cancelled",

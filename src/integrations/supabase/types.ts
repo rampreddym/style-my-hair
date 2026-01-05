@@ -692,6 +692,70 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          notified_at: string | null
+          preferred_date: string
+          preferred_time_end: string | null
+          preferred_time_start: string | null
+          service_id: string
+          status: string
+          stylist_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          notified_at?: string | null
+          preferred_date: string
+          preferred_time_end?: string | null
+          preferred_time_start?: string | null
+          service_id: string
+          status?: string
+          stylist_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          notified_at?: string | null
+          preferred_date?: string
+          preferred_time_end?: string | null
+          preferred_time_start?: string | null
+          service_id?: string
+          status?: string
+          stylist_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlist_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waitlist_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "stylist_services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waitlist_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
