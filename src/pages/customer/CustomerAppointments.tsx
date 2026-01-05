@@ -1,15 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { PostAppointmentFeedback } from "@/components/feedback/PostAppointmentFeedback";
 import { AppointmentConfirmation } from "@/components/booking/AppointmentConfirmation";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
 import { CancelAppointmentDialog } from "@/components/booking/CancelAppointmentDialog";
 import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
+import { PullToRefreshIndicator } from "@/components/ui/pull-to-refresh-indicator";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar, Clock, MessageSquare, Star, CheckCircle, X, RefreshCw } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
@@ -38,7 +40,7 @@ const CustomerAppointments = () => {
     fetchCustomerAndAppointments();
   }, [user]);
 
-  const fetchCustomerAndAppointments = async () => {
+  const fetchCustomerAndAppointments = useCallback(async () => {
     if (!user) return;
 
     // Get customer ID
@@ -61,7 +63,7 @@ const CustomerAppointments = () => {
       .select(`
         *,
         stylist:stylists(id, name, photo_url, address, user_id),
-        service:stylist_services(name, duration_minutes, price),
+        service:stylist_services(id, name, duration_minutes, price),
         feedback:appointment_feedback(sentiment)
       `)
       .eq("customer_id", customer.id)
@@ -72,7 +74,12 @@ const CustomerAppointments = () => {
     }
 
     setLoading(false);
-  };
+  }, [user, navigate]);
+
+  // Pull to refresh
+  const { isRefreshing, pullDistance, handlers } = usePullToRefresh({
+    onRefresh: fetchCustomerAndAppointments,
+  });
 
   const handleFeedbackComplete = () => {
     setShowFeedback(null);
@@ -142,12 +149,20 @@ const CustomerAppointments = () => {
 
   return (
     <CustomerLayout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4">
+      <div 
+        className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4 scroll-smooth-touch"
+        {...handlers}
+      >
+        <PullToRefreshIndicator 
+          pullDistance={pullDistance} 
+          isRefreshing={isRefreshing} 
+        />
+        
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">My Appointments</h1>
-              <p className="text-muted-foreground">Manage your bookings</p>
+              <h1 className="text-2xl font-bold text-foreground">My Appointments</h1>
+              <p className="text-sm text-muted-foreground">Manage your bookings</p>
             </div>
             <Button variant="outline" onClick={() => navigate("/customer/booking")} className="min-h-[44px]">
               Book New
@@ -336,6 +351,8 @@ const CustomerAppointments = () => {
               appointmentId={cancelAppointment.id}
               appointmentDate={cancelAppointment.appointment_date}
               stylistName={cancelAppointment.stylist?.name || "Stylist"}
+              stylistId={cancelAppointment.stylist?.id}
+              serviceId={cancelAppointment.service?.id}
               onCancelled={() => {
                 setCancelAppointment(null);
                 fetchCustomerAndAppointments();

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { User, Sparkles, CalendarDays, Scissors } from "lucide-react";
+import { User, Calendar, DollarSign, Scissors, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -8,29 +8,23 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const customerNavItems: NavItem[] = [
-  { path: "/customer", label: "Profile", icon: User },
-  { path: "/customer/style", label: "Style", icon: Sparkles },
-  { path: "/customer/booking", label: "Book", icon: Scissors },
-  { path: "/customer/appointments", label: "Appointments", icon: CalendarDays },
+const stylistNavItems: NavItem[] = [
+  { path: "/stylist", label: "Profile", icon: User },
+  { path: "/stylist/services", label: "Services", icon: Scissors },
+  { path: "/stylist/appointments", label: "Bookings", icon: Calendar },
+  { path: "/stylist/payments", label: "Payments", icon: DollarSign },
 ];
 
-export function BottomNavigation() {
+export function StylistBottomNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check for active path (include sub-routes for booking)
-  const isActive = (path: string) => {
-    if (path === "/customer/booking") {
-      return location.pathname.startsWith("/customer/booking");
-    }
-    return location.pathname === path;
-  };
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-t border-border safe-area-bottom safe-area-left safe-area-right">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
-        {customerNavItems.map((item) => {
+        {stylistNavItems.map((item) => {
           const active = isActive(item.path);
           const Icon = item.icon;
           
@@ -48,7 +42,6 @@ export function BottomNavigation() {
               aria-label={item.label}
               aria-current={active ? "page" : undefined}
             >
-              {/* Active indicator dot */}
               {active && (
                 <span className="absolute -top-1 w-1.5 h-1.5 rounded-full bg-primary animate-in fade-in zoom-in duration-200" />
               )}

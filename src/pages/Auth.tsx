@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Scissors, User, Mail, Lock, Chrome, ChevronLeft } from "lucide-react";
+import { Scissors, User, Mail, Lock, Chrome } from "lucide-react";
 import { z } from "zod";
 
 const authSchema = z.object({
@@ -89,27 +89,22 @@ const Auth = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-background safe-area-top">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 safe-area-top safe-area-bottom">
       <Card className="w-full max-w-md shadow-lg border-0">
         <CardHeader className="text-center space-y-4 pb-2">
-          <div className="flex items-center justify-center gap-2">
-            <button className="absolute left-4 top-4 p-2 text-primary hover:bg-primary/10 rounded-full transition-colors">
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-          </div>
           <CardTitle className="text-2xl font-bold uppercase tracking-wide">Welcome to StyleMatch</CardTitle>
           <CardDescription className="text-muted-foreground">
             Sign in or create an account to continue
           </CardDescription>
           
-          {/* Role Toggle - Teal Pill Buttons */}
+          {/* Role Toggle - Pill Buttons with proper touch targets */}
           <div className="flex items-center justify-center gap-2 py-4">
             <span className="text-sm font-medium text-primary">
               {isStylist ? 'Stylist' : 'Customer'}
@@ -117,7 +112,7 @@ const Auth = () => {
             <div className="flex bg-muted rounded-full p-1">
               <button
                 onClick={() => setIsStylist(false)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-full text-sm font-medium transition-all no-tap-highlight active:scale-95 ${
                   !isStylist 
                     ? 'bg-primary text-primary-foreground shadow-sm' 
                     : 'text-muted-foreground hover:text-foreground'
@@ -128,7 +123,7 @@ const Auth = () => {
               </button>
               <button
                 onClick={() => setIsStylist(true)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-full text-sm font-medium transition-all no-tap-highlight active:scale-95 ${
                   isStylist 
                     ? 'bg-primary text-primary-foreground shadow-sm' 
                     : 'text-muted-foreground hover:text-foreground'
@@ -145,7 +140,7 @@ const Auth = () => {
           {/* Google Login */}
           <Button 
             variant="outline" 
-            className="w-full gap-2 h-12 border-2 hover:bg-muted/50" 
+            className="w-full gap-2 h-14 border-2 hover:bg-muted/50 no-tap-highlight active:scale-[0.98]" 
             onClick={handleGoogleLogin}
             disabled={isSubmitting}
           >
@@ -163,21 +158,34 @@ const Auth = () => {
           </div>
 
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-muted/50">
-              <TabsTrigger value="signin" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign In</TabsTrigger>
-              <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-muted/50 h-12">
+              <TabsTrigger 
+                value="signin" 
+                className="min-h-[40px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger 
+                value="signup" 
+                className="min-h-[40px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                Sign Up
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="signin" className="space-y-4 mt-6">
               <div className="space-y-2">
                 <Label htmlFor="signin-email" className="font-medium">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signin-email"
                     type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    autoCapitalize="none"
                     placeholder="you@example.com"
-                    className="pl-10 h-12 border-2 focus:border-primary"
+                    className="pl-10 h-14 border-2 focus:border-primary text-base"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -186,26 +194,30 @@ const Auth = () => {
               <div className="space-y-2">
                 <Label htmlFor="signin-password" className="font-medium">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signin-password"
                     type="password"
+                    autoComplete="current-password"
                     placeholder="••••••••"
-                    className="pl-10 h-12 border-2 focus:border-primary"
+                    className="pl-10 h-14 border-2 focus:border-primary text-base"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
               </div>
               <Button 
-                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium" 
+                className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base active:scale-[0.98]" 
                 onClick={handleSignIn}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Signing in..." : "Sign In"}
               </Button>
-              <div className="text-center">
-                <Link to="/reset-password" className="text-sm text-primary hover:underline font-medium">
+              <div className="text-center py-2">
+                <Link 
+                  to="/reset-password" 
+                  className="text-sm text-primary hover:underline font-medium p-2 inline-block min-h-[44px] flex items-center justify-center"
+                >
                   Forgot your password?
                 </Link>
               </div>
@@ -215,12 +227,15 @@ const Auth = () => {
               <div className="space-y-2">
                 <Label htmlFor="signup-email" className="font-medium">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signup-email"
                     type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    autoCapitalize="none"
                     placeholder="you@example.com"
-                    className="pl-10 h-12 border-2 focus:border-primary"
+                    className="pl-10 h-14 border-2 focus:border-primary text-base"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -229,19 +244,20 @@ const Auth = () => {
               <div className="space-y-2">
                 <Label htmlFor="signup-password" className="font-medium">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signup-password"
                     type="password"
+                    autoComplete="new-password"
                     placeholder="••••••••"
-                    className="pl-10 h-12 border-2 focus:border-primary"
+                    className="pl-10 h-14 border-2 focus:border-primary text-base"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
               </div>
               <Button 
-                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium" 
+                className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base active:scale-[0.98]" 
                 onClick={handleSignUp}
                 disabled={isSubmitting}
               >
@@ -250,7 +266,7 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
 
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="text-center text-xs text-muted-foreground pb-2">
             By continuing, you agree to our Terms of Service and Privacy Policy
           </p>
         </CardContent>

@@ -51,7 +51,7 @@ export const EnhancedStylistCard = ({
     <Card
       onClick={onSelect}
       className={cn(
-        "cursor-pointer transition-all overflow-hidden",
+        "cursor-pointer transition-all overflow-hidden no-tap-highlight active:scale-[0.99]",
         isSelected 
           ? "ring-2 ring-primary border-primary" 
           : "hover:border-primary/50"
@@ -188,10 +188,9 @@ export const EnhancedStylistCard = ({
             <Button 
               size="sm" 
               variant="outline" 
-              className="flex-1"
+              className="flex-1 min-h-[44px]"
               onClick={(e) => {
                 e.stopPropagation();
-                // Message action
               }}
             >
               <MessageSquare className="w-4 h-4 mr-1" />
@@ -200,9 +199,9 @@ export const EnhancedStylistCard = ({
             <Button 
               size="sm" 
               variant="outline"
+              className="min-h-[44px]"
               onClick={(e) => {
                 e.stopPropagation();
-                // View portfolio
               }}
             >
               <Camera className="w-4 h-4 mr-1" />
