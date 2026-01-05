@@ -277,8 +277,8 @@ const StylistOnboarding = () => {
     }
 
     if (currentStep === 5) {
-      // Final step - complete onboarding
-      const success = await saveProgress(5);
+      // Final step - complete onboarding with flag set to true
+      const success = await saveProgress(6);
       if (success) {
         toast({ title: "Onboarding complete!" });
         navigate("/stylist/services");
