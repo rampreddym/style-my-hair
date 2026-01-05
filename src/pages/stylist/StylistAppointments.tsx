@@ -9,13 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
-  Calendar, Clock, User, Check, X, ArrowLeft, DollarSign, 
-  Image, MessageSquare, MapPin, Phone, ChevronRight, History,
-  Sparkles, AlertTriangle
+  Calendar, Clock, User, Check, X, DollarSign, 
+  MessageSquare, History, Sparkles, AlertTriangle
 } from "lucide-react";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { cn } from "@/lib/utils";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
+import { StylistLayout } from "@/components/layout/StylistLayout";
 
 const StylistAppointments = () => {
   const navigate = useNavigate();
@@ -143,15 +143,17 @@ const StylistAppointments = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Your Appointments</h1>
-            <p className="text-muted-foreground">Loading your schedule...</p>
+      <StylistLayout>
+        <div className="min-h-screen bg-background p-4">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Your Appointments</h1>
+              <p className="text-sm text-muted-foreground">Loading your schedule...</p>
+            </div>
+            <CardSkeleton count={3} />
           </div>
-          <CardSkeleton count={3} />
         </div>
-      </div>
+      </StylistLayout>
     );
   }
 
@@ -163,21 +165,18 @@ const StylistAppointments = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Your Appointments</h1>
-            <p className="text-muted-foreground">Manage your bookings and client notes</p>
+    <StylistLayout>
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Your Appointments</h1>
+              <p className="text-sm text-muted-foreground">Manage your bookings</p>
+            </div>
           </div>
-          <Button variant="outline" onClick={() => navigate("/stylist/payments")}>
-            <DollarSign className="w-4 h-4 mr-2" />
-            Payments
-          </Button>
-        </div>
 
-        {/* Upcoming Appointments */}
+          {/* Upcoming Appointments */}
         <Card className="border-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -470,15 +469,9 @@ const StylistAppointments = () => {
           </Card>
         )}
 
-        {/* Navigation */}
-        <div className="flex gap-4">
-          <Button variant="outline" onClick={() => navigate("/stylist/services")}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Services
-          </Button>
         </div>
       </div>
-    </div>
+    </StylistLayout>
   );
 };
 

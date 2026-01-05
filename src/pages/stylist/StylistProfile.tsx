@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Camera, ArrowRight, MapPin, Sparkles, X, LogOut } from "lucide-react";
+import { StylistLayout } from "@/components/layout/StylistLayout";
 
 const StylistProfile = () => {
   const navigate = useNavigate();
@@ -228,24 +229,27 @@ const StylistProfile = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
-      </div>
+      <StylistLayout>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+          <div className="animate-pulse text-muted-foreground">Loading...</div>
+        </div>
+      </StylistLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="flex justify-between items-start">
-          <div className="text-center flex-1 space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">{existingStylistId ? "Edit Your Profile" : "Create Your Stylist Profile"}</h1>
-            <p className="text-muted-foreground">Showcase your skills and attract new clients</p>
+    <StylistLayout>
+      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <div className="flex justify-between items-start">
+            <div className="text-center flex-1 space-y-2">
+              <h1 className="text-2xl font-bold text-foreground">{existingStylistId ? "Edit Your Profile" : "Create Your Stylist Profile"}</h1>
+              <p className="text-sm text-muted-foreground">Showcase your skills and attract new clients</p>
+            </div>
+            <Button variant="ghost" size="icon" onClick={signOut} className="min-w-[44px] min-h-[44px]">
+              <LogOut className="w-5 h-5" />
+            </Button>
           </div>
-          <Button variant="ghost" size="icon" onClick={signOut}>
-            <LogOut className="w-5 h-5" />
-          </Button>
-        </div>
 
         <Card>
           <CardHeader>
@@ -366,6 +370,7 @@ const StylistProfile = () => {
                 size="sm"
                 onClick={generateSpecialties}
                 disabled={generating}
+                className="min-h-[44px]"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 {generating ? "Generating..." : "AI Suggest"}
@@ -379,15 +384,16 @@ const StylistProfile = () => {
                 onChange={(e) => setNewSpecialty(e.target.value)}
                 placeholder="Add a specialty..."
                 onKeyPress={(e) => e.key === "Enter" && addSpecialty()}
+                className="h-12"
               />
-              <Button onClick={addSpecialty} variant="outline">Add</Button>
+              <Button onClick={addSpecialty} variant="outline" className="min-h-[44px]">Add</Button>
             </div>
             
             <div className="flex flex-wrap gap-2">
               {specialties.map((specialty) => (
-                <Badge key={specialty} variant="secondary" className="px-3 py-1">
+                <Badge key={specialty} variant="secondary" className="px-3 py-2 text-sm">
                   {specialty}
-                  <button onClick={() => removeSpecialty(specialty)} className="ml-2">
+                  <button onClick={() => removeSpecialty(specialty)} className="ml-2 min-w-[20px] min-h-[20px]">
                     <X className="w-3 h-3" />
                   </button>
                 </Badge>
@@ -397,13 +403,13 @@ const StylistProfile = () => {
         </Card>
 
         <div className="flex gap-4">
-          <Button variant="outline" onClick={() => navigate("/")} className="flex-1">
+          <Button variant="outline" onClick={() => navigate("/")} className="flex-1 h-14">
             Back
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={loading}
-            className="flex-1 bg-gradient-to-r from-accent to-primary hover:opacity-90"
+            className="flex-1 h-14 bg-gradient-to-r from-accent to-primary hover:opacity-90"
           >
             {loading ? "Saving..." : "Continue"}
             <ArrowRight className="w-4 h-4 ml-2" />
@@ -411,6 +417,7 @@ const StylistProfile = () => {
         </div>
       </div>
     </div>
+    </StylistLayout>
   );
 };
 
