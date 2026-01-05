@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   Check, Calendar, Clock, MapPin, Share2, Bell, 
-  CalendarPlus, RefreshCw, MessageSquare 
+  RefreshCw, MessageSquare, X 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,36 +17,29 @@ interface BookingConfirmationProps {
   };
   onDone: () => void;
   onTryAnotherStyle: () => void;
+  onCancel?: () => void;
+  onReschedule?: () => void;
 }
 
 export const BookingConfirmation = ({ 
   booking, 
   onDone, 
-  onTryAnotherStyle 
+  onTryAnotherStyle,
+  onCancel,
+  onReschedule
 }: BookingConfirmationProps) => {
   const { toast } = useToast();
-  const [remindersEnabled, setRemindersEnabled] = useState(false);
 
   const appointmentDate = new Date(booking.appointment_date);
 
-  const addToCalendar = () => {
-    const startTime = appointmentDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    const endTime = new Date(appointmentDate.getTime() + booking.service.duration_minutes * 60000)
-      .toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-
-    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(booking.service.name + ' with ' + booking.stylist.name)}&dates=${startTime}/${endTime}&details=${encodeURIComponent('Hair appointment booked via StyleMyHair')}&location=${encodeURIComponent(booking.stylist.address || '')}`;
-
-    window.open(calendarUrl, '_blank');
-    toast({ title: "Opening calendar...", description: "Add to your Google Calendar" });
-  };
-
-  const enableReminders = () => {
-    setRemindersEnabled(true);
+  // Auto-enable reminders on mount
+  useEffect(() => {
     toast({ 
-      title: "Reminders enabled!", 
-      description: "You'll receive reminders 24h, 6h, and 1h before your appointment" 
+      title: "Reminders enabled", 
+      description: "You'll be notified before your appointment",
+      duration: 3000
     });
-  };
+  }, []);
 
   const shareBooking = async () => {
     const shareText = `I just booked a ${booking.service.name} with ${booking.stylist.name} on ${appointmentDate.toLocaleDateString()} at ${appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}! 💇`;
@@ -76,6 +69,12 @@ export const BookingConfirmation = ({
             <div>
               <h2 className="text-2xl font-bold text-foreground">Booking Confirmed!</h2>
               <p className="text-muted-foreground mt-2">Your appointment has been scheduled</p>
+            </div>
+
+            {/* Reminder indicator */}
+            <div className="flex items-center justify-center gap-2 text-sm text-primary">
+              <Bell className="w-4 h-4" />
+              <span>Reminders are on</span>
             </div>
             
             {/* Booking Details */}
@@ -123,31 +122,10 @@ export const BookingConfirmation = ({
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <Button 
                 variant="outline" 
-                className="h-12 flex-col py-2"
-                onClick={addToCalendar}
-              >
-                <CalendarPlus className="w-4 h-4 mb-1" />
-                <span className="text-xs">Add to Calendar</span>
-              </Button>
-
-              <Button 
-                variant="outline" 
-                className={`h-12 flex-col py-2 ${remindersEnabled ? 'border-primary bg-primary/5' : ''}`}
-                onClick={enableReminders}
-                disabled={remindersEnabled}
-              >
-                <Bell className={`w-4 h-4 mb-1 ${remindersEnabled ? 'text-primary' : ''}`} />
-                <span className="text-xs">
-                  {remindersEnabled ? 'Reminders On' : 'Turn On Reminders'}
-                </span>
-              </Button>
-
-              <Button 
-                variant="outline" 
-                className="h-12 flex-col py-2"
+                className="h-14 flex-col py-2"
                 onClick={shareBooking}
               >
                 <Share2 className="w-4 h-4 mb-1" />
@@ -156,13 +134,20 @@ export const BookingConfirmation = ({
 
               <Button 
                 variant="outline" 
-                className="h-12 flex-col py-2"
-                onClick={() => {
-                  toast({ title: "Coming soon!", description: "Reschedule feature is under development" });
-                }}
+                className="h-14 flex-col py-2"
+                onClick={onReschedule}
               >
                 <RefreshCw className="w-4 h-4 mb-1" />
                 <span className="text-xs">Reschedule</span>
+              </Button>
+
+              <Button 
+                variant="outline" 
+                className="h-14 flex-col py-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                onClick={onCancel}
+              >
+                <X className="w-4 h-4 mb-1" />
+                <span className="text-xs">Cancel</span>
               </Button>
             </div>
 
