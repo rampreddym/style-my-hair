@@ -2,19 +2,17 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Star, Clock, ArrowLeft, Calendar, MessageSquare, Image } from "lucide-react";
+import { MapPin, Star, Clock, ArrowLeft, Calendar, Image } from "lucide-react";
 import { EnhancedStylistCard } from "@/components/stylist/EnhancedStylistCard";
 import { PriceBreakdown } from "@/components/booking/PriceBreakdown";
 import { BookingConfirmation } from "@/components/booking/BookingConfirmation";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { PaymentTimingSelector, PaymentTiming } from "@/components/booking/PaymentTimingSelector";
 import { DistanceSlider } from "@/components/booking/DistanceSlider";
-import { ChatWindow } from "@/components/messaging/ChatWindow";
+import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
 
 const CustomerBooking = () => {
   const navigate = useNavigate();
@@ -101,6 +99,9 @@ const CustomerBooking = () => {
 
   const selectStylist = async (stylist: any) => {
     setSelectedStylist(stylist);
+    setSelectedService(null);
+    setAppointmentDate("");
+    setAppointmentTime("");
     
     // Fetch stylist's services
     const { data: servicesData } = await supabase
@@ -123,6 +124,11 @@ const CustomerBooking = () => {
   const filteredStylists = stylists.filter(s => 
     s.distance === null || s.distance === undefined || s.distance <= maxDistance
   );
+
+  const handleSlotSelect = (date: string, time: string) => {
+    setAppointmentDate(date);
+    setAppointmentTime(time);
+  };
 
   const handleBooking = async () => {
     if (!selectedService || !appointmentDate || !appointmentTime) {
@@ -286,9 +292,13 @@ const CustomerBooking = () => {
                 )}
               </div>
               
+              {/* Step 1: Select Service */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Select Service</CardTitle>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">1</span>
+                    Select Service
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {services.length === 0 ? (
@@ -297,8 +307,12 @@ const CustomerBooking = () => {
                     services.map((service) => (
                       <div
                         key={service.id}
-                        onClick={() => setSelectedService(service)}
-                        className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                        onClick={() => {
+                          setSelectedService(service);
+                          setAppointmentDate("");
+                          setAppointmentTime("");
+                        }}
+                        className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
                           selectedService?.id === service.id
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"
@@ -320,35 +334,24 @@ const CustomerBooking = () => {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    Select Date & Time
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Date</Label>
-                    <Input
-                      type="date"
-                      value={appointmentDate}
-                      onChange={(e) => setAppointmentDate(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Time</Label>
-                    <Input
-                      type="time"
-                      value={appointmentTime}
-                      onChange={(e) => setAppointmentTime(e.target.value)}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
+              {/* Step 2: Select Time Slot (only after service is selected) */}
               {selectedService && (
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">2</span>
+                    <span className="font-medium">Choose Time Slot</span>
+                  </div>
+                  <TimeSlotPicker
+                    stylistId={selectedStylist.id}
+                    serviceDuration={selectedService.duration_minutes}
+                    onSlotSelect={handleSlotSelect}
+                    selectedDate={appointmentDate}
+                    selectedTime={appointmentTime}
+                  />
+                </div>
+              )}
+
+              {selectedService && appointmentDate && appointmentTime && (
                 <>
                   <PaymentTimingSelector
                     value={paymentTiming}
