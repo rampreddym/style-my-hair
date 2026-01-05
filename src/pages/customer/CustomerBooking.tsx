@@ -13,6 +13,7 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { PaymentTimingSelector, PaymentTiming } from "@/components/booking/PaymentTimingSelector";
 import { DistanceSlider } from "@/components/booking/DistanceSlider";
 import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
+import { CustomerLayout } from "@/components/layout/CustomerLayout";
 
 const CustomerBooking = () => {
   const navigate = useNavigate();
@@ -175,215 +176,217 @@ const CustomerBooking = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Book Your Appointment</h1>
-            <p className="text-muted-foreground">Finding stylists near you...</p>
+      <CustomerLayout>
+        <div className="min-h-screen bg-background p-4">
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="text-center space-y-2">
+              <h1 className="text-3xl font-bold text-foreground">Book Your Appointment</h1>
+              <p className="text-muted-foreground">Finding stylists near you...</p>
+            </div>
+            <CardSkeleton count={3} />
           </div>
-          <CardSkeleton count={3} />
         </div>
-      </div>
+      </CustomerLayout>
     );
   }
 
   if (booked && bookingDetails) {
     return (
-      <BookingConfirmation
-        booking={{
-          id: bookingDetails.id,
-          appointment_date: bookingDetails.appointment_date,
-          price: bookingDetails.price,
-          stylist: bookingDetails.stylist,
-          service: bookingDetails.service,
-        }}
-        onDone={() => navigate("/")}
-        onTryAnotherStyle={() => navigate("/customer/style")}
-      />
+      <CustomerLayout>
+        <BookingConfirmation
+          booking={{
+            id: bookingDetails.id,
+            appointment_date: bookingDetails.appointment_date,
+            price: bookingDetails.price,
+            stylist: bookingDetails.stylist,
+            service: bookingDetails.service,
+          }}
+          onDone={() => navigate("/customer/appointments")}
+          onTryAnotherStyle={() => navigate("/customer/style")}
+        />
+      </CustomerLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Book Your Appointment</h1>
-          <p className="text-muted-foreground">Find the perfect stylist near you</p>
-        </div>
-
-        {selectedStyle && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Selected Style</CardTitle>
-            </CardHeader>
-            <CardContent className="flex gap-4 items-center">
-              <img
-                src={selectedStyle.generated_image_url}
-                alt="Selected style"
-                className="w-24 h-24 rounded-lg object-cover"
-              />
-              <p className="text-muted-foreground">{selectedStyle.style_prompt}</p>
-            </CardContent>
-          </Card>
-        )}
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Available Stylists</h2>
-              <span className="text-sm text-muted-foreground">
-                {filteredStylists.length} found
-              </span>
-            </div>
-            
-            {/* Distance Slider */}
-            <Card className="p-4">
-              <DistanceSlider value={maxDistance} onChange={setMaxDistance} maxDistance={50} />
-            </Card>
-            
-            {filteredStylists.length === 0 ? (
-              <Card>
-                <CardContent className="py-8 text-center text-muted-foreground">
-                  No stylists within {maxDistance} km. Try increasing the distance.
-                </CardContent>
-              </Card>
-            ) : (
-              filteredStylists.map((stylist) => (
-                <EnhancedStylistCard
-                  key={stylist.id}
-                  stylist={stylist}
-                  isSelected={selectedStylist?.id === stylist.id}
-                  onSelect={() => selectStylist(stylist)}
-                  recentWork={portfolioPhotos.filter(p => p.stylist_id === stylist.id).map(p => p.image_url).slice(0, 4)}
-                />
-              ))
-            )}
+    <CustomerLayout>
+      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-foreground">Book Your Appointment</h1>
+            <p className="text-muted-foreground">Find the perfect stylist near you</p>
           </div>
 
-          {selectedStylist && (
+          {selectedStyle && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Selected Style</CardTitle>
+              </CardHeader>
+              <CardContent className="flex gap-4 items-center">
+                <img
+                  src={selectedStyle.generated_image_url}
+                  alt="Selected style"
+                  className="w-24 h-24 rounded-lg object-cover"
+                />
+                <p className="text-muted-foreground">{selectedStyle.style_prompt}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Book with {selectedStylist.name}</h2>
-                {/* Portfolio preview */}
-                {portfolioPhotos.length > 0 && (
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        <Image className="w-4 h-4 mr-1" />
-                        Portfolio ({portfolioPhotos.length})
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>{selectedStylist.name}'s Portfolio</DialogTitle>
-                      </DialogHeader>
-                      <div className="grid grid-cols-3 gap-2">
-                        {portfolioPhotos.map((photo, i) => (
-                          <img
-                            key={photo.id || i}
-                            src={photo.image_url}
-                            alt="Portfolio work"
-                            className="aspect-square rounded-lg object-cover"
-                          />
-                        ))}
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                )}
+                <h2 className="text-xl font-semibold">Available Stylists</h2>
+                <span className="text-sm text-muted-foreground">
+                  {filteredStylists.length} found
+                </span>
               </div>
               
-              {/* Step 1: Select Service */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">1</span>
-                    Select Service
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {services.length === 0 ? (
-                    <p className="text-muted-foreground">No services configured yet</p>
-                  ) : (
-                    services.map((service) => (
-                      <div
-                        key={service.id}
-                        onClick={() => {
-                          setSelectedService(service);
-                          setAppointmentDate("");
-                          setAppointmentTime("");
-                        }}
-                        className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                          selectedService?.id === service.id
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="font-medium">{service.name}</span>
-                          <span className="font-semibold text-primary">${service.price}</span>
-                        </div>
-                        <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {service.duration_minutes} min
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </CardContent>
+              {/* Distance Slider */}
+              <Card className="p-4">
+                <DistanceSlider value={maxDistance} onChange={setMaxDistance} maxDistance={50} />
               </Card>
-
-              {/* Step 2: Select Time Slot (only after service is selected) */}
-              {selectedService && (
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">2</span>
-                    <span className="font-medium">Choose Time Slot</span>
-                  </div>
-                  <TimeSlotPicker
-                    stylistId={selectedStylist.id}
-                    serviceDuration={selectedService.duration_minutes}
-                    onSlotSelect={handleSlotSelect}
-                    selectedDate={appointmentDate}
-                    selectedTime={appointmentTime}
+              
+              {filteredStylists.length === 0 ? (
+                <Card>
+                  <CardContent className="py-8 text-center text-muted-foreground">
+                    No stylists within {maxDistance} km. Try increasing the distance.
+                  </CardContent>
+                </Card>
+              ) : (
+                filteredStylists.map((stylist) => (
+                  <EnhancedStylistCard
+                    key={stylist.id}
+                    stylist={stylist}
+                    isSelected={selectedStylist?.id === stylist.id}
+                    onSelect={() => selectStylist(stylist)}
+                    recentWork={portfolioPhotos.filter(p => p.stylist_id === stylist.id).map(p => p.image_url).slice(0, 4)}
                   />
-                </div>
+                ))
               )}
-
-              {selectedService && appointmentDate && appointmentTime && (
-                <>
-                  <PaymentTimingSelector
-                    value={paymentTiming}
-                    onChange={setPaymentTiming}
-                    servicePrice={selectedService.price}
-                  />
-
-                  <PriceBreakdown 
-                    service={selectedService}
-                    platformFeePercent={0}
-                    paymentTiming={paymentTiming}
-                  />
-                </>
-              )}
-
-              <Button
-                onClick={handleBooking}
-                disabled={booking || !selectedService || !appointmentDate || !appointmentTime}
-                className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
-              >
-                {booking ? "Booking..." : paymentTiming === "pay_now" ? "Confirm & Pay" : "Confirm Booking"}
-              </Button>
             </div>
-          )}
-        </div>
 
-        <Button variant="outline" onClick={() => navigate("/customer/style")}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Style Selection
-        </Button>
+            {selectedStylist && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Book with {selectedStylist.name}</h2>
+                  {/* Portfolio preview */}
+                  {portfolioPhotos.length > 0 && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="min-h-[44px]">
+                          <Image className="w-4 h-4 mr-1" />
+                          Portfolio ({portfolioPhotos.length})
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>{selectedStylist.name}'s Portfolio</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid grid-cols-3 gap-2">
+                          {portfolioPhotos.map((photo, i) => (
+                            <img
+                              key={photo.id || i}
+                              src={photo.image_url}
+                              alt="Portfolio work"
+                              className="aspect-square rounded-lg object-cover"
+                            />
+                          ))}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                </div>
+                
+                {/* Step 1: Select Service */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">1</span>
+                      Select Service
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {services.length === 0 ? (
+                      <p className="text-muted-foreground">No services configured yet</p>
+                    ) : (
+                      services.map((service) => (
+                        <button
+                          key={service.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedService(service);
+                            setAppointmentDate("");
+                            setAppointmentTime("");
+                          }}
+                          className={`w-full min-h-[56px] p-4 rounded-lg border-2 cursor-pointer transition-all text-left active:scale-[0.98] ${
+                            selectedService?.id === service.id
+                              ? "border-primary bg-primary/5"
+                              : "border-border hover:border-primary/50"
+                          }`}
+                        >
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">{service.name}</span>
+                            <span className="font-semibold text-primary">${service.price}</span>
+                          </div>
+                          <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {service.duration_minutes} min
+                            </span>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Step 2: Select Time Slot (only after service is selected) */}
+                {selectedService && (
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">2</span>
+                      <span className="font-medium">Choose Time Slot</span>
+                    </div>
+                    <TimeSlotPicker
+                      stylistId={selectedStylist.id}
+                      serviceDuration={selectedService.duration_minutes}
+                      onSlotSelect={handleSlotSelect}
+                      selectedDate={appointmentDate}
+                      selectedTime={appointmentTime}
+                    />
+                  </div>
+                )}
+
+                {selectedService && appointmentDate && appointmentTime && (
+                  <>
+                    <PaymentTimingSelector
+                      value={paymentTiming}
+                      onChange={setPaymentTiming}
+                      servicePrice={selectedService.price}
+                    />
+
+                    <PriceBreakdown 
+                      service={selectedService}
+                      platformFeePercent={0}
+                      paymentTiming={paymentTiming}
+                    />
+                  </>
+                )}
+
+                <Button
+                  onClick={handleBooking}
+                  disabled={booking || !selectedService || !appointmentDate || !appointmentTime}
+                  className="w-full h-14 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                >
+                  {booking ? "Booking..." : paymentTiming === "pay_now" ? "Confirm & Pay" : "Confirm Booking"}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </CustomerLayout>
   );
 };
 
