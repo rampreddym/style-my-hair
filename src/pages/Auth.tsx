@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,22 +9,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Scissors, User, Mail, Lock, Chrome } from "lucide-react";
+import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { z } from "zod";
-
-const authSchema = z.object({
-  email: z.string().trim().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters")
-});
 
 const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { user, userRole, signUp, signIn, signInWithGoogle, loading } = useAuth();
   
   const [isStylist, setIsStylist] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const authSchema = z.object({
+    email: z.string().trim().email(t("auth.invalidEmail")),
+    password: z.string().min(6, t("auth.passwordMinLength"))
+  });
 
   useEffect(() => {
     if (!loading && user && userRole) {
@@ -96,18 +99,23 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 safe-area-top safe-area-bottom">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 safe-area-top safe-area-bottom relative">
+      {/* Language Switcher */}
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
+      
       <Card className="w-full max-w-md shadow-lg border-0">
         <CardHeader className="text-center space-y-4 pb-2">
-          <CardTitle className="text-2xl font-bold uppercase tracking-wide">Welcome to StyleMatch</CardTitle>
+          <CardTitle className="text-2xl font-bold uppercase tracking-wide">{t("auth.welcome")}</CardTitle>
           <CardDescription className="text-muted-foreground">
-            Sign in or create an account to continue
+            {t("auth.signInOrCreate")}
           </CardDescription>
           
           {/* Role Toggle - Pill Buttons with proper touch targets */}
           <div className="flex items-center justify-center gap-2 py-4">
             <span className="text-sm font-medium text-primary">
-              {isStylist ? 'Stylist' : 'Customer'}
+              {isStylist ? t("auth.stylist") : t("auth.customer")}
             </span>
             <div className="flex bg-muted rounded-full p-1">
               <button
@@ -119,7 +127,7 @@ const Auth = () => {
                 }`}
               >
                 <User className="w-4 h-4" />
-                Customer
+                {t("auth.customer")}
               </button>
               <button
                 onClick={() => setIsStylist(true)}
@@ -130,7 +138,7 @@ const Auth = () => {
                 }`}
               >
                 <Scissors className="w-4 h-4" />
-                Stylist
+                {t("auth.stylist")}
               </button>
             </div>
           </div>
@@ -145,7 +153,7 @@ const Auth = () => {
             disabled={isSubmitting}
           >
             <Chrome className="w-5 h-5" />
-            Continue with Google
+            {t("auth.continueWithGoogle")}
           </Button>
 
           <div className="relative">
@@ -153,7 +161,7 @@ const Auth = () => {
               <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-4 text-muted-foreground">Or continue with email</span>
+              <span className="bg-card px-4 text-muted-foreground">{t("auth.orContinueWithEmail")}</span>
             </div>
           </div>
 
@@ -163,19 +171,19 @@ const Auth = () => {
                 value="signin" 
                 className="min-h-[40px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
-                Sign In
+                {t("auth.signIn")}
               </TabsTrigger>
               <TabsTrigger 
                 value="signup" 
                 className="min-h-[40px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
-                Sign Up
+                {t("auth.signUp")}
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="signin" className="space-y-4 mt-6">
               <div className="space-y-2">
-                <Label htmlFor="signin-email" className="font-medium">Email</Label>
+                <Label htmlFor="signin-email" className="font-medium">{t("common.email")}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -184,7 +192,7 @@ const Auth = () => {
                     inputMode="email"
                     autoComplete="email"
                     autoCapitalize="none"
-                    placeholder="you@example.com"
+                    placeholder={t("auth.emailPlaceholder")}
                     className="pl-10 h-14 border-2 focus:border-primary text-base"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -192,14 +200,14 @@ const Auth = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signin-password" className="font-medium">Password</Label>
+                <Label htmlFor="signin-password" className="font-medium">{t("common.password")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signin-password"
                     type="password"
                     autoComplete="current-password"
-                    placeholder="••••••••"
+                    placeholder={t("auth.passwordPlaceholder")}
                     className="pl-10 h-14 border-2 focus:border-primary text-base"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -211,21 +219,21 @@ const Auth = () => {
                 onClick={handleSignIn}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Signing in..." : "Sign In"}
+                {isSubmitting ? t("auth.signingIn") : t("auth.signIn")}
               </Button>
               <div className="text-center py-2">
                 <Link 
                   to="/reset-password" 
                   className="text-sm text-primary hover:underline font-medium p-2 inline-block min-h-[44px] flex items-center justify-center"
                 >
-                  Forgot your password?
+                  {t("auth.forgotPassword")}
                 </Link>
               </div>
             </TabsContent>
 
             <TabsContent value="signup" className="space-y-4 mt-6">
               <div className="space-y-2">
-                <Label htmlFor="signup-email" className="font-medium">Email</Label>
+                <Label htmlFor="signup-email" className="font-medium">{t("common.email")}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -234,7 +242,7 @@ const Auth = () => {
                     inputMode="email"
                     autoComplete="email"
                     autoCapitalize="none"
-                    placeholder="you@example.com"
+                    placeholder={t("auth.emailPlaceholder")}
                     className="pl-10 h-14 border-2 focus:border-primary text-base"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -242,14 +250,14 @@ const Auth = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signup-password" className="font-medium">Password</Label>
+                <Label htmlFor="signup-password" className="font-medium">{t("common.password")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="signup-password"
                     type="password"
                     autoComplete="new-password"
-                    placeholder="••••••••"
+                    placeholder={t("auth.passwordPlaceholder")}
                     className="pl-10 h-14 border-2 focus:border-primary text-base"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -261,13 +269,13 @@ const Auth = () => {
                 onClick={handleSignUp}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Creating account..." : `Sign Up as ${isStylist ? 'Stylist' : 'Customer'}`}
+                {isSubmitting ? t("auth.creatingAccount") : t("auth.signUpAs", { role: isStylist ? t("auth.stylist") : t("auth.customer") })}
               </Button>
             </TabsContent>
           </Tabs>
 
           <p className="text-center text-xs text-muted-foreground pb-2">
-            By continuing, you agree to our Terms of Service and Privacy Policy
+            {t("auth.termsAgreement")}
           </p>
         </CardContent>
       </Card>
