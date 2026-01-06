@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,10 +14,12 @@ import { GuidedPhotoCapture } from "@/components/customer/GuidedPhotoCapture";
 import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
 import { NotificationToggle } from "@/components/notifications/NotificationToggle";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
+import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { user, userRole, loading: authLoading, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -147,7 +150,7 @@ const CustomerProfile = () => {
       .upload(filePath, file);
 
     if (uploadError) {
-      toast({ title: "Upload failed", description: uploadError.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: uploadError.message, variant: "destructive" });
       setUploadingPhoto(null);
       return;
     }
@@ -166,22 +169,22 @@ const CustomerProfile = () => {
       delete updated[photoType];
       return updated;
     });
-    toast({ title: "Photo removed", description: "Remember to save your profile" });
+    toast({ title: t("customer.profile.photoRemoved", "Photo removed"), description: t("customer.profile.rememberToSave", "Remember to save your profile") });
   };
 
   const handleSubmit = async () => {
     if (!user) {
-      toast({ title: "Not authenticated", variant: "destructive" });
+      toast({ title: t("auth.notAuthenticated", "Not authenticated"), variant: "destructive" });
       return;
     }
     
     if (!formData.name || !formData.gender) {
-      toast({ title: "Required fields missing", description: "Please fill in name and gender", variant: "destructive" });
+      toast({ title: t("customer.profile.requiredFields", "Required fields missing"), description: t("customer.profile.fillNameGender", "Please fill in name and gender"), variant: "destructive" });
       return;
     }
 
     if (Object.keys(photos).length < 2) {
-      toast({ title: "Photos required", description: "Please upload at least 2 photos of your hair", variant: "destructive" });
+      toast({ title: t("customer.profile.photosRequired", "Photos required"), description: t("customer.profile.uploadPhotos", "Please upload at least 2 photos of your hair"), variant: "destructive" });
       return;
     }
 
@@ -242,10 +245,10 @@ const CustomerProfile = () => {
 
       sessionStorage.setItem("customerId", customerId);
 
-      toast({ title: "Profile saved!", description: "Let's generate your new look" });
+      toast({ title: t("customer.profile.profileSaved", "Profile saved!"), description: t("customer.profile.letsGenerate", "Let's generate your new look") });
       navigate("/customer/style");
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -255,7 +258,7 @@ const CustomerProfile = () => {
     return (
       <CustomerLayout>
         <div className="min-h-screen flex items-center justify-center bg-background">
-          <div className="animate-pulse text-muted-foreground">Loading...</div>
+          <div className="animate-pulse text-muted-foreground">{t("common.loading")}</div>
         </div>
       </CustomerLayout>
     );
@@ -270,43 +273,45 @@ const CustomerProfile = () => {
             <button 
               onClick={() => navigate(-1)}
               className="min-w-[44px] min-h-[44px] flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors"
-              aria-label="Go back"
+              aria-label={t("common.back")}
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <div className="text-center flex-1">
               <h1 className="text-xl font-bold uppercase tracking-wide text-foreground">
-                {existingCustomerId ? "Edit Your Profile" : "Create Your Profile"}
+                {existingCustomerId ? t("customer.profile.editProfile") : t("customer.profile.createProfile", "Create Your Profile")}
               </h1>
-              <p className="text-sm text-muted-foreground">Page 1 "Profile Creation"</p>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={signOut} 
-              className="min-w-[44px] min-h-[44px] text-muted-foreground hover:text-foreground"
-              aria-label="Sign out"
-            >
-              <LogOut className="w-5 h-5" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <LanguageSwitcher variant="icon" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={signOut} 
+                className="min-w-[44px] min-h-[44px] text-muted-foreground hover:text-foreground"
+                aria-label={t("auth.signOut")}
+              >
+                <LogOut className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
 
           {/* Basic Info Form */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="font-medium">Full Name</Label>
+              <Label htmlFor="name" className="font-medium">{t("customer.profile.fullName", "Full Name")}</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Enter your fullname"
+                placeholder={t("customer.profile.enterName", "Enter your fullname")}
                 className="h-12 border-2 focus:border-primary"
               />
             </div>
 
             {/* Gender Selection - Pill Style with proper touch targets */}
             <div className="space-y-2">
-              <Label className="font-medium">Gender</Label>
+              <Label className="font-medium">{t("customer.profile.gender")}</Label>
               <div className="flex items-center justify-center gap-2">
                 {["male", "female", "other"].map((gender) => (
                   <button
@@ -328,7 +333,7 @@ const CustomerProfile = () => {
                         <span className="w-2 h-2 bg-primary-foreground rounded-full" />
                       )}
                     </span>
-                    {gender === "male" ? "Male" : gender === "female" ? "Female" : "Other"}
+                    {t(`customer.profile.${gender}`)}
                   </button>
                 ))}
               </div>
@@ -344,14 +349,14 @@ const CustomerProfile = () => {
 
             {/* Age Input */}
             <div className="space-y-2">
-              <Label htmlFor="age" className="font-medium">Age</Label>
+              <Label htmlFor="age" className="font-medium">{t("customer.profile.age")}</Label>
               <Input
                 id="age"
                 type="number"
                 inputMode="numeric"
                 value={formData.age}
                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                placeholder="Enter your age"
+                placeholder={t("customer.profile.enterAge", "Enter your age")}
                 className="h-12 border-2 focus:border-primary"
               />
             </div>
@@ -361,7 +366,7 @@ const CustomerProfile = () => {
               <Textarea
                 value={formData.preferred_style_description}
                 onChange={(e) => setFormData({ ...formData, preferred_style_description: e.target.value })}
-                placeholder="Describe your ideal hair style..."
+                placeholder={t("customer.profile.styleDescription", "Describe your ideal hair style...")}
                 className="border-2 focus:border-primary min-h-[80px]"
               />
             </div>
@@ -369,7 +374,7 @@ const CustomerProfile = () => {
             {/* Visual Hair Style Selection */}
             {formData.gender && hairStyles.length > 0 && (
               <div className="space-y-2">
-                <Label className="font-medium">Choose Your Style</Label>
+                <Label className="font-medium">{t("customer.profile.chooseStyle", "Choose Your Style")}</Label>
                 <HairStyleSelector
                   styles={hairStyles}
                   selectedStyle={formData.preferred_style_category}
@@ -380,17 +385,17 @@ const CustomerProfile = () => {
 
             {location && (
               <p className="text-sm text-muted-foreground flex items-center gap-1">
-                <MapPin className="w-4 h-4 text-primary" /> Location detected for finding nearby stylists
+                <MapPin className="w-4 h-4 text-primary" /> {t("customer.profile.locationDetected", "Location detected for finding nearby stylists")}
               </p>
             )}
           </div>
 
           {/* Notification Settings */}
           <div className="p-4 border-2 border-primary/20 rounded-xl bg-card">
-            <h3 className="text-sm font-medium text-foreground mb-3">Appointment Reminders</h3>
+            <h3 className="text-sm font-medium text-foreground mb-3">{t("customer.profile.appointmentReminders", "Appointment Reminders")}</h3>
             <NotificationToggle variant="switch" showLabel={true} />
             <p className="text-xs text-muted-foreground mt-2">
-              Get push notifications 1 hour before your appointments
+              {t("customer.profile.reminderDescription", "Get push notifications 1 hour before your appointments")}
             </p>
           </div>
 
@@ -400,7 +405,7 @@ const CustomerProfile = () => {
             className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
           >
             <CreditCard className="w-5 h-5 mr-2" />
-            {showPayment ? "Hide Payment" : "Connect to Stripe"}
+            {showPayment ? t("customer.profile.hidePayment", "Hide Payment") : t("customer.profile.connectStripe", "Connect to Stripe")}
           </Button>
 
           {showPayment && <PaymentMethodUI onClose={() => setShowPayment(false)} />}
@@ -411,7 +416,7 @@ const CustomerProfile = () => {
             disabled={loading}
             className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
           >
-            {loading ? "Saving..." : "Continue"}
+            {loading ? t("common.saving", "Saving...") : t("common.continue")}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

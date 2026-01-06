@@ -33,7 +33,12 @@
     "error": "Error",
     "success": "Success",
     "warning": "Warning",
-    "info": "Info"
+    "info": "Info",
+    "saving": "Saving..."
+  },
+  "notFound": {
+    "title": "Oops! Page not found",
+    "returnHome": "Return to Home"
   },
   "auth": {
     "welcome": "Welcome to StyleMatch",
@@ -105,7 +110,8 @@
   "customer": {
     "profile": {
       "title": "Your Profile",
-      "editProfile": "Edit Profile",
+      "editProfile": "Edit Your Profile",
+      "createProfile": "Create Your Profile",
       "personalInfo": "Personal Information",
       "preferences": "Preferences",
       "gender": "Gender",
@@ -114,7 +120,25 @@
       "female": "Female",
       "other": "Other",
       "saveChanges": "Save Changes",
-      "profileUpdated": "Profile updated successfully"
+      "profileUpdated": "Profile updated successfully",
+      "fullName": "Full Name",
+      "enterName": "Enter your fullname",
+      "enterAge": "Enter your age",
+      "styleDescription": "Describe your ideal hair style...",
+      "chooseStyle": "Choose Your Style",
+      "locationDetected": "Location detected for finding nearby stylists",
+      "appointmentReminders": "Appointment Reminders",
+      "reminderDescription": "Get push notifications 1 hour before your appointments",
+      "hidePayment": "Hide Payment",
+      "connectStripe": "Connect to Stripe",
+      "photoRemoved": "Photo removed",
+      "rememberToSave": "Remember to save your profile",
+      "requiredFields": "Required fields missing",
+      "fillNameGender": "Please fill in name and gender",
+      "photosRequired": "Photos required",
+      "uploadPhotos": "Please upload at least 2 photos of your hair",
+      "profileSaved": "Profile saved!",
+      "letsGenerate": "Let's generate your new look"
     },
     "style": {
       "title": "Choose Your Style",

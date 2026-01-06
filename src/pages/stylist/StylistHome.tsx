@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Scissors, Calendar, CheckCircle } from "lucide-react";
+import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 
 const StylistHome = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user, userRole, loading: authLoading } = useAuth();
   const [checking, setChecking] = useState(true);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
@@ -68,20 +71,25 @@ const StylistHome = () => {
   if (authLoading || checking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+        <div className="animate-pulse text-muted-foreground">{t("common.loading")}</div>
       </div>
     );
   }
 
   // Show prompt to complete setup
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4 safe-area-top">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4 safe-area-top relative">
+      {/* Language Switcher */}
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
+      
       <div className="max-w-lg mx-auto pt-8 space-y-6">
         <div className="text-center space-y-2">
           <Scissors className="w-12 h-12 mx-auto text-primary" />
-          <h1 className="text-2xl font-bold text-foreground">Welcome, Stylist!</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t("stylist.home.welcome")}</h1>
           <p className="text-muted-foreground">
-            Complete your setup to start receiving bookings
+            {t("stylist.home.setupMessage")}
           </p>
         </div>
 
@@ -98,11 +106,11 @@ const StylistHome = () => {
                   </div>
                 )}
                 <div>
-                  <CardTitle className="text-lg">Complete Your Profile</CardTitle>
+                  <CardTitle className="text-lg">{t("stylist.home.completeProfile")}</CardTitle>
                   <CardDescription>
                     {onboardingComplete 
-                      ? "Profile setup complete!" 
-                      : "Add your details, experience, portfolio & availability"}
+                      ? t("stylist.home.completed")
+                      : t("stylist.home.profileDescription")}
                   </CardDescription>
                 </div>
               </div>
@@ -113,7 +121,7 @@ const StylistHome = () => {
                   onClick={() => navigate("/stylist/onboarding")} 
                   className="w-full"
                 >
-                  Continue Setup
+                  {t("stylist.home.getStarted")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </CardContent>
@@ -132,11 +140,11 @@ const StylistHome = () => {
                   </div>
                 )}
                 <div>
-                  <CardTitle className="text-lg">Add Your Services</CardTitle>
+                  <CardTitle className="text-lg">{t("stylist.home.addServices")}</CardTitle>
                   <CardDescription>
                     {hasServices 
-                      ? "Services configured!" 
-                      : "Create services with pricing & duration"}
+                      ? t("stylist.home.completed")
+                      : t("stylist.home.servicesDescription")}
                   </CardDescription>
                 </div>
               </div>
@@ -147,7 +155,7 @@ const StylistHome = () => {
                   onClick={() => navigate("/stylist/services")} 
                   className="w-full"
                 >
-                  Add Services
+                  {t("stylist.services.addService")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </CardContent>
@@ -160,9 +168,9 @@ const StylistHome = () => {
               <div className="flex items-center gap-3">
                 <Calendar className="w-6 h-6 text-muted-foreground" />
                 <div>
-                  <CardTitle className="text-lg">Receive Bookings</CardTitle>
+                  <CardTitle className="text-lg">{t("stylist.home.receiveBookings")}</CardTitle>
                   <CardDescription>
-                    Complete the steps above to start receiving appointments
+                    {t("stylist.home.bookingsDescription")}
                   </CardDescription>
                 </div>
               </div>

@@ -1,23 +1,25 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { User, Calendar, DollarSign, Scissors, Settings } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { User, Calendar, DollarSign, Scissors } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
   path: string;
-  label: string;
+  labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
 const stylistNavItems: NavItem[] = [
-  { path: "/stylist", label: "Profile", icon: User },
-  { path: "/stylist/services", label: "Services", icon: Scissors },
-  { path: "/stylist/appointments", label: "Bookings", icon: Calendar },
-  { path: "/stylist/payments", label: "Payments", icon: DollarSign },
+  { path: "/stylist", labelKey: "navigation.profile", icon: User },
+  { path: "/stylist/services", labelKey: "navigation.services", icon: Scissors },
+  { path: "/stylist/appointments", labelKey: "navigation.appointments", icon: Calendar },
+  { path: "/stylist/payments", labelKey: "navigation.payments", icon: DollarSign },
 ];
 
 export function StylistBottomNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -39,7 +41,7 @@ export function StylistBottomNavigation() {
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               )}
-              aria-label={item.label}
+              aria-label={t(item.labelKey)}
               aria-current={active ? "page" : undefined}
             >
               {active && (
@@ -55,7 +57,7 @@ export function StylistBottomNavigation() {
                 "text-[10px] mt-1 font-medium transition-all",
                 active ? "text-primary" : "text-muted-foreground"
               )}>
-                {item.label}
+                {t(item.labelKey)}
               </span>
             </button>
           );
