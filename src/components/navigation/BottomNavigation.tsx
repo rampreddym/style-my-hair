@@ -1,23 +1,25 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { User, Sparkles, CalendarDays, Scissors } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
   path: string;
-  label: string;
+  labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
 const customerNavItems: NavItem[] = [
-  { path: "/customer", label: "Profile", icon: User },
-  { path: "/customer/style", label: "Style", icon: Sparkles },
-  { path: "/customer/booking", label: "Book", icon: Scissors },
-  { path: "/customer/appointments", label: "Appointments", icon: CalendarDays },
+  { path: "/customer", labelKey: "navigation.profile", icon: User },
+  { path: "/customer/style", labelKey: "navigation.style", icon: Sparkles },
+  { path: "/customer/booking", labelKey: "navigation.booking", icon: Scissors },
+  { path: "/customer/appointments", labelKey: "navigation.appointments", icon: CalendarDays },
 ];
 
 export function BottomNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Check for active path (include sub-routes for booking)
   const isActive = (path: string) => {
@@ -45,7 +47,7 @@ export function BottomNavigation() {
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               )}
-              aria-label={item.label}
+              aria-label={t(item.labelKey)}
               aria-current={active ? "page" : undefined}
             >
               {/* Active indicator dot */}
@@ -62,7 +64,7 @@ export function BottomNavigation() {
                 "text-[10px] mt-1 font-medium transition-all",
                 active ? "text-primary" : "text-muted-foreground"
               )}>
-                {item.label}
+                {t(item.labelKey)}
               </span>
             </button>
           );

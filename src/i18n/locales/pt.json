@@ -33,7 +33,12 @@
     "error": "Erro",
     "success": "Sucesso",
     "warning": "Aviso",
-    "info": "Informação"
+    "info": "Informação",
+    "saving": "Salvando..."
+  },
+  "notFound": {
+    "title": "Ops! Página não encontrada",
+    "returnHome": "Voltar ao Início"
   },
   "auth": {
     "welcome": "Bem-vindo ao StyleMatch",
@@ -105,7 +110,8 @@
   "customer": {
     "profile": {
       "title": "Seu Perfil",
-      "editProfile": "Editar Perfil",
+      "editProfile": "Editar Seu Perfil",
+      "createProfile": "Criar Seu Perfil",
       "personalInfo": "Informações Pessoais",
       "preferences": "Preferências",
       "gender": "Gênero",
@@ -114,7 +120,25 @@
       "female": "Feminino",
       "other": "Outro",
       "saveChanges": "Salvar Alterações",
-      "profileUpdated": "Perfil atualizado com sucesso"
+      "profileUpdated": "Perfil atualizado com sucesso",
+      "fullName": "Nome Completo",
+      "enterName": "Digite seu nome completo",
+      "enterAge": "Digite sua idade",
+      "styleDescription": "Descreva seu estilo de cabelo ideal...",
+      "chooseStyle": "Escolha Seu Estilo",
+      "locationDetected": "Localização detectada para encontrar estilistas próximos",
+      "appointmentReminders": "Lembretes de Agendamentos",
+      "reminderDescription": "Receba notificações 1 hora antes dos seus agendamentos",
+      "hidePayment": "Ocultar Pagamento",
+      "connectStripe": "Conectar com Stripe",
+      "photoRemoved": "Foto removida",
+      "rememberToSave": "Lembre-se de salvar seu perfil",
+      "requiredFields": "Campos obrigatórios faltando",
+      "fillNameGender": "Por favor preencha nome e gênero",
+      "photosRequired": "Fotos necessárias",
+      "uploadPhotos": "Por favor envie pelo menos 2 fotos do seu cabelo",
+      "profileSaved": "Perfil salvo!",
+      "letsGenerate": "Vamos gerar seu novo visual"
     },
     "style": {
       "title": "Escolha Seu Estilo",
