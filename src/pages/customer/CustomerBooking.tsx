@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +11,7 @@ import { CustomerLayout } from "@/components/layout/CustomerLayout";
 
 const CustomerBooking = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [stylists, setStylists] = useState<any[]>([]);
@@ -94,8 +96,8 @@ const CustomerBooking = () => {
         <div className="min-h-screen bg-background p-4">
           <div className="max-w-2xl mx-auto space-y-6">
             <div className="text-center space-y-2">
-              <h1 className="text-3xl font-bold text-foreground">Find a Stylist</h1>
-              <p className="text-muted-foreground">Finding stylists near you...</p>
+              <h1 className="text-3xl font-bold text-foreground">{t('customer.booking.title')}</h1>
+              <p className="text-muted-foreground">{t('customer.booking.findingStylists')}</p>
             </div>
             <CardSkeleton count={3} />
           </div>
@@ -109,8 +111,8 @@ const CustomerBooking = () => {
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4 pb-24">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">Find a Stylist</h1>
-            <p className="text-muted-foreground">Select a stylist to book your appointment</p>
+            <h1 className="text-3xl font-bold text-foreground">{t('customer.booking.title')}</h1>
+            <p className="text-muted-foreground">{t('customer.booking.selectStylistSubtitle')}</p>
           </div>
 
           {selectedStyle && (
@@ -118,11 +120,11 @@ const CustomerBooking = () => {
               <CardContent className="p-4 flex gap-4 items-center">
                 <img
                   src={selectedStyle.generated_image_url}
-                  alt="Selected style"
+                  alt={t('customer.booking.selectedStyle')}
                   className="w-16 h-16 rounded-lg object-cover"
                 />
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Your Selected Style</p>
+                  <p className="text-sm font-medium">{t('customer.booking.yourSelectedStyle')}</p>
                   <p className="text-xs text-muted-foreground line-clamp-2">{selectedStyle.style_prompt}</p>
                 </div>
               </CardContent>
@@ -135,16 +137,16 @@ const CustomerBooking = () => {
           </Card>
 
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Available Stylists</h2>
+            <h2 className="text-lg font-semibold">{t('customer.booking.availableStylists')}</h2>
             <span className="text-sm text-muted-foreground">
-              {filteredStylists.length} found
+              {t('customer.booking.stylistsFound', { count: filteredStylists.length })}
             </span>
           </div>
 
           {filteredStylists.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                No stylists within {maxDistance} km. Try increasing the distance.
+                {t('customer.booking.noStylistsInRange', { distance: maxDistance })}. {t('customer.booking.tryIncreasing')}
               </CardContent>
             </Card>
           ) : (

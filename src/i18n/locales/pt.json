@@ -154,6 +154,12 @@
     "booking": {
       "title": "Encontrar um Estilista",
       "subtitle": "Escolha entre os estilistas disponíveis na sua região",
+      "findingStylists": "Procurando estilistas perto de você...",
+      "selectStylistSubtitle": "Selecione um estilista para agendar sua consulta",
+      "yourSelectedStyle": "Seu Estilo Selecionado",
+      "selectedStyle": "Estilo selecionado",
+      "availableStylists": "Estilistas Disponíveis",
+      "stylistsFound": "{{count}} encontrados",
       "noStylists": "Nenhum estilista encontrado",
       "noStylistsInRange": "Nenhum estilista encontrado em {{distance}} km",
       "tryIncreasing": "Tente aumentar a distância",
@@ -165,6 +171,21 @@
       "distance": "a {{distance}} km",
       "rating": "{{rating}} estrelas",
       "reviews": "{{count}} avaliações"
+    },
+    "bookingDetails": {
+      "stylistNotFound": "Estilista não encontrado",
+      "completeAllFields": "Por favor, preencha todos os campos",
+      "appointmentScheduled": "Seu agendamento foi marcado",
+      "bookingFailed": "Falha na reserva",
+      "backToStylists": "Voltar aos Estilistas",
+      "portfolio": "Portfólio de {{name}}",
+      "portfolioWork": "Trabalho do portfólio",
+      "noServicesAvailable": "Nenhum serviço disponível",
+      "min": "min",
+      "chooseTimeSlot": "Escolher Horário",
+      "paymentAndConfirm": "Pagamento e Confirmação",
+      "booking": "Agendando...",
+      "confirmAndPay": "Confirmar e Pagar"
     },
     "appointments": {
       "title": "Seus Agendamentos",

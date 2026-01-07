@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -18,6 +19,7 @@ import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 const CustomerBookingDetails = () => {
   const navigate = useNavigate();
   const { stylistId } = useParams();
+  const { t } = useTranslation();
   const { toast } = useToast();
   
   const [loading, setLoading] = useState(true);
@@ -70,7 +72,7 @@ const CustomerBookingDetails = () => {
       .single();
 
     if (stylistError || !stylistData) {
-      toast({ title: "Stylist not found", variant: "destructive" });
+      toast({ title: t('customer.bookingDetails.stylistNotFound'), variant: "destructive" });
       navigate("/customer/booking");
       return;
     }
@@ -103,7 +105,7 @@ const CustomerBookingDetails = () => {
 
   const handleBooking = async () => {
     if (!selectedService || !appointmentDate || !appointmentTime) {
-      toast({ title: "Please complete all fields", variant: "destructive" });
+      toast({ title: t('customer.bookingDetails.completeAllFields'), variant: "destructive" });
       return;
     }
 
@@ -136,9 +138,9 @@ const CustomerBookingDetails = () => {
         service: selectedService,
       });
       setBooked(true);
-      toast({ title: "Booking confirmed!", description: "Your appointment has been scheduled" });
+      toast({ title: t('booking.bookingConfirmed'), description: t('customer.bookingDetails.appointmentScheduled') });
     } catch (error: any) {
-      toast({ title: "Booking failed", description: error.message, variant: "destructive" });
+      toast({ title: t('customer.bookingDetails.bookingFailed'), description: error.message, variant: "destructive" });
     } finally {
       setBooking(false);
     }
@@ -155,7 +157,7 @@ const CustomerBookingDetails = () => {
               className="mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              {t('common.back')}
             </Button>
             <CardSkeleton count={3} />
           </div>
@@ -215,7 +217,7 @@ const CustomerBookingDetails = () => {
             className="mb-2"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Stylists
+            {t('customer.bookingDetails.backToStylists')}
           </Button>
 
           {/* Stylist Header */}
@@ -264,15 +266,15 @@ const CustomerBookingDetails = () => {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>{stylist.name}'s Portfolio</DialogTitle>
+                    <DialogHeader>
+                        <DialogTitle>{t('customer.bookingDetails.portfolio', { name: stylist.name })}</DialogTitle>
                       </DialogHeader>
                       <div className="grid grid-cols-3 gap-2">
                         {portfolioPhotos.map((photo, i) => (
                           <img
                             key={photo.id || i}
                             src={photo.image_url}
-                            alt="Portfolio work"
+                            alt={t('customer.bookingDetails.portfolioWork')}
                             className="aspect-square rounded-lg object-cover"
                           />
                         ))}
@@ -288,12 +290,12 @@ const CustomerBookingDetails = () => {
           {selectedStyle && (
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Your Selected Style</CardTitle>
+                <CardTitle className="text-base">{t('customer.booking.yourSelectedStyle')}</CardTitle>
               </CardHeader>
               <CardContent className="flex gap-4 items-center">
                 <img
                   src={selectedStyle.generated_image_url}
-                  alt="Selected style"
+                  alt={t('customer.booking.selectedStyle')}
                   className="w-20 h-20 rounded-lg object-cover"
                 />
                 <p className="text-sm text-muted-foreground line-clamp-3">{selectedStyle.style_prompt}</p>
@@ -306,12 +308,12 @@ const CustomerBookingDetails = () => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">1</span>
-                Select Service
+                {t('booking.selectService')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {services.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">No services available</p>
+                <p className="text-muted-foreground text-center py-4">{t('customer.bookingDetails.noServicesAvailable')}</p>
               ) : (
                 services.map((service) => (
                   <button
@@ -335,7 +337,7 @@ const CustomerBookingDetails = () => {
                     <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        {service.duration_minutes} min
+                        {service.duration_minutes} {t('customer.bookingDetails.min')}
                       </span>
                       {service.description && (
                         <span className="truncate">{service.description}</span>
@@ -353,7 +355,7 @@ const CustomerBookingDetails = () => {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">2</span>
-                  Choose Time Slot
+                  {t('customer.bookingDetails.chooseTimeSlot')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -378,7 +380,7 @@ const CustomerBookingDetails = () => {
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">3</span>
-                    Payment & Confirm
+                    {t('customer.bookingDetails.paymentAndConfirm')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -400,7 +402,7 @@ const CustomerBookingDetails = () => {
                 disabled={booking}
                 className="w-full h-14 bg-gradient-to-r from-primary to-accent hover:opacity-90"
               >
-                {booking ? "Booking..." : paymentTiming === "pay_now" ? "Confirm & Pay" : "Confirm Booking"}
+                {booking ? t('customer.bookingDetails.booking') : paymentTiming === "pay_now" ? t('customer.bookingDetails.confirmAndPay') : t('booking.confirmBooking')}
               </Button>
             </>
           )}
