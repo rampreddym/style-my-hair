@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,7 @@ export const ExperienceStep = ({
   certifications,
   setCertifications,
 }: ExperienceStepProps) => {
+  const { t } = useTranslation();
   const [newSpecialty, setNewSpecialty] = useState("");
   const [newCertification, setNewCertification] = useState("");
   const [generating, setGenerating] = useState(false);
@@ -70,12 +72,12 @@ export const ExperienceStep = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Award className="w-5 h-5 text-accent" />
-            Professional Experience
+            {t("onboardingSteps.professionalExperience")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="years">Years of Experience</Label>
+            <Label htmlFor="years">{t("stylist.onboarding.yearsExperience")}</Label>
             <Input
               id="years"
               type="number"
@@ -88,12 +90,12 @@ export const ExperienceStep = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bio">About You</Label>
+            <Label htmlFor="bio">{t("onboardingSteps.aboutYou")}</Label>
             <Textarea
               id="bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              placeholder="Tell clients about your experience, style philosophy, and what makes you unique..."
+              placeholder={t("onboardingSteps.bioPlaceholder")}
               rows={4}
             />
           </div>
@@ -103,10 +105,10 @@ export const ExperienceStep = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Specialties</span>
+            <span>{t("stylist.onboarding.specialties")}</span>
             <Button variant="outline" size="sm" onClick={generateSpecialties} disabled={generating}>
               <Sparkles className="w-4 h-4 mr-2" />
-              {generating ? "Generating..." : "AI Suggest"}
+              {generating ? t("onboardingSteps.generating") : t("onboardingSteps.aiSuggest")}
             </Button>
           </CardTitle>
         </CardHeader>
@@ -115,11 +117,11 @@ export const ExperienceStep = ({
             <Input
               value={newSpecialty}
               onChange={(e) => setNewSpecialty(e.target.value)}
-              placeholder="Add a specialty..."
+              placeholder={t("onboardingSteps.addSpecialtyPlaceholder")}
               onKeyDown={(e) => e.key === "Enter" && addSpecialty()}
             />
             <Button onClick={addSpecialty} variant="outline">
-              Add
+              {t("onboardingSteps.add")}
             </Button>
           </div>
 
@@ -138,18 +140,18 @@ export const ExperienceStep = ({
 
       <Card>
         <CardHeader>
-          <CardTitle>Certifications</CardTitle>
+          <CardTitle>{t("stylist.onboarding.certifications")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
               value={newCertification}
               onChange={(e) => setNewCertification(e.target.value)}
-              placeholder="Add a certification..."
+              placeholder={t("onboardingSteps.addCertificationPlaceholder")}
               onKeyDown={(e) => e.key === "Enter" && addCertification()}
             />
             <Button onClick={addCertification} variant="outline">
-              Add
+              {t("onboardingSteps.add")}
             </Button>
           </div>
 
