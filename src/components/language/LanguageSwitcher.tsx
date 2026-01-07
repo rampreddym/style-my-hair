@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { languages, LanguageCode } from "@/i18n";
+import { useLanguagePreference } from "@/hooks/useLanguagePreference";
 
 interface LanguageSwitcherProps {
   variant?: "icon" | "full";
@@ -16,13 +17,14 @@ interface LanguageSwitcherProps {
 }
 
 export const LanguageSwitcher = ({ variant = "icon", className = "" }: LanguageSwitcherProps) => {
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const [open, setOpen] = useState(false);
+  const { saveLanguagePreference } = useLanguagePreference();
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   const changeLanguage = (code: LanguageCode) => {
-    i18n.changeLanguage(code);
+    saveLanguagePreference(code);
     setOpen(false);
   };
 
