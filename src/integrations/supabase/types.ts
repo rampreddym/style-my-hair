@@ -273,6 +273,7 @@ export type Database = {
           email: string
           gender: string
           id: string
+          language_preference: string | null
           latitude: number | null
           longitude: number | null
           name: string
@@ -289,6 +290,7 @@ export type Database = {
           email: string
           gender: string
           id?: string
+          language_preference?: string | null
           latitude?: number | null
           longitude?: number | null
           name: string
@@ -305,6 +307,7 @@ export type Database = {
           email?: string
           gender?: string
           id?: string
+          language_preference?: string | null
           latitude?: number | null
           longitude?: number | null
           name?: string
@@ -601,6 +604,7 @@ export type Database = {
           email: string
           google_place_id: string | null
           id: string
+          language_preference: string | null
           latitude: number | null
           longitude: number | null
           name: string
@@ -627,6 +631,7 @@ export type Database = {
           email: string
           google_place_id?: string | null
           id?: string
+          language_preference?: string | null
           latitude?: number | null
           longitude?: number | null
           name: string
@@ -653,6 +658,7 @@ export type Database = {
           email?: string
           google_place_id?: string | null
           id?: string
+          language_preference?: string | null
           latitude?: number | null
           longitude?: number | null
           name?: string
