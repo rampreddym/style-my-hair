@@ -154,8 +154,14 @@
     "booking": {
       "title": "Find a Stylist",
       "subtitle": "Choose from available stylists in your area",
+      "findingStylists": "Finding stylists near you...",
+      "selectStylistSubtitle": "Select a stylist to book your appointment",
+      "yourSelectedStyle": "Your Selected Style",
+      "selectedStyle": "Selected style",
+      "availableStylists": "Available Stylists",
+      "stylistsFound": "{{count}} found",
       "noStylists": "No stylists found",
-      "noStylistsInRange": "No stylists found within {{distance}} km",
+      "noStylistsInRange": "No stylists within {{distance}} km",
       "tryIncreasing": "Try increasing the distance",
       "maxDistance": "Max Distance",
       "anyDistance": "Any distance",
@@ -165,6 +171,21 @@
       "distance": "{{distance}} km away",
       "rating": "{{rating}} stars",
       "reviews": "{{count}} reviews"
+    },
+    "bookingDetails": {
+      "stylistNotFound": "Stylist not found",
+      "completeAllFields": "Please complete all fields",
+      "appointmentScheduled": "Your appointment has been scheduled",
+      "bookingFailed": "Booking failed",
+      "backToStylists": "Back to Stylists",
+      "portfolio": "{{name}}'s Portfolio",
+      "portfolioWork": "Portfolio work",
+      "noServicesAvailable": "No services available",
+      "min": "min",
+      "chooseTimeSlot": "Choose Time Slot",
+      "paymentAndConfirm": "Payment & Confirm",
+      "booking": "Booking...",
+      "confirmAndPay": "Confirm & Pay"
     },
     "appointments": {
       "title": "Your Appointments",
