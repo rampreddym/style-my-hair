@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ interface Service {
 const StylistServices = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
@@ -53,7 +55,7 @@ const StylistServices = () => {
 
   const addService = async () => {
     if (!newService.name || newService.price <= 0) {
-      toast({ title: "Please fill in name and price", variant: "destructive" });
+      toast({ title: t("stylistServices.fillNamePrice"), variant: "destructive" });
       return;
     }
 
@@ -61,7 +63,7 @@ const StylistServices = () => {
       (s) => s.name.toLowerCase().trim() === newService.name.toLowerCase().trim()
     );
     if (isDuplicate) {
-      toast({ title: "Service already exists", description: "A service with this name has already been added", variant: "destructive" });
+      toast({ title: t("stylistServices.serviceExists"), description: t("stylistServices.serviceExistsDesc"), variant: "destructive" });
       return;
     }
 
@@ -84,9 +86,9 @@ const StylistServices = () => {
 
       setServices([...services, data]);
       setNewService({ name: "", description: "", duration_minutes: 30, price: 0 });
-      toast({ title: "Service added!" });
+      toast({ title: t("stylistServices.serviceAdded") });
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -96,19 +98,19 @@ const StylistServices = () => {
     try {
       await supabase.from("stylist_services").delete().eq("id", serviceId);
       setServices(services.filter((s) => s.id !== serviceId));
-      toast({ title: "Service deleted" });
+      toast({ title: t("stylistServices.serviceDeleted") });
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
     }
   };
 
   const suggestedServices = [
-    { name: "Haircut", duration: 45, price: 35 },
-    { name: "Color", duration: 120, price: 80 },
-    { name: "Highlights", duration: 150, price: 120 },
-    { name: "Blowout", duration: 30, price: 25 },
-    { name: "Beard Trim", duration: 15, price: 15 },
-    { name: "Deep Conditioning", duration: 30, price: 30 },
+    { name: t("stylistServices.suggested.haircut"), duration: 45, price: 35 },
+    { name: t("stylistServices.suggested.color"), duration: 120, price: 80 },
+    { name: t("stylistServices.suggested.highlights"), duration: 150, price: 120 },
+    { name: t("stylistServices.suggested.blowout"), duration: 30, price: 25 },
+    { name: t("stylistServices.suggested.beardTrim"), duration: 15, price: 15 },
+    { name: t("stylistServices.suggested.deepConditioning"), duration: 30, price: 30 },
   ];
 
   const addSuggestedService = (suggested: typeof suggestedServices[0]) => {
@@ -124,7 +126,7 @@ const StylistServices = () => {
     return (
       <StylistLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse text-muted-foreground">Loading services...</div>
+          <div className="animate-pulse text-muted-foreground">{t("stylistServices.loadingServices")}</div>
         </div>
       </StylistLayout>
     );
@@ -135,13 +137,13 @@ const StylistServices = () => {
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">Configure Your Services</h1>
-            <p className="text-sm text-muted-foreground">Set up the services you offer and their prices</p>
+            <h1 className="text-2xl font-bold text-foreground">{t("stylistServices.title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("stylistServices.subtitle")}</p>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Quick Add</CardTitle>
+              <CardTitle className="text-base">{t("stylist.services.quickAdd")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
@@ -164,23 +166,23 @@ const StylistServices = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Plus className="w-5 h-5" />
-                Add New Service
+                {t("stylist.services.addService")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Service Name</Label>
+                  <Label>{t("stylist.services.serviceName")}</Label>
                   <Input
                     value={newService.name}
                     onChange={(e) => setNewService({ ...newService, name: e.target.value })}
-                    placeholder="e.g., Haircut"
+                    placeholder={t("stylistServices.serviceNamePlaceholder")}
                     className="h-12"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1">
-                    <DollarSign className="w-4 h-4" /> Price
+                    <DollarSign className="w-4 h-4" /> {t("stylist.services.servicePrice")}
                   </Label>
                   <Input
                     type="number"
@@ -195,7 +197,7 @@ const StylistServices = () => {
 
               <div className="space-y-2">
                 <Label className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" /> Duration (minutes)
+                  <Clock className="w-4 h-4" /> {t("stylist.services.serviceDuration")}
                 </Label>
                 <Input
                   type="number"
@@ -207,29 +209,29 @@ const StylistServices = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Description (optional)</Label>
+                <Label>{t("stylistServices.descriptionOptional")}</Label>
                 <Textarea
                   value={newService.description}
                   onChange={(e) => setNewService({ ...newService, description: e.target.value })}
-                  placeholder="Describe what this service includes..."
+                  placeholder={t("stylistServices.descriptionPlaceholder")}
                   rows={2}
                 />
               </div>
 
               <Button onClick={addService} disabled={saving} className="w-full h-14">
-                {saving ? "Adding..." : "Add Service"}
+                {saving ? t("stylistServices.adding") : t("stylist.services.addService")}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Your Services ({services.length})</CardTitle>
+              <CardTitle className="text-base">{t("stylistServices.yourServices", { count: services.length })}</CardTitle>
             </CardHeader>
             <CardContent>
               {services.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
-                  No services added yet. Add your first service above!
+                  {t("stylist.services.noServices")}. {t("stylist.services.addFirst")}
                 </p>
               ) : (
                 <div className="space-y-3">

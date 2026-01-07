@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,7 @@ const STYLE_TYPES = ["Short", "Medium", "Long", "Color", "Braids", "Fades"];
 
 export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioStepProps) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [uploading, setUploading] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
 
@@ -37,7 +39,7 @@ export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioS
     const { error } = await supabase.storage.from("user-photos").upload(filePath, file);
 
     if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      toast({ title: t("onboardingSteps.uploadFailed"), description: error.message, variant: "destructive" });
       setUploading(false);
       return;
     }
@@ -46,7 +48,7 @@ export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioS
 
     setPortfolio([...portfolio, { image_url: urlData.publicUrl }]);
     setUploading(false);
-    toast({ title: "Photo added!" });
+    toast({ title: t("onboardingSteps.photoAdded") });
   };
 
   const removePhoto = (index: number) => {
@@ -70,16 +72,16 @@ export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioS
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Image className="w-5 h-5 text-accent" />
-            Your Portfolio
+            {t("onboardingSteps.yourPortfolio")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
             <p className="text-sm font-medium text-primary">
-              📸 Profiles with 5+ photos get 20% more bookings
+              📸 {t("onboardingSteps.portfolioBoost")}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Include different hair types and styles to attract more clients
+              {t("onboardingSteps.includeHairTypes")}
             </p>
           </div>
 
@@ -120,11 +122,11 @@ export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioS
             {portfolio.length < 9 && (
               <label className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex flex-col items-center justify-center cursor-pointer transition-colors">
                 {uploading ? (
-                  <div className="animate-pulse text-muted-foreground text-sm">Uploading...</div>
+                  <div className="animate-pulse text-muted-foreground text-sm">{t("onboardingSteps.uploading")}</div>
                 ) : (
                   <>
                     <Plus className="w-8 h-8 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground mt-1">Add Photo</span>
+                    <span className="text-xs text-muted-foreground mt-1">{t("stylist.onboarding.addPhoto")}</span>
                   </>
                 )}
                 <input
@@ -143,10 +145,10 @@ export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioS
           {/* Tags for selected photo */}
           {selectedPhoto !== null && portfolio[selectedPhoto] && (
             <div className="p-4 bg-muted/50 rounded-lg space-y-3">
-              <p className="text-sm font-medium">Tag this photo:</p>
+              <p className="text-sm font-medium">{t("onboardingSteps.tagPhoto")}</p>
 
               <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Hair Type</p>
+                <p className="text-xs text-muted-foreground">{t("onboardingSteps.hairType")}</p>
                 <div className="flex flex-wrap gap-2">
                   {HAIR_TYPES.map((type) => (
                     <Badge
@@ -162,7 +164,7 @@ export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioS
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Style Type</p>
+                <p className="text-xs text-muted-foreground">{t("onboardingSteps.styleType")}</p>
                 <div className="flex flex-wrap gap-2">
                   {STYLE_TYPES.map((type) => (
                     <Badge
@@ -180,7 +182,7 @@ export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioS
           )}
 
           <p className="text-sm text-muted-foreground text-center">
-            {portfolio.length} of 9 photos added
+            {t("onboardingSteps.photosCount", { count: portfolio.length, max: 9 })}
           </p>
         </CardContent>
       </Card>

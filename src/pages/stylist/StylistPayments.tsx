@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +11,7 @@ import { StylistLayout } from "@/components/layout/StylistLayout";
 const StylistPayments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [stylist, setStylist] = useState<any>(null);
   const [connecting, setConnecting] = useState(false);
@@ -39,8 +41,8 @@ const StylistPayments = () => {
     setConnecting(true);
     
     toast({
-      title: "Stripe Connect",
-      description: "In production, this would redirect to Stripe's onboarding flow",
+      title: t("stylistPayments.stripeConnect"),
+      description: t("stylistPayments.stripeConnectDesc"),
     });
 
     setTimeout(async () => {
@@ -54,7 +56,7 @@ const StylistPayments = () => {
 
       setStylist({ ...stylist, stripe_onboarded: true });
       setConnecting(false);
-      toast({ title: "Payment setup complete!" });
+      toast({ title: t("stylistPayments.setupComplete") });
     }, 2000);
   };
 
@@ -62,7 +64,7 @@ const StylistPayments = () => {
     return (
       <StylistLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse text-muted-foreground">Loading...</div>
+          <div className="animate-pulse text-muted-foreground">{t("common.loading")}</div>
         </div>
       </StylistLayout>
     );
@@ -73,18 +75,18 @@ const StylistPayments = () => {
       <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">Payment Setup</h1>
-            <p className="text-sm text-muted-foreground">Configure how you receive payments from clients</p>
+            <h1 className="text-2xl font-bold text-foreground">{t("stylist.payments.stripeSetup")}</h1>
+            <p className="text-sm text-muted-foreground">{t("stylistPayments.configurePayments")}</p>
           </div>
 
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <CreditCard className="w-5 h-5" />
-                Stripe Connect
+                {t("stylistPayments.stripeConnect")}
               </CardTitle>
               <CardDescription>
-                Securely receive payments directly to your bank account
+                {t("stylistPayments.securePayments")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -128,19 +130,19 @@ const StylistPayments = () => {
               )}
 
               <div className="border-t pt-4 space-y-3">
-                <h4 className="font-medium">How it works:</h4>
+                <h4 className="font-medium">{t("stylistPayments.howItWorks")}</h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs">1</span>
-                    Clients pay when they book an appointment
+                    {t("stylistPayments.step1")}
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs">2</span>
-                    Funds are held securely until service is complete
+                    {t("stylistPayments.step2")}
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs">3</span>
-                    Payments transfer to your bank within 2-3 days
+                    {t("stylistPayments.step3")}
                   </li>
                 </ul>
               </div>
@@ -151,7 +153,7 @@ const StylistPayments = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <TrendingUp className="w-5 h-5" />
-                Earnings Overview
+                {t("stylistPayments.earningsOverview")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -159,40 +161,40 @@ const StylistPayments = () => {
                 <div className="text-center p-3 bg-secondary/50 rounded-lg">
                   <DollarSign className="w-5 h-5 mx-auto text-muted-foreground mb-1" />
                   <p className="text-xl font-bold">$0</p>
-                  <p className="text-xs text-muted-foreground">This Week</p>
+                  <p className="text-xs text-muted-foreground">{t("stylistPayments.thisWeek")}</p>
                 </div>
                 <div className="text-center p-3 bg-secondary/50 rounded-lg">
                   <DollarSign className="w-5 h-5 mx-auto text-muted-foreground mb-1" />
                   <p className="text-xl font-bold">$0</p>
-                  <p className="text-xs text-muted-foreground">This Month</p>
+                  <p className="text-xs text-muted-foreground">{t("stylist.payments.thisMonth")}</p>
                 </div>
                 <div className="text-center p-3 bg-secondary/50 rounded-lg">
                   <DollarSign className="w-5 h-5 mx-auto text-muted-foreground mb-1" />
                   <p className="text-xl font-bold">$0</p>
-                  <p className="text-xs text-muted-foreground">All Time</p>
+                  <p className="text-xs text-muted-foreground">{t("stylistPayments.allTime")}</p>
                 </div>
               </div>
               <p className="text-center text-sm text-muted-foreground mt-4">
-                Earnings data will appear here once you start receiving payments
+                {t("stylistPayments.earningsDataAppear")}
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Pricing & Fees</CardTitle>
+              <CardTitle className="text-base">{t("stylistPayments.pricingFees")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Platform fee</span>
-                <span>2.9% + $0.30 per transaction</span>
+                <span className="text-muted-foreground">{t("stylist.payments.platformFee")}</span>
+                <span>{t("stylistPayments.platformFeeValue")}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Payout schedule</span>
-                <span>Daily (2-day rolling)</span>
+                <span className="text-muted-foreground">{t("stylist.payments.payoutSchedule")}</span>
+                <span>{t("stylistPayments.payoutScheduleValue")}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Minimum payout</span>
+                <span className="text-muted-foreground">{t("stylistPayments.minimumPayout")}</span>
                 <span>$1.00</span>
               </div>
             </CardContent>

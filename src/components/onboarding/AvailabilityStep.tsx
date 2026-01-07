@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,8 @@ const DAYS = [
 ];
 
 export const AvailabilityStep = ({ availability, setAvailability }: AvailabilityStepProps) => {
+  const { t } = useTranslation();
+  
   const updateDay = (dayIndex: number, field: keyof DayAvailability, value: any) => {
     const updated = availability.map((a) =>
       a.day === dayIndex ? { ...a, [field]: value } : a
@@ -60,12 +63,12 @@ export const AvailabilityStep = ({ availability, setAvailability }: Availability
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-accent" />
-            Weekly Availability
+            {t("onboardingSteps.weeklyAvailability")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Set your regular working hours. You can adjust these later.
+            {t("onboardingSteps.setWorkingHours")}
           </p>
 
           <div className="space-y-3">
@@ -77,35 +80,35 @@ export const AvailabilityStep = ({ availability, setAvailability }: Availability
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Switch
-                      checked={day.isAvailable}
-                      onCheckedChange={(checked) => updateDay(day.day, "isAvailable", checked)}
-                    />
-                    <Label className="font-medium">{day.dayName}</Label>
-                  </div>
-
-                  {day.isAvailable && (
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="time"
-                        value={day.startTime}
-                        onChange={(e) => updateDay(day.day, "startTime", e.target.value)}
-                        className="w-28"
+                    <div className="flex items-center gap-3">
+                      <Switch
+                        checked={day.isAvailable}
+                        onCheckedChange={(checked) => updateDay(day.day, "isAvailable", checked)}
                       />
-                      <span className="text-muted-foreground">to</span>
-                      <Input
-                        type="time"
-                        value={day.endTime}
-                        onChange={(e) => updateDay(day.day, "endTime", e.target.value)}
-                        className="w-28"
-                      />
+                      <Label className="font-medium">{t(`onboardingSteps.days.${day.dayName.toLowerCase()}`)}</Label>
                     </div>
-                  )}
 
-                  {!day.isAvailable && (
-                    <span className="text-sm text-muted-foreground">Closed</span>
-                  )}
+                    {day.isAvailable && (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="time"
+                          value={day.startTime}
+                          onChange={(e) => updateDay(day.day, "startTime", e.target.value)}
+                          className="w-28"
+                        />
+                        <span className="text-muted-foreground">{t("onboardingSteps.to")}</span>
+                        <Input
+                          type="time"
+                          value={day.endTime}
+                          onChange={(e) => updateDay(day.day, "endTime", e.target.value)}
+                          className="w-28"
+                        />
+                      </div>
+                    )}
+
+                    {!day.isAvailable && (
+                      <span className="text-sm text-muted-foreground">{t("onboardingSteps.closed")}</span>
+                    )}
                 </div>
               </div>
             ))}

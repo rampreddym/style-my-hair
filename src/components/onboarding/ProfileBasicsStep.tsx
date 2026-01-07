@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,12 +26,13 @@ export const ProfileBasicsStep = ({
   onPhotoUpload,
   location,
 }: ProfileBasicsStepProps) => {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       {/* Profile Photo */}
       <Card>
         <CardHeader>
-          <CardTitle>Profile Photo</CardTitle>
+          <CardTitle>{t("stylist.onboarding.profilePhoto")}</CardTitle>
         </CardHeader>
         <CardContent>
           <label className="block cursor-pointer mx-auto w-32">
@@ -42,7 +44,7 @@ export const ProfileBasicsStep = ({
               {photoUrl ? (
                 <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
               ) : uploadingPhoto ? (
-                <div className="animate-pulse text-muted-foreground text-sm">Uploading...</div>
+                <div className="animate-pulse text-muted-foreground text-sm">{t("onboardingSteps.uploading")}</div>
               ) : (
                 <Camera className="w-8 h-8 text-muted-foreground" />
               )}
@@ -58,7 +60,7 @@ export const ProfileBasicsStep = ({
             />
           </label>
           <p className="text-center text-sm text-muted-foreground mt-2">
-            Profiles with photos get 40% more bookings
+            {t("onboardingSteps.photoBoost")}
           </p>
         </CardContent>
       </Card>
@@ -68,33 +70,33 @@ export const ProfileBasicsStep = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MapPin className="w-5 h-5 text-accent" />
-            Basic Information
+            {t("onboardingSteps.basicInfo")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Name *</Label>
+              <Label htmlFor="name">{t("common.name")} *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Your name"
+                placeholder={t("onboardingSteps.yourName")}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="business_name">Business Name</Label>
+              <Label htmlFor="business_name">{t("stylist.onboarding.businessName")}</Label>
               <Input
                 id="business_name"
                 value={formData.business_name}
                 onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
-                placeholder="Salon or business name"
+                placeholder={t("onboardingSteps.salonName")}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">{t("common.phone")}</Label>
             <Input
               id="phone"
               value={formData.phone}
@@ -104,18 +106,18 @@ export const ProfileBasicsStep = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">{t("common.address")}</Label>
             <Input
               id="address"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              placeholder="Your salon or studio address"
+              placeholder={t("onboardingSteps.addressPlaceholder")}
             />
           </div>
 
           {location && (
             <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <MapPin className="w-4 h-4" /> Location detected for client matching
+              <MapPin className="w-4 h-4" /> {t("onboardingSteps.locationDetected")}
             </p>
           )}
         </CardContent>
