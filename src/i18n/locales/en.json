@@ -491,5 +491,85 @@
     "platformFee": "Platform fee (15%)",
     "processingFee": "Payment processing (2.9% + $0.30)",
     "youReceive": "You receive"
+  },
+  "appointmentConfirmation": {
+    "attendanceConfirmed": "Attendance confirmed!",
+    "seeYouSoon": "See You Soon!",
+    "stylistReady": "{{stylist}} is ready for you.",
+    "confirmTitle": "Confirm Your Appointment",
+    "appointmentIn": "Your appointment with {{stylist}} is in {{hours}} hours",
+    "rescheduleComingSoon": "Reschedule feature coming soon!",
+    "confirming": "Confirming..."
+  },
+  "postFeedback": {
+    "title": "How was your appointment?",
+    "withStylist": "with {{stylist}}",
+    "sentiments": {
+      "love": "Love it!",
+      "happy": "Happy",
+      "okay": "Okay",
+      "notGreat": "Not great",
+      "upset": "Upset"
+    },
+    "issues": {
+      "styleMismatch": "Style didn't match expectations",
+      "tookTooLong": "Took too long",
+      "communication": "Communication issues",
+      "unprofessional": "Unprofessional behavior",
+      "pricing": "Pricing issues",
+      "other": "Other"
+    },
+    "thankYou": "Thank you for your feedback!",
+    "gladGreatExperience": "We're glad you had a great experience.",
+    "sorryToHear": "We're sorry to hear that",
+    "teamWillReach": "Our team will reach out to make things right.",
+    "feedbackSubmitted": "Feedback submitted!",
+    "sorryNotGreat": "We're sorry you didn't have a great experience.",
+    "letUsKnow": "Please let us know what went wrong so we can make it right.",
+    "whatWasIssue": "What was the issue?",
+    "tellUsMore": "Tell us more (optional)",
+    "describePlaceholder": "Describe what happened...",
+    "makeItRight": "We'd like to make this right",
+    "makeItRightDesc": "Based on your feedback, we may offer a free touch-up or partial refund. Our team will contact you within 24 hours.",
+    "happyYouLovedIt": "We're so happy you loved it!",
+    "considerReview": "Consider leaving a detailed review to help others find great stylists.",
+    "shareWhatYouLoved": "Share what you loved (optional)",
+    "whatMadeGreatPlaceholder": "What made your experience great?",
+    "submitting": "Submitting...",
+    "submit": "Submit Feedback"
+  },
+  "enhancedReview": {
+    "title": "How was your {{service}} with {{stylist}}?",
+    "tapToRate": "Tap to rate",
+    "ratings": {
+      "amazing": "Amazing!",
+      "great": "Great!",
+      "good": "Good",
+      "fair": "Fair",
+      "poor": "Poor"
+    },
+    "rateAspects": "Rate specific aspects",
+    "aspects": {
+      "technique": "Technique",
+      "techniqueDesc": "Technical skill and precision",
+      "communication": "Communication",
+      "communicationDesc": "How well they listened",
+      "cleanliness": "Cleanliness",
+      "cleanlinessDesc": "Studio/workspace cleanliness",
+      "value": "Value",
+      "valueDesc": "Quality for the price"
+    },
+    "addPhotos": "Add before/after photos",
+    "before": "Before",
+    "after": "After",
+    "whatLikedMost": "What did you like most?",
+    "likedMostPlaceholder": "e.g., Perfect fade, very clean lines, listened to my preferences...",
+    "wouldRecommend": "Would you recommend?",
+    "wouldRebook": "Would you rebook?",
+    "anythingElse": "Anything else to add?",
+    "anythingElsePlaceholder": "Share your experience... (optional)",
+    "skipForNow": "Skip for now",
+    "submitting": "Submitting...",
+    "submit": "Submit Review"
   }
 }
