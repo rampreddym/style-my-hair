@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Trash2, DollarSign, Clock } from "lucide-react";
 import { StylistLayout } from "@/components/layout/StylistLayout";
 
@@ -23,9 +24,11 @@ const StylistServices = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
+  const [stylistId, setStylistId] = useState<string | null>(null);
   const [newService, setNewService] = useState<Service>({
     name: "",
     description: "",
@@ -33,17 +36,42 @@ const StylistServices = () => {
     price: 0,
   });
 
-  const stylistId = sessionStorage.getItem("stylistId");
+  // Fetch stylist ID from auth
+  useEffect(() => {
+    const fetchStylistId = async () => {
+      if (!user) return;
+      
+      const { data: stylistData } = await supabase
+        .from("stylists")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (stylistData) {
+        setStylistId(stylistData.id);
+      } else {
+        navigate("/stylist");
+      }
+    };
+    
+    if (!authLoading) {
+      if (!user) {
+        navigate("/auth");
+      } else {
+        fetchStylistId();
+      }
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    if (!stylistId) {
-      navigate("/stylist");
-      return;
+    if (stylistId) {
+      fetchServices();
     }
-    fetchServices();
   }, [stylistId]);
 
   const fetchServices = async () => {
+    if (!stylistId) return;
+    
     const { data } = await supabase
       .from("stylist_services")
       .select("*")
@@ -54,6 +82,8 @@ const StylistServices = () => {
   };
 
   const addService = async () => {
+    if (!stylistId) return;
+    
     if (!newService.name || newService.price <= 0) {
       toast({ title: t("stylistServices.fillNamePrice"), variant: "destructive" });
       return;
@@ -122,7 +152,7 @@ const StylistServices = () => {
     });
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <StylistLayout>
         <div className="min-h-screen flex items-center justify-center">

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { Clock, ArrowLeft, Image, Star, MapPin } from "lucide-react";
 import { PriceBreakdown } from "@/components/booking/PriceBreakdown";
 import { BookingConfirmation } from "@/components/booking/BookingConfirmation";
@@ -21,6 +22,7 @@ const CustomerBookingDetails = () => {
   const { stylistId } = useParams();
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
   
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
@@ -36,22 +38,48 @@ const CustomerBookingDetails = () => {
   const [portfolioPhotos, setPortfolioPhotos] = useState<any[]>([]);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+  const [customerId, setCustomerId] = useState<string | null>(null);
 
-  const customerId = sessionStorage.getItem("customerId");
+  // Fetch customer ID from auth
+  useEffect(() => {
+    const fetchCustomerId = async () => {
+      if (!user) return;
+      
+      const { data: customerData } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (customerData) {
+        setCustomerId(customerData.id);
+      } else {
+        navigate("/customer");
+      }
+    };
+    
+    if (!authLoading) {
+      if (!user) {
+        navigate("/auth");
+      } else {
+        fetchCustomerId();
+      }
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    if (!customerId) {
-      navigate("/customer");
-      return;
-    }
     if (!stylistId) {
       navigate("/customer/booking");
       return;
     }
-    fetchData();
+    if (customerId) {
+      fetchData();
+    }
   }, [customerId, stylistId]);
 
   const fetchData = async () => {
+    if (!customerId) return;
+    
     setLoading(true);
 
     // Fetch selected style
@@ -104,7 +132,7 @@ const CustomerBookingDetails = () => {
   };
 
   const handleBooking = async () => {
-    if (!selectedService || !appointmentDate || !appointmentTime) {
+    if (!selectedService || !appointmentDate || !appointmentTime || !customerId) {
       toast({ title: t('customer.bookingDetails.completeAllFields'), variant: "destructive" });
       return;
     }
@@ -146,7 +174,7 @@ const CustomerBookingDetails = () => {
     }
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <CustomerLayout>
         <div className="min-h-screen bg-background p-4">

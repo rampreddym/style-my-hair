@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { DistanceSlider } from "@/components/booking/DistanceSlider";
 import { EnhancedStylistCard } from "@/components/stylist/EnhancedStylistCard";
@@ -13,22 +14,49 @@ const CustomerBooking = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stylists, setStylists] = useState<any[]>([]);
   const [selectedStyle, setSelectedStyle] = useState<any>(null);
   const [maxDistance, setMaxDistance] = useState(50);
+  const [customerId, setCustomerId] = useState<string | null>(null);
 
-  const customerId = sessionStorage.getItem("customerId");
+  // Fetch customer ID from auth
+  useEffect(() => {
+    const fetchCustomerId = async () => {
+      if (!user) return;
+      
+      const { data: customerData } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (customerData) {
+        setCustomerId(customerData.id);
+      } else {
+        navigate("/customer");
+      }
+    };
+    
+    if (!authLoading) {
+      if (!user) {
+        navigate("/auth");
+      } else {
+        fetchCustomerId();
+      }
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    if (!customerId) {
-      navigate("/customer");
-      return;
+    if (customerId) {
+      fetchData();
     }
-    fetchData();
   }, [customerId]);
 
   const fetchData = async () => {
+    if (!customerId) return;
+    
     setLoading(true);
 
     // Fetch selected style
@@ -90,7 +118,7 @@ const CustomerBooking = () => {
     s.distance === null || s.distance === undefined || s.distance <= maxDistance
   );
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <CustomerLayout>
         <div className="min-h-screen bg-background p-4">
