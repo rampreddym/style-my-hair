@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { CreditCard, ExternalLink, Check, AlertCircle, DollarSign, TrendingUp } from "lucide-react";
 import { StylistLayout } from "@/components/layout/StylistLayout";
 
@@ -12,32 +13,44 @@ const StylistPayments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stylist, setStylist] = useState<any>(null);
+  const [stylistId, setStylistId] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
 
-  const stylistId = sessionStorage.getItem("stylistId");
-
+  // Fetch stylist ID from auth
   useEffect(() => {
-    if (!stylistId) {
-      navigate("/stylist");
-      return;
+    const fetchStylistId = async () => {
+      if (!user) return;
+      
+      const { data: stylistData } = await supabase
+        .from("stylists")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (stylistData) {
+        setStylistId(stylistData.id);
+        setStylist(stylistData);
+        setLoading(false);
+      } else {
+        navigate("/stylist");
+      }
+    };
+    
+    if (!authLoading) {
+      if (!user) {
+        navigate("/auth");
+      } else {
+        fetchStylistId();
+      }
     }
-    fetchStylist();
-  }, [stylistId]);
-
-  const fetchStylist = async () => {
-    const { data } = await supabase
-      .from("stylists")
-      .select("*")
-      .eq("id", stylistId)
-      .single();
-
-    if (data) setStylist(data);
-    setLoading(false);
-  };
+  }, [user, authLoading, navigate]);
 
   const connectStripe = async () => {
+    if (!stylistId) return;
+    
     setConnecting(true);
     
     toast({
@@ -60,7 +73,7 @@ const StylistPayments = () => {
     }, 2000);
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <StylistLayout>
         <div className="min-h-screen flex items-center justify-center">

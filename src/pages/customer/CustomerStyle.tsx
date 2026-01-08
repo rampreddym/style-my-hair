@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { RefreshCw, ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2 } from "lucide-react";
 import { AIPreviewGenerator } from "@/components/ai/AIPreviewGenerator";
 import { SkeletonLoader } from "@/components/ui/skeleton-loader";
@@ -14,10 +15,12 @@ import { CustomerLayout } from "@/components/layout/CustomerLayout";
 const CustomerStyle = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [customer, setCustomer] = useState<any>(null);
+  const [customerId, setCustomerId] = useState<string | null>(null);
   const [hairStyles, setHairStyles] = useState<any[]>([]);
   const [photos, setPhotos] = useState<any[]>([]);
   const [generatedImages, setGeneratedImages] = useState<any[]>([]);
@@ -26,17 +29,42 @@ const CustomerStyle = () => {
   const [stylePrompt, setStylePrompt] = useState("");
   const [selectedStyle, setSelectedStyle] = useState("");
 
-  const customerId = sessionStorage.getItem("customerId");
+  // Fetch customer ID from auth
+  useEffect(() => {
+    const fetchCustomerId = async () => {
+      if (!user) return;
+      
+      const { data: customerData } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
+      if (customerData) {
+        setCustomerId(customerData.id);
+      } else {
+        navigate("/customer");
+      }
+    };
+    
+    if (!authLoading) {
+      if (!user) {
+        navigate("/auth");
+      } else {
+        fetchCustomerId();
+      }
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    if (!customerId) {
-      navigate("/customer");
-      return;
+    if (customerId) {
+      fetchCustomerData();
     }
-    fetchCustomerData();
   }, [customerId]);
 
   const fetchCustomerData = async () => {
+    if (!customerId) return;
+    
     setLoading(true);
     
     const { data: customerData } = await supabase
@@ -176,7 +204,7 @@ const CustomerStyle = () => {
     navigate("/customer/booking");
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <CustomerLayout>
         <div className="min-h-screen bg-background p-4">
