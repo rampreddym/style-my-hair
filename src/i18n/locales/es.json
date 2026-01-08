@@ -491,5 +491,85 @@
     "platformFee": "Comisión de plataforma (15%)",
     "processingFee": "Procesamiento de pago (2.9% + $0.30)",
     "youReceive": "Tú recibes"
+  },
+  "appointmentConfirmation": {
+    "attendanceConfirmed": "¡Asistencia confirmada!",
+    "seeYouSoon": "¡Nos Vemos Pronto!",
+    "stylistReady": "{{stylist}} está listo/a para ti.",
+    "confirmTitle": "Confirma Tu Cita",
+    "appointmentIn": "Tu cita con {{stylist}} es en {{hours}} horas",
+    "rescheduleComingSoon": "¡La función de reprogramación estará disponible pronto!",
+    "confirming": "Confirmando..."
+  },
+  "postFeedback": {
+    "title": "¿Cómo fue tu cita?",
+    "withStylist": "con {{stylist}}",
+    "sentiments": {
+      "love": "¡Me encanta!",
+      "happy": "Feliz",
+      "okay": "Regular",
+      "notGreat": "No muy bien",
+      "upset": "Molesto/a"
+    },
+    "issues": {
+      "styleMismatch": "El estilo no coincidió con las expectativas",
+      "tookTooLong": "Tardó demasiado",
+      "communication": "Problemas de comunicación",
+      "unprofessional": "Comportamiento no profesional",
+      "pricing": "Problemas de precio",
+      "other": "Otro"
+    },
+    "thankYou": "¡Gracias por tus comentarios!",
+    "gladGreatExperience": "Nos alegra que hayas tenido una gran experiencia.",
+    "sorryToHear": "Lamentamos escuchar eso",
+    "teamWillReach": "Nuestro equipo se comunicará contigo para resolver el problema.",
+    "feedbackSubmitted": "¡Comentarios enviados!",
+    "sorryNotGreat": "Lamentamos que no hayas tenido una buena experiencia.",
+    "letUsKnow": "Por favor cuéntanos qué salió mal para que podamos solucionarlo.",
+    "whatWasIssue": "¿Cuál fue el problema?",
+    "tellUsMore": "Cuéntanos más (opcional)",
+    "describePlaceholder": "Describe lo que pasó...",
+    "makeItRight": "Nos gustaría solucionarlo",
+    "makeItRightDesc": "Según tus comentarios, podemos ofrecer un retoque gratuito o reembolso parcial. Nuestro equipo te contactará en 24 horas.",
+    "happyYouLovedIt": "¡Nos alegra mucho que te haya encantado!",
+    "considerReview": "Considera dejar una reseña detallada para ayudar a otros a encontrar grandes estilistas.",
+    "shareWhatYouLoved": "Comparte lo que te gustó (opcional)",
+    "whatMadeGreatPlaceholder": "¿Qué hizo que tu experiencia fuera genial?",
+    "submitting": "Enviando...",
+    "submit": "Enviar Comentarios"
+  },
+  "enhancedReview": {
+    "title": "¿Cómo fue tu {{service}} con {{stylist}}?",
+    "tapToRate": "Toca para calificar",
+    "ratings": {
+      "amazing": "¡Increíble!",
+      "great": "¡Genial!",
+      "good": "Bueno",
+      "fair": "Regular",
+      "poor": "Malo"
+    },
+    "rateAspects": "Califica aspectos específicos",
+    "aspects": {
+      "technique": "Técnica",
+      "techniqueDesc": "Habilidad técnica y precisión",
+      "communication": "Comunicación",
+      "communicationDesc": "Qué tan bien escucharon",
+      "cleanliness": "Limpieza",
+      "cleanlinessDesc": "Limpieza del estudio/espacio de trabajo",
+      "value": "Valor",
+      "valueDesc": "Calidad por el precio"
+    },
+    "addPhotos": "Agregar fotos antes/después",
+    "before": "Antes",
+    "after": "Después",
+    "whatLikedMost": "¿Qué te gustó más?",
+    "likedMostPlaceholder": "ej., Degradado perfecto, líneas muy limpias, escucharon mis preferencias...",
+    "wouldRecommend": "¿Lo recomendarías?",
+    "wouldRebook": "¿Reservarías de nuevo?",
+    "anythingElse": "¿Algo más que agregar?",
+    "anythingElsePlaceholder": "Comparte tu experiencia... (opcional)",
+    "skipForNow": "Omitir por ahora",
+    "submitting": "Enviando...",
+    "submit": "Enviar Reseña"
   }
 }

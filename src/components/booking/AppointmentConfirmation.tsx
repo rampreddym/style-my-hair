@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Clock, MapPin, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface AppointmentConfirmationProps {
   appointmentId: string;
@@ -21,6 +22,7 @@ export const AppointmentConfirmation = ({
   stylistAddress,
   onConfirm,
 }: AppointmentConfirmationProps) => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [confirming, setConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
@@ -39,7 +41,7 @@ export const AppointmentConfirmation = ({
       if (error) throw error;
 
       setConfirmed(true);
-      toast({ title: "Attendance confirmed!" });
+      toast({ title: t("appointmentConfirmation.attendanceConfirmed") });
       onConfirm();
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -64,9 +66,9 @@ export const AppointmentConfirmation = ({
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-green-700">See You Soon!</h3>
+              <h3 className="text-lg font-semibold text-green-700">{t("appointmentConfirmation.seeYouSoon")}</h3>
               <p className="text-muted-foreground text-sm">
-                {stylistName} is ready for you.
+                {t("appointmentConfirmation.stylistReady", { stylist: stylistName })}
               </p>
             </div>
           </>
@@ -76,9 +78,9 @@ export const AppointmentConfirmation = ({
               <Calendar className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Confirm Your Appointment</h3>
+              <h3 className="text-lg font-semibold">{t("appointmentConfirmation.confirmTitle")}</h3>
               <p className="text-muted-foreground text-sm">
-                Your appointment with {stylistName} is in {hoursUntil} hours
+                {t("appointmentConfirmation.appointmentIn", { stylist: stylistName, hours: hoursUntil })}
               </p>
             </div>
 
@@ -103,18 +105,17 @@ export const AppointmentConfirmation = ({
                 variant="outline"
                 className="flex-1"
                 onClick={() => {
-                  // Handle reschedule
-                  toast({ title: "Reschedule feature coming soon!" });
+                  toast({ title: t("appointmentConfirmation.rescheduleComingSoon") });
                 }}
               >
-                Reschedule
+                {t("customer.appointments.reschedule")}
               </Button>
               <Button
                 onClick={confirmAttendance}
                 disabled={confirming}
                 className="flex-1 bg-gradient-to-r from-accent to-primary"
               >
-                {confirming ? "Confirming..." : "Yes, I'm Coming!"}
+                {confirming ? t("appointmentConfirmation.confirming") : t("customer.appointments.confirmAttendance")}
               </Button>
             </div>
           </>

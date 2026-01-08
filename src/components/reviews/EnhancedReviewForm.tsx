@@ -7,6 +7,7 @@ import {
   Check, X, ChevronDown, ChevronUp 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface EnhancedReviewFormProps {
   appointmentId: string;
@@ -34,11 +35,11 @@ export interface ReviewData {
   comment: string;
 }
 
-const aspectLabels: Record<string, { label: string; description: string }> = {
-  technique: { label: "Technique", description: "Technical skill and precision" },
-  communication: { label: "Communication", description: "How well they listened" },
-  cleanliness: { label: "Cleanliness", description: "Studio/workspace cleanliness" },
-  value: { label: "Value", description: "Quality for the price" },
+const aspectLabelKeys: Record<string, { labelKey: string; descriptionKey: string }> = {
+  technique: { labelKey: "enhancedReview.aspects.technique", descriptionKey: "enhancedReview.aspects.techniqueDesc" },
+  communication: { labelKey: "enhancedReview.aspects.communication", descriptionKey: "enhancedReview.aspects.communicationDesc" },
+  cleanliness: { labelKey: "enhancedReview.aspects.cleanliness", descriptionKey: "enhancedReview.aspects.cleanlinessDesc" },
+  value: { labelKey: "enhancedReview.aspects.value", descriptionKey: "enhancedReview.aspects.valueDesc" },
 };
 
 export const EnhancedReviewForm = ({
@@ -48,6 +49,7 @@ export const EnhancedReviewForm = ({
   onSubmit,
   onSkip,
 }: EnhancedReviewFormProps) => {
+  const { t } = useTranslation();
   const [overallRating, setOverallRating] = useState(0);
   const [aspectRatings, setAspectRatings] = useState({
     technique: 0,
@@ -140,22 +142,22 @@ export const EnhancedReviewForm = ({
     <Card className="border-2">
       <CardHeader>
         <CardTitle className="text-center">
-          How was your {serviceName} with {stylistName}?
+          {t("enhancedReview.title", { service: serviceName, stylist: stylistName })}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Overall Rating */}
         <div className="text-center space-y-3">
-          <p className="text-muted-foreground">Tap to rate</p>
+          <p className="text-muted-foreground">{t("enhancedReview.tapToRate")}</p>
           <div className="flex justify-center">
             <StarRating rating={overallRating} onRate={setOverallRating} size="lg" />
           </div>
           {overallRating > 0 && (
             <p className="text-lg font-medium text-primary">
-              {overallRating === 5 ? "Amazing!" :
-               overallRating === 4 ? "Great!" :
-               overallRating === 3 ? "Good" :
-               overallRating === 2 ? "Fair" : "Poor"}
+              {overallRating === 5 ? t("enhancedReview.ratings.amazing") :
+               overallRating === 4 ? t("enhancedReview.ratings.great") :
+               overallRating === 3 ? t("enhancedReview.ratings.good") :
+               overallRating === 2 ? t("enhancedReview.ratings.fair") : t("enhancedReview.ratings.poor")}
             </p>
           )}
         </div>
@@ -168,17 +170,17 @@ export const EnhancedReviewForm = ({
               onClick={() => setShowAspects(!showAspects)}
               className="w-full p-3 flex items-center justify-between bg-muted/30 hover:bg-muted/50 transition-colors"
             >
-              <span className="font-medium">Rate specific aspects</span>
+              <span className="font-medium">{t("enhancedReview.rateAspects")}</span>
               {showAspects ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
             
             {showAspects && (
               <div className="p-4 space-y-4">
-                {Object.entries(aspectLabels).map(([key, { label, description }]) => (
+                {Object.entries(aspectLabelKeys).map(([key, { labelKey, descriptionKey }]) => (
                   <div key={key} className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-sm">{label}</p>
-                      <p className="text-xs text-muted-foreground">{description}</p>
+                      <p className="font-medium text-sm">{t(labelKey)}</p>
+                      <p className="text-xs text-muted-foreground">{t(descriptionKey)}</p>
                     </div>
                     <StarRating 
                       rating={aspectRatings[key as keyof typeof aspectRatings]} 
@@ -195,25 +197,25 @@ export const EnhancedReviewForm = ({
         {/* Before/After Photos */}
         {overallRating > 0 && (
           <div className="space-y-3">
-            <p className="font-medium">Add before/after photos</p>
+            <p className="font-medium">{t("enhancedReview.addPhotos")}</p>
             <div className="flex gap-3">
               {/* Before photos */}
               {beforePhotos.length > 0 && (
                 <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground text-center">Before</p>
+                  <p className="text-xs text-muted-foreground text-center">{t("enhancedReview.before")}</p>
                   <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-muted">
-                    <img src={beforePhotos[0]} alt="Before" className="w-full h-full object-cover" />
+                    <img src={beforePhotos[0]} alt={t("enhancedReview.before")} className="w-full h-full object-cover" />
                   </div>
                 </div>
               )}
 
               {/* After photos */}
               <div className="space-y-1">
-                <p className="text-xs text-muted-foreground text-center">After</p>
+                <p className="text-xs text-muted-foreground text-center">{t("enhancedReview.after")}</p>
                 <div className="flex gap-2">
                   {afterPhotos.map((photo, i) => (
                     <div key={i} className="w-20 h-20 rounded-lg overflow-hidden border-2 border-primary relative">
-                      <img src={photo} alt="After" className="w-full h-full object-cover" />
+                      <img src={photo} alt={t("enhancedReview.after")} className="w-full h-full object-cover" />
                       <button
                         onClick={() => setAfterPhotos(prev => prev.filter((_, idx) => idx !== i))}
                         className="absolute top-1 right-1 w-5 h-5 bg-destructive rounded-full flex items-center justify-center"
@@ -226,7 +228,7 @@ export const EnhancedReviewForm = ({
                   {afterPhotos.length < 4 && (
                     <label className="w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/30 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
                       <Camera className="w-5 h-5 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground mt-1">Add</span>
+                      <span className="text-xs text-muted-foreground mt-1">{t("common.add")}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -246,18 +248,18 @@ export const EnhancedReviewForm = ({
         {overallRating > 0 && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <p className="font-medium">What did you like most?</p>
+              <p className="font-medium">{t("enhancedReview.whatLikedMost")}</p>
               <Textarea
                 value={likedMost}
                 onChange={(e) => setLikedMost(e.target.value)}
-                placeholder="e.g., Perfect fade, very clean lines, listened to my preferences..."
+                placeholder={t("enhancedReview.likedMostPlaceholder")}
                 className="min-h-[80px] border-2"
               />
             </div>
 
             <div className="flex gap-4">
               <div className="flex-1 space-y-2">
-                <p className="text-sm font-medium">Would you recommend?</p>
+                <p className="text-sm font-medium">{t("enhancedReview.wouldRecommend")}</p>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -267,7 +269,7 @@ export const EnhancedReviewForm = ({
                     className="flex-1"
                   >
                     <ThumbsUp className="w-4 h-4 mr-1" />
-                    Yes
+                    {t("common.yes")}
                   </Button>
                   <Button
                     type="button"
@@ -276,13 +278,13 @@ export const EnhancedReviewForm = ({
                     onClick={() => setWouldRecommend(false)}
                     className="flex-1"
                   >
-                    No
+                    {t("common.no")}
                   </Button>
                 </div>
               </div>
 
               <div className="flex-1 space-y-2">
-                <p className="text-sm font-medium">Would you rebook?</p>
+                <p className="text-sm font-medium">{t("enhancedReview.wouldRebook")}</p>
                 <div className="flex gap-2">
                   <Button
                     type="button"
@@ -292,7 +294,7 @@ export const EnhancedReviewForm = ({
                     className="flex-1"
                   >
                     <Check className="w-4 h-4 mr-1" />
-                    Yes
+                    {t("common.yes")}
                   </Button>
                   <Button
                     type="button"
@@ -301,7 +303,7 @@ export const EnhancedReviewForm = ({
                     onClick={() => setWouldRebook(false)}
                     className="flex-1"
                   >
-                    No
+                    {t("common.no")}
                   </Button>
                 </div>
               </div>
@@ -312,11 +314,11 @@ export const EnhancedReviewForm = ({
         {/* Additional comment */}
         {overallRating > 0 && (
           <div className="space-y-2">
-            <p className="font-medium">Anything else to add?</p>
+            <p className="font-medium">{t("enhancedReview.anythingElse")}</p>
             <Textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Share your experience... (optional)"
+              placeholder={t("enhancedReview.anythingElsePlaceholder")}
               className="min-h-[60px] border-2"
             />
           </div>
@@ -331,7 +333,7 @@ export const EnhancedReviewForm = ({
               onClick={onSkip}
               className="flex-1"
             >
-              Skip for now
+              {t("enhancedReview.skipForNow")}
             </Button>
           )}
           <Button
@@ -339,7 +341,7 @@ export const EnhancedReviewForm = ({
             disabled={overallRating === 0 || submitting}
             className="flex-1 bg-primary hover:bg-primary/90"
           >
-            {submitting ? "Submitting..." : "Submit Review"}
+            {submitting ? t("enhancedReview.submitting") : t("enhancedReview.submit")}
           </Button>
         </div>
       </CardContent>

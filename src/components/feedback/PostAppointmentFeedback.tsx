@@ -6,30 +6,31 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Heart, Smile, Meh, Frown, Angry, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface FeedbackOption {
   emoji: string;
   icon: React.ReactNode;
-  label: string;
+  labelKey: string;
   sentiment: "love" | "happy" | "okay" | "not_great" | "upset";
   color: string;
 }
 
 const FEEDBACK_OPTIONS: FeedbackOption[] = [
-  { emoji: "😍", icon: <Heart className="w-8 h-8" />, label: "Love it!", sentiment: "love", color: "text-pink-500" },
-  { emoji: "😊", icon: <Smile className="w-8 h-8" />, label: "Happy", sentiment: "happy", color: "text-green-500" },
-  { emoji: "😐", icon: <Meh className="w-8 h-8" />, label: "Okay", sentiment: "okay", color: "text-yellow-500" },
-  { emoji: "😕", icon: <Frown className="w-8 h-8" />, label: "Not great", sentiment: "not_great", color: "text-orange-500" },
-  { emoji: "😠", icon: <Angry className="w-8 h-8" />, label: "Upset", sentiment: "upset", color: "text-red-500" },
+  { emoji: "😍", icon: <Heart className="w-8 h-8" />, labelKey: "postFeedback.sentiments.love", sentiment: "love", color: "text-pink-500" },
+  { emoji: "😊", icon: <Smile className="w-8 h-8" />, labelKey: "postFeedback.sentiments.happy", sentiment: "happy", color: "text-green-500" },
+  { emoji: "😐", icon: <Meh className="w-8 h-8" />, labelKey: "postFeedback.sentiments.okay", sentiment: "okay", color: "text-yellow-500" },
+  { emoji: "😕", icon: <Frown className="w-8 h-8" />, labelKey: "postFeedback.sentiments.notGreat", sentiment: "not_great", color: "text-orange-500" },
+  { emoji: "😠", icon: <Angry className="w-8 h-8" />, labelKey: "postFeedback.sentiments.upset", sentiment: "upset", color: "text-red-500" },
 ];
 
-const ISSUE_TYPES = [
-  "Style didn't match expectations",
-  "Took too long",
-  "Communication issues",
-  "Unprofessional behavior",
-  "Pricing issues",
-  "Other",
+const ISSUE_TYPE_KEYS = [
+  "postFeedback.issues.styleMismatch",
+  "postFeedback.issues.tookTooLong",
+  "postFeedback.issues.communication",
+  "postFeedback.issues.unprofessional",
+  "postFeedback.issues.pricing",
+  "postFeedback.issues.other",
 ];
 
 interface PostAppointmentFeedbackProps {
@@ -45,6 +46,7 @@ export const PostAppointmentFeedback = ({
   stylistName,
   onComplete,
 }: PostAppointmentFeedbackProps) => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [selectedSentiment, setSelectedSentiment] = useState<FeedbackOption | null>(null);
   const [issueType, setIssueType] = useState<string | null>(null);
@@ -82,16 +84,16 @@ export const PostAppointmentFeedback = ({
 
       if (selectedSentiment.sentiment === "love" || selectedSentiment.sentiment === "happy") {
         toast({
-          title: "Thank you for your feedback!",
-          description: "We're glad you had a great experience.",
+          title: t("postFeedback.thankYou"),
+          description: t("postFeedback.gladGreatExperience"),
         });
       } else if (selectedSentiment.sentiment === "not_great" || selectedSentiment.sentiment === "upset") {
         toast({
-          title: "We're sorry to hear that",
-          description: "Our team will reach out to make things right.",
+          title: t("postFeedback.sorryToHear"),
+          description: t("postFeedback.teamWillReach"),
         });
       } else {
-        toast({ title: "Feedback submitted!" });
+        toast({ title: t("postFeedback.feedbackSubmitted") });
       }
 
       onComplete();
@@ -105,9 +107,9 @@ export const PostAppointmentFeedback = ({
   return (
     <Card className="max-w-md mx-auto">
       <CardHeader className="text-center">
-        <CardTitle>How was your appointment?</CardTitle>
+        <CardTitle>{t("postFeedback.title")}</CardTitle>
         <p className="text-muted-foreground text-sm">
-          With {stylistName}
+          {t("postFeedback.withStylist", { stylist: stylistName })}
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -125,7 +127,7 @@ export const PostAppointmentFeedback = ({
               )}
             >
               <span className="text-3xl">{option.emoji}</span>
-              <span className="text-xs text-muted-foreground">{option.label}</span>
+              <span className="text-xs text-muted-foreground">{t(option.labelKey)}</span>
             </button>
           ))}
         </div>
@@ -135,46 +137,45 @@ export const PostAppointmentFeedback = ({
           <div className="space-y-4 animate-in slide-in-from-top-4">
             <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
               <p className="text-sm font-medium text-destructive">
-                We're sorry you didn't have a great experience.
+                {t("postFeedback.sorryNotGreat")}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Please let us know what went wrong so we can make it right.
+                {t("postFeedback.letUsKnow")}
               </p>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium">What was the issue?</p>
+              <p className="text-sm font-medium">{t("postFeedback.whatWasIssue")}</p>
               <div className="flex flex-wrap gap-2">
-                {ISSUE_TYPES.map((issue) => (
+                {ISSUE_TYPE_KEYS.map((issueKey) => (
                   <Button
-                    key={issue}
-                    variant={issueType === issue ? "default" : "outline"}
+                    key={issueKey}
+                    variant={issueType === issueKey ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setIssueType(issue)}
+                    onClick={() => setIssueType(issueKey)}
                   >
-                    {issue}
+                    {t(issueKey)}
                   </Button>
                 ))}
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium">Tell us more (optional)</p>
+              <p className="text-sm font-medium">{t("postFeedback.tellUsMore")}</p>
               <Textarea
                 value={feedbackText}
                 onChange={(e) => setFeedbackText(e.target.value)}
-                placeholder="Describe what happened..."
+                placeholder={t("postFeedback.describePlaceholder")}
                 rows={3}
               />
             </div>
 
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
               <p className="text-sm font-medium text-primary">
-                🎁 We'd like to make this right
+                🎁 {t("postFeedback.makeItRight")}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Based on your feedback, we may offer a free touch-up or partial refund.
-                Our team will contact you within 24 hours.
+                {t("postFeedback.makeItRightDesc")}
               </p>
             </div>
           </div>
@@ -185,19 +186,19 @@ export const PostAppointmentFeedback = ({
           <div className="space-y-4 animate-in slide-in-from-top-4">
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
               <p className="text-sm font-medium text-green-700">
-                We're so happy you loved it!
+                {t("postFeedback.happyYouLovedIt")}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Consider leaving a detailed review to help others find great stylists.
+                {t("postFeedback.considerReview")}
               </p>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium">Share what you loved (optional)</p>
+              <p className="text-sm font-medium">{t("postFeedback.shareWhatYouLoved")}</p>
               <Textarea
                 value={feedbackText}
                 onChange={(e) => setFeedbackText(e.target.value)}
-                placeholder="What made your experience great?"
+                placeholder={t("postFeedback.whatMadeGreatPlaceholder")}
                 rows={2}
               />
             </div>
@@ -211,7 +212,7 @@ export const PostAppointmentFeedback = ({
             disabled={submitting || (showFollowUp && !issueType)}
             className="w-full"
           >
-            {submitting ? "Submitting..." : "Submit Feedback"}
+            {submitting ? t("postFeedback.submitting") : t("postFeedback.submit")}
           </Button>
         )}
       </CardContent>
