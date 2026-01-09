@@ -29,15 +29,36 @@ const StylistAppointments = () => {
   const [customerHistory, setCustomerHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [showChat, setShowChat] = useState<string | null>(null);
+  const [stylistId, setStylistId] = useState<string | null>(null);
 
-  const stylistId = sessionStorage.getItem("stylistId");
+  // Fetch stylist ID from database using authenticated user
+  useEffect(() => {
+    const fetchStylistId = async () => {
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+
+      const { data: stylistData } = await supabase
+        .from("stylists")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (stylistData) {
+        setStylistId(stylistData.id);
+      } else {
+        navigate("/stylist");
+      }
+    };
+
+    fetchStylistId();
+  }, [user, navigate]);
 
   useEffect(() => {
-    if (!stylistId) {
-      navigate("/stylist");
-      return;
+    if (stylistId) {
+      fetchAppointments();
     }
-    fetchAppointments();
   }, [stylistId]);
 
   const fetchAppointments = async () => {
