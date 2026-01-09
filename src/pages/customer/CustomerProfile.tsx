@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowRight, CreditCard, MapPin, LogOut, ChevronLeft } from "lucide-react";
+import { ArrowRight, CreditCard, MapPin, LogOut, ChevronLeft, Share2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import PaymentMethodUI from "@/components/stripe/PaymentMethodUI";
 import { GuidedPhotoCapture } from "@/components/customer/GuidedPhotoCapture";
 import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
@@ -36,6 +37,7 @@ const CustomerProfile = () => {
     age: "",
     preferred_style_description: "",
     preferred_style_category: "",
+    share_ai_styles_with_stylist: true,
   });
 
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -88,6 +90,7 @@ const CustomerProfile = () => {
           age: existingCustomer.age?.toString() || "",
           preferred_style_description: existingCustomer.preferred_style_description || "",
           preferred_style_category: existingCustomer.preferred_style_category || "",
+          share_ai_styles_with_stylist: existingCustomer.share_ai_styles_with_stylist ?? true,
         });
         
         if (existingCustomer.customer_photos) {
@@ -206,6 +209,7 @@ const CustomerProfile = () => {
             preferred_style_category: formData.preferred_style_category,
             latitude: location?.lat,
             longitude: location?.lng,
+            share_ai_styles_with_stylist: formData.share_ai_styles_with_stylist,
           })
           .eq("id", existingCustomerId);
 
@@ -225,6 +229,7 @@ const CustomerProfile = () => {
             preferred_style_category: formData.preferred_style_category,
             latitude: location?.lat,
             longitude: location?.lng,
+            share_ai_styles_with_stylist: formData.share_ai_styles_with_stylist,
           })
           .select()
           .single();
@@ -398,6 +403,25 @@ const CustomerProfile = () => {
             <p className="text-xs text-muted-foreground mt-2">
               {t("customer.profile.reminderDescription", "Get push notifications 1 hour before your appointments")}
             </p>
+          </div>
+
+          {/* AI Style Sharing Toggle */}
+          <div className="p-4 border-2 border-primary/20 rounded-xl bg-card">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Share2 className="w-5 h-5 text-primary" />
+                <div>
+                  <h3 className="text-sm font-medium text-foreground">{t("customer.profile.shareAiStyles", "Share AI Styles with Stylist")}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t("customer.profile.shareAiStylesDescription", "Allow stylists to see your AI-generated hairstyle previews when booking")}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={formData.share_ai_styles_with_stylist}
+                onCheckedChange={(checked) => setFormData({ ...formData, share_ai_styles_with_stylist: checked })}
+              />
+            </div>
           </div>
 
           {/* Payment Button */}
