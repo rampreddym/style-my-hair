@@ -1,16 +1,21 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface WaitlistCheckRequest {
-  stylistId: string;
-  serviceId: string;
-  appointmentDate: string;
-}
+// Input validation schema
+const WaitlistCheckSchema = z.object({
+  stylistId: z.string().uuid("Invalid stylist ID format"),
+  serviceId: z.string().uuid("Invalid service ID format"),
+  appointmentDate: z.string().refine(
+    (date) => !isNaN(Date.parse(date)),
+    { message: "Invalid date format" }
+  ),
+});
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -22,7 +27,19 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { stylistId, serviceId, appointmentDate }: WaitlistCheckRequest = await req.json();
+    // Validate input
+    const body = await req.json();
+    const validationResult = WaitlistCheckSchema.safeParse(body);
+    
+    if (!validationResult.success) {
+      console.error('Validation failed:', validationResult.error.issues);
+      return new Response(
+        JSON.stringify({ error: 'Invalid input', details: validationResult.error.issues }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { stylistId, serviceId, appointmentDate } = validationResult.data;
     
     const cancelledDate = new Date(appointmentDate);
     const dateOnly = cancelledDate.toISOString().split('T')[0];
