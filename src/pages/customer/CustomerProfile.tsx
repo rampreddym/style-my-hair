@@ -139,11 +139,12 @@ const CustomerProfile = () => {
   };
 
   const handlePhotoUpload = async (photoType: string, file: File) => {
+    if (!user) return;
     setUploadingPhoto(photoType);
     
     const fileExt = file.name.split(".").pop();
     const fileName = `${Date.now()}-${photoType}.${fileExt}`;
-    const filePath = `customer-photos/${fileName}`;
+    const filePath = `${user.id}/customer-photos/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("user-photos")

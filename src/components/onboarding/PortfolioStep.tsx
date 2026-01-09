@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { Camera, Plus, X, Image } from "lucide-react";
 
 interface PortfolioPhoto {
@@ -26,15 +27,17 @@ const STYLE_TYPES = ["Short", "Medium", "Long", "Color", "Braids", "Fades"];
 export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioStepProps) => {
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
 
   const handlePhotoUpload = async (file: File) => {
+    if (!user) return;
     setUploading(true);
 
     const fileExt = file.name.split(".").pop();
     const fileName = `portfolio-${Date.now()}.${fileExt}`;
-    const filePath = `portfolio-photos/${fileName}`;
+    const filePath = `${user.id}/portfolio-photos/${fileName}`;
 
     const { error } = await supabase.storage.from("user-photos").upload(filePath, file);
 
