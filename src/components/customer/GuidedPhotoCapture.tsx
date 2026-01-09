@@ -50,6 +50,31 @@ const photoGuides: PhotoGuide[] = [
   }
 ];
 
+// Haptic feedback helper
+const triggerHaptic = async (type: 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error' = 'medium') => {
+  try {
+    const { Haptics, ImpactStyle, NotificationType } = await import("@capacitor/haptics");
+    
+    if (type === 'success' || type === 'warning' || type === 'error') {
+      const notificationMap = {
+        success: NotificationType.Success,
+        warning: NotificationType.Warning,
+        error: NotificationType.Error,
+      };
+      await Haptics.notification({ type: notificationMap[type] });
+    } else {
+      const impactMap = {
+        light: ImpactStyle.Light,
+        medium: ImpactStyle.Medium,
+        heavy: ImpactStyle.Heavy,
+      };
+      await Haptics.impact({ style: impactMap[type] });
+    }
+  } catch {
+    // Haptics not available (web browser), fail silently
+  }
+};
+
 interface GuidedPhotoCaptureProps {
   photos: Record<string, string>;
   onPhotoCapture: (photoType: string, file: File) => Promise<void>;
@@ -75,6 +100,7 @@ export const GuidedPhotoCapture = ({
   const totalPhotos = photoGuides.length;
 
   const handleCapture = useCallback(async () => {
+    await triggerHaptic('medium');
     try {
       // Try Capacitor camera first
       const { Camera: CapacitorCamera, CameraResultType, CameraSource } = await import("@capacitor/camera");
@@ -103,6 +129,7 @@ export const GuidedPhotoCapture = ({
 
       await onPhotoCapture(currentGuide.id, file);
       setCapturedInSession(prev => new Set([...prev, currentGuide.id]));
+      await triggerHaptic('success');
       
       // Auto-advance to next uncaptured photo
       if (currentStep < photoGuides.length - 1) {
@@ -114,11 +141,13 @@ export const GuidedPhotoCapture = ({
         fileInputRef.current?.click();
       } else if (error.message !== "User cancelled photos app") {
         console.error("Camera error:", error);
+        await triggerHaptic('error');
       }
     }
   }, [currentGuide, currentStep, onPhotoCapture]);
 
-  const handleGalleryUpload = useCallback(() => {
+  const handleGalleryUpload = useCallback(async () => {
+    await triggerHaptic('light');
     galleryInputRef.current?.click();
   }, []);
 
@@ -127,6 +156,7 @@ export const GuidedPhotoCapture = ({
     if (file) {
       await onPhotoCapture(currentGuide.id, file);
       setCapturedInSession(prev => new Set([...prev, currentGuide.id]));
+      await triggerHaptic('success');
       
       if (currentStep < photoGuides.length - 1) {
         setTimeout(() => setCurrentStep(prev => prev + 1), 500);
@@ -141,6 +171,7 @@ export const GuidedPhotoCapture = ({
     if (file) {
       await onPhotoCapture(currentGuide.id, file);
       setCapturedInSession(prev => new Set([...prev, currentGuide.id]));
+      await triggerHaptic('success');
       
       if (currentStep < photoGuides.length - 1) {
         setTimeout(() => setCurrentStep(prev => prev + 1), 500);
@@ -150,7 +181,8 @@ export const GuidedPhotoCapture = ({
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleQuickUpload = (photoId: string) => {
+  const handleQuickUpload = async (photoId: string) => {
+    await triggerHaptic('light');
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
@@ -158,12 +190,14 @@ export const GuidedPhotoCapture = ({
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
         await onPhotoCapture(photoId, file);
+        await triggerHaptic('success');
       }
     };
     input.click();
   };
 
-  const startGuidedCapture = () => {
+  const startGuidedCapture = async () => {
+    await triggerHaptic('medium');
     // Find first empty slot
     const firstEmpty = photoGuides.findIndex(g => !photos[g.id]);
     setCurrentStep(firstEmpty >= 0 ? firstEmpty : 0);
@@ -267,17 +301,22 @@ export const GuidedPhotoCapture = ({
               <Button 
                 variant="outline" 
                 className="flex-1 h-12"
-                onClick={() => onPhotoDelete(currentGuide.id)}
+                onClick={async () => {
+                  await triggerHaptic('warning');
+                  onPhotoDelete(currentGuide.id);
+                }}
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
                 {t("photoCapture.retake", "Retake")}
               </Button>
               <Button 
                 className="flex-1 h-12 bg-primary hover:bg-primary/90"
-                onClick={() => {
+                onClick={async () => {
+                  await triggerHaptic('light');
                   if (currentStep < photoGuides.length - 1) {
                     setCurrentStep(prev => prev + 1);
                   } else {
+                    await triggerHaptic('success');
                     setIsGuidedMode(false);
                   }
                 }}
@@ -316,7 +355,10 @@ export const GuidedPhotoCapture = ({
             {photoGuides.map((guide, idx) => (
               <button
                 key={guide.id}
-                onClick={() => setCurrentStep(idx)}
+                onClick={async () => {
+                  await triggerHaptic('light');
+                  setCurrentStep(idx);
+                }}
                 className={cn(
                   "w-2.5 h-2.5 rounded-full transition-all touch-target flex items-center justify-center",
                   idx === currentStep 
