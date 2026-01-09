@@ -287,6 +287,7 @@ export type Database = {
           phone: string | null
           preferred_style_category: string | null
           preferred_style_description: string | null
+          share_ai_styles_with_stylist: boolean | null
           stripe_customer_id: string | null
           updated_at: string
           user_id: string | null
@@ -304,6 +305,7 @@ export type Database = {
           phone?: string | null
           preferred_style_category?: string | null
           preferred_style_description?: string | null
+          share_ai_styles_with_stylist?: boolean | null
           stripe_customer_id?: string | null
           updated_at?: string
           user_id?: string | null
@@ -321,6 +323,7 @@ export type Database = {
           phone?: string | null
           preferred_style_category?: string | null
           preferred_style_description?: string | null
+          share_ai_styles_with_stylist?: boolean | null
           stripe_customer_id?: string | null
           updated_at?: string
           user_id?: string | null
