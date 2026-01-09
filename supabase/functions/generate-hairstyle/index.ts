@@ -1,11 +1,21 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schema
+const GenerateStyleSchema = z.object({
+  stylePrompt: z.string().min(1, "Style prompt is required").max(500, "Style prompt too long"),
+  userPhotoUrl: z.string().url("Invalid URL format").refine(
+    (url) => url.startsWith('https://'),
+    { message: 'URL must use HTTPS' }
+  ),
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -38,7 +48,22 @@ serve(async (req) => {
 
     console.log('Authenticated user:', user.id);
 
-    const { stylePrompt, userPhotoUrl } = await req.json();
+    // Validate input
+    const body = await req.json();
+    const validationResult = GenerateStyleSchema.safeParse(body);
+    
+    if (!validationResult.success) {
+      console.error('Validation failed:', validationResult.error.issues);
+      return new Response(JSON.stringify({ 
+        error: 'Invalid input', 
+        details: validationResult.error.issues 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { stylePrompt, userPhotoUrl } = validationResult.data;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     
     if (!LOVABLE_API_KEY) {

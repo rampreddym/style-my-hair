@@ -1,10 +1,22 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schema
+const PushNotificationSchema = z.object({
+  action: z.enum(['send-reminder', 'check-reminders'], {
+    errorMap: () => ({ message: "Action must be 'send-reminder' or 'check-reminders'" })
+  }),
+  userId: z.string().uuid("Invalid user ID format").optional(),
+  title: z.string().max(100, "Title too long").optional(),
+  body: z.string().max(500, "Body too long").optional(),
+  data: z.record(z.unknown()).optional(),
+});
 
 interface PushPayload {
   title: string;
@@ -114,7 +126,19 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { action, userId, title, body, data } = await req.json();
+    // Validate input
+    const body = await req.json();
+    const validationResult = PushNotificationSchema.safeParse(body);
+    
+    if (!validationResult.success) {
+      console.error('Validation failed:', validationResult.error.issues);
+      return new Response(
+        JSON.stringify({ error: 'Invalid input', details: validationResult.error.issues }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { action, userId, title, body: notificationBody, data } = validationResult.data;
 
     if (action === 'send-reminder') {
       // Send to specific user
@@ -140,7 +164,7 @@ serve(async (req) => {
 
       const payload: PushPayload = {
         title: title || 'Appointment Reminder',
-        body: body || 'You have an upcoming appointment',
+        body: notificationBody || 'You have an upcoming appointment',
         icon: '/favicon.ico',
         data: data || {},
       };
