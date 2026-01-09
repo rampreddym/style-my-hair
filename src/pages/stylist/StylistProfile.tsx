@@ -92,11 +92,12 @@ const StylistProfile = () => {
   }, []);
 
   const handlePhotoUpload = async (file: File) => {
+    if (!user) return;
     setUploadingPhoto(true);
     
     const fileExt = file.name.split(".").pop();
     const fileName = `stylist-${Date.now()}.${fileExt}`;
-    const filePath = `stylist-photos/${fileName}`;
+    const filePath = `${user.id}/stylist-photos/${fileName}`;
 
     const { error } = await supabase.storage
       .from("user-photos")
