@@ -155,6 +155,13 @@ export type Database = {
             referencedRelation: "stylists"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "appointments_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       customer_generated_styles: {
@@ -477,6 +484,13 @@ export type Database = {
             referencedRelation: "stylists"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "reviews_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       stylist_availability: {
@@ -513,6 +527,13 @@ export type Database = {
             columns: ["stylist_id"]
             isOneToOne: false
             referencedRelation: "stylists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stylist_availability_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists_public"
             referencedColumns: ["id"]
           },
         ]
@@ -553,6 +574,13 @@ export type Database = {
             referencedRelation: "stylists"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "stylist_portfolio_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       stylist_services: {
@@ -589,6 +617,13 @@ export type Database = {
             columns: ["stylist_id"]
             isOneToOne: false
             referencedRelation: "stylists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stylist_services_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists_public"
             referencedColumns: ["id"]
           },
         ]
@@ -760,11 +795,71 @@ export type Database = {
             referencedRelation: "stylists"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "waitlist_stylist_id_fkey"
+            columns: ["stylist_id"]
+            isOneToOne: false
+            referencedRelation: "stylists_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      stylists_public: {
+        Row: {
+          address: string | null
+          availability_status: string | null
+          bio: string | null
+          business_name: string | null
+          certifications: string[] | null
+          id: string | null
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          onboarding_completed: boolean | null
+          photo_url: string | null
+          rating: number | null
+          specialties: string[] | null
+          total_reviews: number | null
+          years_experience: number | null
+        }
+        Insert: {
+          address?: string | null
+          availability_status?: string | null
+          bio?: string | null
+          business_name?: string | null
+          certifications?: string[] | null
+          id?: string | null
+          latitude?: never
+          longitude?: never
+          name?: string | null
+          onboarding_completed?: boolean | null
+          photo_url?: string | null
+          rating?: number | null
+          specialties?: string[] | null
+          total_reviews?: number | null
+          years_experience?: number | null
+        }
+        Update: {
+          address?: string | null
+          availability_status?: string | null
+          bio?: string | null
+          business_name?: string | null
+          certifications?: string[] | null
+          id?: string | null
+          latitude?: never
+          longitude?: never
+          name?: string | null
+          onboarding_completed?: boolean | null
+          photo_url?: string | null
+          rating?: number | null
+          specialties?: string[] | null
+          total_reviews?: number | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_user_role: {

@@ -76,9 +76,9 @@ const CustomerBooking = () => {
       .eq("id", customerId)
       .single();
 
-    // Fetch stylists
+    // Fetch stylists from public view (excludes sensitive data like email, phone, stripe_account_id)
     const { data: stylistsData } = await supabase
-      .from("stylists")
+      .from("stylists_public")
       .select("*")
       .order("rating", { ascending: false });
 
