@@ -1,7 +1,8 @@
 import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Camera, Check, ChevronLeft, ChevronRight, X, RotateCcw, Lightbulb, AlertCircle } from "lucide-react";
+import { Camera, Check, ChevronRight, X, RotateCcw, Lightbulb, AlertCircle, ImagePlus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface PhotoGuide {
   id: string;
@@ -62,10 +63,12 @@ export const GuidedPhotoCapture = ({
   onPhotoDelete,
   uploadingPhoto
 }: GuidedPhotoCaptureProps) => {
+  const { t } = useTranslation();
   const [isGuidedMode, setIsGuidedMode] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [capturedInSession, setCapturedInSession] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const currentGuide = photoGuides[currentStep];
   const completedPhotos = Object.keys(photos).length;
@@ -115,6 +118,24 @@ export const GuidedPhotoCapture = ({
     }
   }, [currentGuide, currentStep, onPhotoCapture]);
 
+  const handleGalleryUpload = useCallback(() => {
+    galleryInputRef.current?.click();
+  }, []);
+
+  const handleGallerySelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      await onPhotoCapture(currentGuide.id, file);
+      setCapturedInSession(prev => new Set([...prev, currentGuide.id]));
+      
+      if (currentStep < photoGuides.length - 1) {
+        setTimeout(() => setCurrentStep(prev => prev + 1), 500);
+      }
+    }
+    // Reset input
+    if (galleryInputRef.current) galleryInputRef.current.value = '';
+  };
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -151,26 +172,26 @@ export const GuidedPhotoCapture = ({
 
   if (isGuidedMode) {
     return (
-      <div className="fixed inset-0 bg-background z-50 flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="fixed inset-0 bg-background z-50 flex flex-col safe-area-top">
+        {/* Header - Fixed */}
+        <div className="flex-shrink-0 flex items-center justify-between p-4 border-b border-border">
           <button 
             onClick={() => setIsGuidedMode(false)}
-            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors touch-target"
           >
             <X className="w-6 h-6" />
           </button>
           <div className="text-center">
             <p className="text-sm font-medium text-muted-foreground">
-              Step {currentStep + 1} of {totalPhotos}
+              {t("photoCapture.step", "Step {{current}} of {{total}}", { current: currentStep + 1, total: totalPhotos })}
             </p>
             <h2 className="text-lg font-bold text-foreground">{currentGuide.label}</h2>
           </div>
           <div className="w-10" /> {/* Spacer */}
         </div>
 
-        {/* Progress bar */}
-        <div className="flex gap-1 px-4 py-2">
+        {/* Progress bar - Fixed */}
+        <div className="flex-shrink-0 flex gap-1 px-4 py-2">
           {photoGuides.map((guide, idx) => (
             <div 
               key={guide.id}
@@ -183,70 +204,76 @@ export const GuidedPhotoCapture = ({
           ))}
         </div>
 
-        {/* Main capture area */}
-        <div className="flex-1 flex flex-col items-center justify-center p-6 space-y-6">
-          {/* Photo preview or placeholder */}
-          <div className="relative w-64 h-64 rounded-2xl overflow-hidden border-4 border-primary/20">
-            {photos[currentGuide.id] ? (
-              <>
-                <img 
-                  src={photos[currentGuide.id]} 
-                  alt={currentGuide.label}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
-                  <Check className="w-4 h-4" />
+        {/* Main capture area - Scrollable */}
+        <div className="flex-1 overflow-y-auto scroll-smooth-touch">
+          <div className="flex flex-col items-center p-6 space-y-4 min-h-full">
+            {/* Photo preview or placeholder */}
+            <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-2xl overflow-hidden border-4 border-primary/20 flex-shrink-0">
+              {photos[currentGuide.id] ? (
+                <>
+                  <img 
+                    src={photos[currentGuide.id]} 
+                    alt={currentGuide.label}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
+                    <Check className="w-4 h-4" />
+                  </div>
+                </>
+              ) : (
+                <div className="w-full h-full bg-muted/30 flex flex-col items-center justify-center">
+                  <span className="text-5xl sm:text-6xl mb-3">{currentGuide.icon}</span>
+                  <p className="text-sm text-muted-foreground text-center px-4">
+                    {currentGuide.instruction}
+                  </p>
                 </div>
-              </>
-            ) : (
-              <div className="w-full h-full bg-muted/30 flex flex-col items-center justify-center">
-                <span className="text-6xl mb-4">{currentGuide.icon}</span>
-                <p className="text-sm text-muted-foreground text-center px-4">
-                  {currentGuide.instruction}
-                </p>
-              </div>
-            )}
-            
-            {uploadingPhoto === currentGuide.id && (
-              <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
-          </div>
+              )}
+              
+              {uploadingPhoto === currentGuide.id && (
+                <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                  <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+            </div>
 
-          {/* Guidance tip */}
-          <div className="flex items-start gap-3 bg-primary/5 rounded-xl p-4 max-w-sm">
-            <Lightbulb className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-foreground">{currentGuide.tip}</p>
-          </div>
+            {/* Guidance tip */}
+            <div className="flex items-start gap-3 bg-primary/5 rounded-xl p-3 max-w-sm w-full">
+              <Lightbulb className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-foreground">{currentGuide.tip}</p>
+            </div>
 
-          {/* Quality tips */}
-          <div className="flex flex-wrap justify-center gap-2 max-w-sm">
-            {["Good lighting", "Face visible", "In focus"].map((tip) => (
-              <span 
-                key={tip}
-                className="px-3 py-1 bg-muted rounded-full text-xs text-muted-foreground"
-              >
-                ✓ {tip}
-              </span>
-            ))}
+            {/* Quality tips */}
+            <div className="flex flex-wrap justify-center gap-2 max-w-sm">
+              {[
+                t("photoCapture.goodLighting", "Good lighting"),
+                t("photoCapture.faceVisible", "Face visible"),
+                t("photoCapture.inFocus", "In focus")
+              ].map((tip) => (
+                <span 
+                  key={tip}
+                  className="px-3 py-1 bg-muted rounded-full text-xs text-muted-foreground"
+                >
+                  ✓ {tip}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Action buttons */}
-        <div className="p-4 space-y-3 border-t border-border">
+        {/* Action buttons - Fixed at bottom */}
+        <div className="flex-shrink-0 p-4 space-y-3 border-t border-border safe-area-bottom bg-background">
           {photos[currentGuide.id] ? (
             <div className="flex gap-3">
               <Button 
                 variant="outline" 
-                className="flex-1"
+                className="flex-1 h-12"
                 onClick={() => onPhotoDelete(currentGuide.id)}
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
-                Retake
+                {t("photoCapture.retake", "Retake")}
               </Button>
               <Button 
-                className="flex-1 bg-primary hover:bg-primary/90"
+                className="flex-1 h-12 bg-primary hover:bg-primary/90"
                 onClick={() => {
                   if (currentStep < photoGuides.length - 1) {
                     setCurrentStep(prev => prev + 1);
@@ -256,31 +283,42 @@ export const GuidedPhotoCapture = ({
                 }}
               >
                 {currentStep < photoGuides.length - 1 ? (
-                  <>Next <ChevronRight className="w-4 h-4 ml-2" /></>
+                  <>{t("common.next", "Next")} <ChevronRight className="w-4 h-4 ml-2" /></>
                 ) : (
-                  <>Done <Check className="w-4 h-4 ml-2" /></>
+                  <>{t("common.done", "Done")} <Check className="w-4 h-4 ml-2" /></>
                 )}
               </Button>
             </div>
           ) : (
-            <Button 
-              className="w-full h-14 bg-primary hover:bg-primary/90 text-lg"
-              onClick={handleCapture}
-              disabled={!!uploadingPhoto}
-            >
-              <Camera className="w-6 h-6 mr-3" />
-              Take Photo
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                className="flex-1 h-12 bg-primary hover:bg-primary/90"
+                onClick={handleCapture}
+                disabled={!!uploadingPhoto}
+              >
+                <Camera className="w-5 h-5 mr-2" />
+                {t("photoCapture.takePhoto", "Take Photo")}
+              </Button>
+              <Button 
+                variant="outline"
+                className="flex-1 h-12"
+                onClick={handleGalleryUpload}
+                disabled={!!uploadingPhoto}
+              >
+                <ImagePlus className="w-5 h-5 mr-2" />
+                {t("photoCapture.upload", "Upload")}
+              </Button>
+            </div>
           )}
 
           {/* Navigation dots */}
-          <div className="flex justify-center gap-2 pt-2">
+          <div className="flex justify-center gap-2 pt-1">
             {photoGuides.map((guide, idx) => (
               <button
                 key={guide.id}
                 onClick={() => setCurrentStep(idx)}
                 className={cn(
-                  "w-2.5 h-2.5 rounded-full transition-all",
+                  "w-2.5 h-2.5 rounded-full transition-all touch-target flex items-center justify-center",
                   idx === currentStep 
                     ? "bg-primary w-6" 
                     : photos[guide.id] 
@@ -292,7 +330,7 @@ export const GuidedPhotoCapture = ({
           </div>
         </div>
 
-        {/* Hidden file input for web fallback */}
+        {/* Hidden file input for camera fallback */}
         <input
           ref={fileInputRef}
           type="file"
@@ -300,6 +338,15 @@ export const GuidedPhotoCapture = ({
           capture="environment"
           className="hidden"
           onChange={handleFileSelect}
+        />
+        
+        {/* Hidden file input for gallery upload */}
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleGallerySelect}
         />
       </div>
     );
