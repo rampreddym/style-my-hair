@@ -7,6 +7,59 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute window
+const MAX_REQUESTS_PER_WINDOW = 5; // Max 5 requests per minute per user
+
+// In-memory rate limit store (per isolate instance)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+// Clean up expired entries periodically
+function cleanupRateLimitStore() {
+  const now = Date.now();
+  for (const [key, value] of rateLimitStore.entries()) {
+    if (now > value.resetTime) {
+      rateLimitStore.delete(key);
+    }
+  }
+}
+
+// Check rate limit for a user
+function checkRateLimit(userId: string): { allowed: boolean; remaining: number; resetIn: number } {
+  cleanupRateLimitStore();
+  
+  const now = Date.now();
+  const userLimit = rateLimitStore.get(userId);
+  
+  if (!userLimit || now > userLimit.resetTime) {
+    // First request or window expired - create new entry
+    rateLimitStore.set(userId, {
+      count: 1,
+      resetTime: now + RATE_LIMIT_WINDOW_MS
+    });
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1, resetIn: RATE_LIMIT_WINDOW_MS };
+  }
+  
+  if (userLimit.count >= MAX_REQUESTS_PER_WINDOW) {
+    // Rate limit exceeded
+    return { 
+      allowed: false, 
+      remaining: 0, 
+      resetIn: userLimit.resetTime - now 
+    };
+  }
+  
+  // Increment counter
+  userLimit.count++;
+  rateLimitStore.set(userId, userLimit);
+  
+  return { 
+    allowed: true, 
+    remaining: MAX_REQUESTS_PER_WINDOW - userLimit.count, 
+    resetIn: userLimit.resetTime - now 
+  };
+}
+
 // Input validation schema
 const WaitlistCheckSchema = z.object({
   stylistId: z.string().uuid("Invalid stylist ID format"),
@@ -54,8 +107,31 @@ serve(async (req) => {
       );
     }
 
-    const userId = claimsData.claims.sub;
+    const userId = claimsData.claims.sub as string;
     console.log("Authenticated user:", userId);
+
+    // Check rate limit
+    const rateLimit = checkRateLimit(userId);
+    
+    if (!rateLimit.allowed) {
+      console.warn("Rate limit exceeded for user:", userId);
+      return new Response(
+        JSON.stringify({ 
+          error: "Too many requests", 
+          retryAfter: Math.ceil(rateLimit.resetIn / 1000) 
+        }),
+        { 
+          status: 429, 
+          headers: { 
+            ...corsHeaders, 
+            "Content-Type": "application/json",
+            "Retry-After": String(Math.ceil(rateLimit.resetIn / 1000)),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": String(Math.ceil(rateLimit.resetIn / 1000))
+          } 
+        }
+      );
+    }
 
     // Validate input
     const body = await req.json();
@@ -140,7 +216,13 @@ serve(async (req) => {
     if (!waitlistEntries || waitlistEntries.length === 0) {
       return new Response(
         JSON.stringify({ message: "No waitlist entries found", notified: 0 }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { 
+          headers: { 
+            ...corsHeaders, 
+            "Content-Type": "application/json",
+            "X-RateLimit-Remaining": String(rateLimit.remaining)
+          } 
+        }
       );
     }
 
@@ -196,7 +278,13 @@ serve(async (req) => {
         found: matchingEntries.length,
         notified: notifiedCount 
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { 
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "X-RateLimit-Remaining": String(rateLimit.remaining)
+        } 
+      }
     );
   } catch (error: unknown) {
     console.error("Error checking waitlist:", error);
