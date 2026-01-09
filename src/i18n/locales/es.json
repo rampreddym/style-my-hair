@@ -138,7 +138,9 @@
       "photosRequired": "Fotos requeridas",
       "uploadPhotos": "Por favor sube al menos 2 fotos de tu cabello",
       "profileSaved": "¡Perfil guardado!",
-      "letsGenerate": "Generemos tu nuevo look"
+      "letsGenerate": "Generemos tu nuevo look",
+      "shareAiStyles": "Compartir Estilos IA con Estilista",
+      "shareAiStylesDescription": "Permite que los estilistas vean tus previsualizaciones de peinados generadas por IA al reservar"
     },
     "style": {
       "title": "Elige Tu Estilo",
@@ -391,6 +393,21 @@
   "language": {
     "title": "Idioma",
     "select": "Seleccionar Idioma"
+  },
+  "photoCapture": {
+    "step": "Paso {{current}} de {{total}}",
+    "takePhoto": "Tomar Foto",
+    "upload": "Subir",
+    "retake": "Repetir",
+    "goodLighting": "Buena iluminación",
+    "faceVisible": "Rostro visible",
+    "inFocus": "Enfocado",
+    "startCapture": "Iniciar Captura de Fotos",
+    "continueCapture": "Continuar Captura",
+    "guidedProcess": "Proceso guiado paso a paso",
+    "photosCount": "{{completed}}/{{total}} fotos",
+    "yourPhotos": "Tus Fotos",
+    "minimum2Required": "Mínimo 2 requeridas"
   },
   "stylistServices": {
     "title": "Configura Tus Servicios",
