@@ -92,9 +92,9 @@ const CustomerBookingDetails = () => {
 
     if (styleData) setSelectedStyle(styleData);
 
-    // Fetch stylist details
+    // Fetch stylist details from public view (excludes sensitive data)
     const { data: stylistData, error: stylistError } = await supabase
-      .from("stylists")
+      .from("stylists_public")
       .select("*")
       .eq("id", stylistId)
       .single();

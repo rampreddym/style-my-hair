@@ -17,7 +17,6 @@ const StylistPayments = () => {
   const [loading, setLoading] = useState(true);
   const [stylist, setStylist] = useState<any>(null);
   const [stylistId, setStylistId] = useState<string | null>(null);
-  const [connecting, setConnecting] = useState(false);
 
   // Fetch stylist ID from auth
   useEffect(() => {
@@ -51,26 +50,12 @@ const StylistPayments = () => {
   const connectStripe = async () => {
     if (!stylistId) return;
     
-    setConnecting(true);
-    
+    // Show informational message that real Stripe integration is required
     toast({
-      title: t("stylistPayments.stripeConnect"),
-      description: t("stylistPayments.stripeConnectDesc"),
+      title: "Stripe Integration Required",
+      description: "Real payment processing requires Stripe Connect integration. Please contact support to enable payments.",
+      variant: "destructive",
     });
-
-    setTimeout(async () => {
-      await supabase
-        .from("stylists")
-        .update({
-          stripe_account_id: "acct_demo_" + Date.now(),
-          stripe_onboarded: true,
-        })
-        .eq("id", stylistId);
-
-      setStylist({ ...stylist, stripe_onboarded: true });
-      setConnecting(false);
-      toast({ title: t("stylistPayments.setupComplete") });
-    }, 2000);
   };
 
   if (loading || authLoading) {
@@ -118,27 +103,25 @@ const StylistPayments = () => {
                   <div className="flex items-start gap-3 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                     <AlertCircle className="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-yellow-600">Payment setup required</p>
+                      <p className="font-medium text-yellow-600">Payment Setup Coming Soon</p>
                       <p className="text-sm text-muted-foreground">
-                        Connect your Stripe account to start receiving payments from clients
+                        Stripe Connect integration is required for real payment processing. This feature is under development.
                       </p>
                     </div>
                   </div>
 
                   <Button
                     onClick={connectStripe}
-                    disabled={connecting}
-                    className="w-full h-14 bg-[#635BFF] hover:bg-[#5851DB]"
+                    disabled={true}
+                    className="w-full h-14 bg-[#635BFF] hover:bg-[#5851DB] opacity-50"
                   >
-                    {connecting ? (
-                      "Connecting..."
-                    ) : (
-                      <>
-                        Connect with Stripe
-                        <ExternalLink className="w-4 h-4 ml-2" />
-                      </>
-                    )}
+                    Connect with Stripe
+                    <ExternalLink className="w-4 h-4 ml-2" />
                   </Button>
+                  
+                  <p className="text-xs text-center text-muted-foreground">
+                    🔒 Secure Stripe Connect integration required for production payments
+                  </p>
                 </div>
               )}
 

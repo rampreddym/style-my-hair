@@ -42,25 +42,13 @@ const PaymentMethodUI = ({ onClose, onSuccess }: PaymentMethodUIProps) => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.cardNumber || !formData.expiry || !formData.cvc || !formData.name) {
-      toast({ title: "Please fill in all fields", variant: "destructive" });
-      return;
-    }
-
-    setSaving(true);
-    
-    // Simulate saving payment method
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setSaved(true);
-    setSaving(false);
-    
-    toast({ title: "Payment method saved!", description: "Your card has been securely saved" });
-    
-    setTimeout(() => {
-      onSuccess?.();
-      onClose();
-    }, 1000);
+    // Card collection is disabled - real payment integration required
+    toast({ 
+      title: "Payment Integration Required", 
+      description: "Secure payment processing requires Stripe integration. Please contact support to enable payments.",
+      variant: "destructive" 
+    });
+    onClose();
   };
 
   if (saved) {
@@ -88,6 +76,9 @@ const PaymentMethodUI = ({ onClose, onSuccess }: PaymentMethodUIProps) => {
             <X className="w-4 h-4" />
           </Button>
         </div>
+        <p className="text-sm text-yellow-600 bg-yellow-500/10 p-2 rounded-md mt-2">
+          🔒 Payment collection requires Stripe integration for PCI compliance
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
