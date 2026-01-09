@@ -24,8 +24,38 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Authentication check - require Authorization header
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("Missing or invalid Authorization header");
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - missing authentication" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Create client with user's auth token for verification
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Verify the JWT token and get claims
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    
+    if (claimsError || !claimsData?.claims) {
+      console.error("JWT verification failed:", claimsError);
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - invalid token" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log("Authenticated user:", userId);
 
     // Validate input
     const body = await req.json();
@@ -40,6 +70,52 @@ serve(async (req) => {
     }
 
     const { stylistId, serviceId, appointmentDate } = validationResult.data;
+
+    // Use service role client for database operations (after auth verified)
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Verify user is authorized to trigger waitlist check
+    // They must either be the stylist OR have a cancelled appointment for this service
+    const { data: stylist } = await supabase
+      .from("stylists")
+      .select("id, user_id")
+      .eq("id", stylistId)
+      .single();
+
+    const { data: customer } = await supabase
+      .from("customers")
+      .select("id, user_id")
+      .eq("user_id", userId)
+      .single();
+
+    // Check if user is the stylist
+    const isStylist = stylist?.user_id === userId;
+
+    // Check if user is a customer with an appointment for this service
+    let isAuthorizedCustomer = false;
+    if (customer) {
+      const { data: appointment } = await supabase
+        .from("appointments")
+        .select("id")
+        .eq("customer_id", customer.id)
+        .eq("stylist_id", stylistId)
+        .eq("service_id", serviceId)
+        .in("status", ["cancelled", "pending", "confirmed"])
+        .limit(1)
+        .single();
+      
+      isAuthorizedCustomer = !!appointment;
+    }
+
+    if (!isStylist && !isAuthorizedCustomer) {
+      console.error("User not authorized to trigger waitlist check for this stylist/service");
+      return new Response(
+        JSON.stringify({ error: "Forbidden - not authorized for this action" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("Authorization passed:", { isStylist, isAuthorizedCustomer });
     
     const cancelledDate = new Date(appointmentDate);
     const dateOnly = cancelledDate.toISOString().split('T')[0];
@@ -111,6 +187,8 @@ serve(async (req) => {
         }
       }
     }
+
+    console.log("Waitlist check completed:", { found: matchingEntries.length, notified: notifiedCount });
 
     return new Response(
       JSON.stringify({ 
