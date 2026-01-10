@@ -1,190 +1,360 @@
-# AI Hair Styling Marketplace - Feature Summary
+# AI Hair Styling Marketplace - Complete Feature Documentation
 
-## 🎯 Platform Overview
-
-A dual-sided marketplace connecting customers with local hair stylists, powered by AI-driven hairstyle visualization. Users select their role (Customer or Stylist) and access tailored experiences.
+A dual-sided marketplace connecting customers with local hair stylists, powered by AI-driven hairstyle visualization.
 
 ---
 
 ## 👤 Customer Features
 
-### 1. **Smart Profile Creation**
-- Name, gender, age collection
-- Guided 5-angle photo capture (front, left, right, back, top)
-- Camera capture + gallery upload support (Capacitor-based with web fallback)
-- Automatic geolocation for stylist matching
-- Stripe payment method connection
+### 1. Account & Authentication
+- **Google OAuth Integration** - One-tap sign-in with automatic name/email import
+- **Email/Password Authentication** - Traditional signup with auto-confirm
+- **Role-Based Access** - Automatic routing based on customer/stylist role
+- **Secure Password Recovery** - Reset password flow with email verification
+- **Session Persistence** - Stay logged in across browser sessions
 
-### 2. **AI Hairstyle Visualization**
-- Upload photo → AI generates realistic hairstyle previews using Gemini 2.5 Flash
-- Before/after comparison slider
-- Multiple style variations to choose from
-- Real-time generation progress with tips
-- Style description and category customization
-- Carousel thumbnail selection for generated styles
+### 2. Profile Management
+- **Personal Information** - Name, gender, age, email, phone
+- **Location Services** - Automatic geolocation for stylist matching
+- **5-Angle Photo Capture** - Guided camera capture (front, left, right, back, top)
+- **Gallery Upload Support** - Alternative to camera for photo uploads
+- **Haptic Feedback** - Native-feel vibrations on mobile during photo capture
+- **Privacy Toggle** - Control whether AI-generated styles are shared with stylists
+- **Language Preference** - Choose between English, Spanish, or Portuguese
 
-### 3. **Intelligent Stylist Discovery**
-- Location-based search with adjustable distance slider (1-50 miles)
-- Verified badges and proficiency levels
-- Portfolio browsing with hair type filters
-- Rating and review display
-- Quick messaging option
-- Enhanced stylist cards with tactile feedback
+### 3. AI Hairstyle Visualization
+- **AI Style Generation** - Upload photo + describe desired style for realistic preview
+- **Gemini 2.5 Flash Powered** - High-quality image generation via Lovable AI Gateway
+- **Before/After Comparison Slider** - Interactive comparison of original vs. generated
+- **Multiple Style Variations** - Generate and browse multiple style options
+- **Thumbnail Carousel** - Easy selection from generated styles
+- **Style Categories** - 20+ curated hairstyles (Fade, Pixie, Bob, Braids, etc.)
+- **Gender-Specific Options** - Styles tagged for Men's, Women's, or Unisex
+- **Real-Time Progress** - Loading indicators with tips during generation
 
-### 4. **Seamless Booking System**
-- Calendar-based appointment scheduling
-- Service-duration-aware time slot generation
-- Flexible payment options (pay now / pay after)
-- Itemized price breakdown (service + fees + tip)
-- Booking confirmation with calendar integration
-- Rescheduling and cancellation capabilities
-- 24-hour cancellation warning system
+### 4. Stylist Discovery
+- **Location-Based Search** - Find stylists near you
+- **Distance Filter Slider** - Adjustable range (1-50 miles)
+- **Verified Badges** - Trust indicators for vetted stylists
+- **Proficiency Levels** - Experience-based ratings
+- **Portfolio Browsing** - View stylist's past work with hair type filters
+- **Rating & Reviews Display** - Star ratings and review counts
+- **Quick Messaging** - Initiate chat directly from stylist card
+- **Enhanced Stylist Cards** - Tactile feedback on selection
 
-### 5. **Waitlist System**
-- Join waitlist when preferred time slots are unavailable
-- Specify preferred date and optional time range
-- Automatic push notifications when slots open up
-- Triggered by appointment cancellations
+### 5. Booking System
+- **Calendar-Based Scheduling** - Visual date picker
+- **Service Selection** - Browse available services with prices and durations
+- **Duration-Aware Time Slots** - Slots generated based on service length
+- **Stylist Availability Integration** - Only shows available times
+- **Payment Flexibility** - Choose "Pay Now" or "Pay After Service"
+- **Itemized Price Breakdown** - Service cost + platform fees + optional tip
+- **Booking Confirmation** - Visual confirmation with all details
+- **Calendar Integration Ready** - Add to calendar functionality
 
-### 6. **Appointment Management**
-- Upcoming/past appointment views with tab navigation
-- Pull-to-refresh functionality
-- Check-in confirmation
-- Direct stylist messaging
-- Automated push notification reminders (1-2 hours before)
-- Cancel and reschedule dialogs
+### 6. Waitlist System
+- **Join Waitlist** - Sign up when preferred slots are unavailable
+- **Preferred Date Selection** - Specify desired appointment date
+- **Optional Time Range** - Narrow down preferred hours
+- **Automatic Notifications** - Push alerts when slots open
+- **Cancellation Triggers** - Waitlist checked when appointments cancel
 
-### 7. **Feedback & Reviews**
-- Post-appointment sentiment feedback (positive/neutral/negative)
-- Star rating system with aspect-based ratings
-- Detailed review submission with before/after photos
-- Issue type reporting and resolution tracking
+### 7. Appointment Management
+- **Upcoming/Past Tabs** - Organized appointment views
+- **Pull-to-Refresh** - Swipe down to update data
+- **Check-In Confirmation** - Confirm arrival for appointments
+- **Status Indicators** - Visual badges (upcoming, soon, completed, cancelled)
+- **Reschedule Option** - Change appointment date/time
+- **Cancellation Flow** - Cancel with 24-hour warning system
+- **Direct Stylist Messaging** - Chat with stylist about appointment
+
+### 8. Push Notifications
+- **Appointment Reminders** - Automated alerts 1-2 hours before
+- **Waitlist Alerts** - Notified when slots become available
+- **Web Push API** - Works on mobile and desktop browsers
+- **VAPID Key Security** - Encrypted push subscriptions
+- **Opt-In Control** - Enable/disable in settings
+- **Test Notification** - Verify setup works correctly
+
+### 9. Feedback & Reviews
+- **Post-Appointment Feedback** - Prompted after service completion
+- **Sentiment Selection** - Quick positive/neutral/negative choice
+- **Star Rating System** - Overall 1-5 star rating
+- **Aspect-Based Ratings** - Rate technique, communication, cleanliness, value
+- **Written Comments** - Detailed text feedback
+- **Before/After Photo Upload** - Share results with review
+- **Issue Reporting** - Flag problems for resolution
+- **Would Recommend/Rebook** - Quick binary feedback options
+
+### 10. In-App Messaging
+- **Real-Time Chat** - Instant messaging with stylists
+- **Image Sharing** - Send photos in conversation
+- **Appointment-Linked** - Messages connected to bookings
+- **Message History** - View past conversations
+- **Unread Indicators** - Know when new messages arrive
 
 ---
 
 ## 💇 Stylist Features
 
-### 1. **5-Step Onboarding Wizard**
-- Profile basics (name, email, phone, photo upload)
-- Experience & certifications with specialties
-- Portfolio upload with hair/style type tagging
-- Weekly availability scheduling (per-day time ranges)
-- Payout setup with Stripe Connect
+### 1. Account & Authentication
+- **Google OAuth Integration** - One-tap sign-in with automatic name/email import
+- **Email/Password Authentication** - Traditional signup with auto-confirm
+- **Role-Based Access** - Automatic routing to stylist dashboard
+- **Secure Password Recovery** - Reset password flow with email verification
 
-### 2. **Service Management**
-- Add/edit/delete services
-- Custom pricing and duration (in minutes)
-- Duplicate name prevention
-- Service descriptions
-- Mobile-optimized input fields
+### 2. 5-Step Onboarding Wizard
+**Step 1 - Profile Basics:**
+- Name, email, phone input
+- Business name (optional)
+- Profile photo upload with storage
+- Bio/description text
 
-### 3. **Appointment Dashboard**
-- Upcoming/past appointment views
-- AI-generated style preview for each client
-- Quick actions (confirm, cancel, complete)
-- Customer hair history access
-- Post-service notes system
-- Pull-to-refresh support
+**Step 2 - Experience & Certifications:**
+- Years of experience
+- Certifications list
+- Specialties selection (AI-suggested based on bio)
+- Skills and expertise tags
 
-### 4. **Client Communication**
-- In-app messaging with customers
-- Image sharing in chat
-- Appointment-linked conversations
-- Real-time message updates
+**Step 3 - Portfolio:**
+- Multiple photo uploads
+- Hair type tagging per image
+- Style type categorization
+- Description per portfolio item
 
-### 5. **Payment & Earnings**
+**Step 4 - Availability:**
+- Per-day schedule configuration
+- Start/end time selection
+- Toggle availability per day
+- Weekly recurring schedule
+
+**Step 5 - Payout Setup:**
 - Stripe Connect integration
-- Earnings overview dashboard
-- Fee transparency
-- Payout management
+- Bank account linking (placeholder)
+- Payout preferences
+
+### 3. Service Management
+- **Add Services** - Name, price, duration, description
+- **Edit Services** - Modify existing offerings
+- **Delete Services** - Remove discontinued services
+- **Duration Configuration** - Set service length in minutes
+- **Price Setting** - Custom pricing per service
+- **Duplicate Prevention** - Prevents same-name services
+- **Quick Add Suggestions** - Pre-defined service templates
+- **Mobile-Optimized Inputs** - Touch-friendly form fields
+
+### 4. Appointment Dashboard
+- **Upcoming Appointments View** - See scheduled bookings
+- **Past Appointments View** - Historical records
+- **AI Style Preview** - See client's desired look before appointment
+- **Quick Actions** - Confirm, cancel, mark complete buttons
+- **Customer Information** - View client details
+- **Client Hair History** - Access past appointments for same customer
+- **Post-Service Notes** - Add notes after completing service
+- **Pull-to-Refresh** - Swipe to update data
+
+### 5. Client Communication
+- **In-App Messaging** - Chat with customers
+- **Image Sharing** - Send/receive photos
+- **Appointment Context** - Messages linked to bookings
+- **Real-Time Updates** - Instant message delivery
+- **Message History** - Full conversation archive
+
+### 6. Payments & Earnings
+- **Stripe Connect Status** - View connection status
+- **Earnings Overview** - Weekly, monthly, all-time totals
+- **Fee Transparency** - Clear platform fee breakdown
+- **Payout Management** - View payout schedule
+- **Minimum Payout Threshold** - Understand payout rules
+
+### 7. Profile Management
+- **Edit Profile** - Update personal/business info
+- **Photo Management** - Change profile picture
+- **Location Settings** - Update address/coordinates
+- **Specialties Management** - Add/remove expertise areas
+- **Language Preference** - Choose English, Spanish, or Portuguese
 
 ---
 
-## 🔒 Security & Authentication
+## 🔒 Security Features
 
-- Google OAuth login
-- Email/password authentication with auto-confirm
-- Role-based access control (customer/stylist enum)
-- Secure password recovery flow (reset + update pages)
-- Row-Level Security (RLS) on all database tables
-- Protected API endpoints
+### Authentication & Authorization
+- **JWT Token-Based Auth** - Secure session management
+- **Role-Based Access Control (RBAC)** - Customer/stylist role enforcement
+- **Google OAuth 2.0** - Secure third-party authentication
+- **Auto-Confirm Email** - Streamlined signup (configurable)
+- **Password Reset Flow** - Secure recovery process
+
+### Database Security
+- **Row-Level Security (RLS)** - All tables protected
+- **User-Specific Data Access** - Users only see their own data
+- **Stylists Public View** - Sensitive data excluded from public queries
+- **Foreign Key Constraints** - Data integrity enforcement
+
+### API Security
+- **Edge Function Authentication** - JWT verification required
+- **Rate Limiting** - 5 requests/minute per user on sensitive endpoints
+- **Input Validation** - Zod schema validation on all inputs
+- **CORS Headers** - Proper cross-origin configuration
+- **Service Role Separation** - Admin vs. user key separation
+
+### Data Privacy
+- **AI Style Sharing Toggle** - Customer controls stylist visibility
+- **Sensitive Field Exclusion** - Email, phone, Stripe IDs hidden in public views
+- **Secure File Storage** - User photos in protected buckets
 
 ---
 
 ## 📱 Mobile-First Experience
 
 ### Progressive Web App (PWA)
-- Service worker for offline support
-- Mobile web app capable meta tags
-- Theme color integration
-- Apple touch icon support
+- **Service Worker** - Offline support and caching
+- **Web App Manifest** - Installable on home screen
+- **Mobile Web Capable** - Full-screen app experience
+- **Theme Color Integration** - Native status bar styling
+- **Apple Touch Icons** - iOS home screen support
 
 ### Touch-Optimized UI
-- 44x44px minimum touch targets throughout
-- Bottom navigation bars (separate for customer/stylist)
-- Safe area padding for notched devices
-- Pull-to-refresh on list pages
-- No-tap-highlight for clean interactions
-- Active state animations for tactile feedback
+- **44x44px Touch Targets** - Minimum size for all interactive elements
+- **Bottom Navigation** - Thumb-friendly nav bars (customer & stylist variants)
+- **Safe Area Padding** - Notched device support
+- **Pull-to-Refresh** - Native gesture on list pages
+- **No Tap Highlight** - Clean touch interactions
+- **Active State Animations** - Visual feedback on press
 
-### Mobile-Specific Features
-- Capacitor camera integration with web fallback
-- Smooth scrolling with hidden scrollbars
-- Viewport-fit cover for edge-to-edge display
-- Backdrop blur effects on navigation
+### Capacitor Integration
+- **Camera Access** - Native camera capture with web fallback
+- **Haptic Feedback** - Vibration patterns for tactile response
+  - Light impact for navigation
+  - Medium impact for captures
+  - Success/error patterns for outcomes
+- **Graceful Degradation** - Works on web without Capacitor
+
+### Responsive Design
+- **Mobile-First CSS** - Designed for small screens first
+- **Flexible Layouts** - Adapts to all screen sizes
+- **Hidden Scrollbars** - Clean mobile appearance
+- **Viewport Fit Cover** - Edge-to-edge display
+- **Backdrop Blur Effects** - Modern glass morphism on navigation
+
+---
+
+## 🌐 Internationalization (i18n)
+
+### Supported Languages
+- **English (en)** - Default language
+- **Spanish (es)** - Full translation
+- **Portuguese (pt)** - Full translation
+
+### Implementation
+- **react-i18next** - Translation framework
+- **Browser Detection** - Auto-detect user language
+- **Language Persistence** - Saved to database per user
+- **Cross-Device Sync** - Language follows user account
+- **Language Switcher** - Available on auth page and in layouts
+- **Full Coverage** - All UI text, labels, messages, and errors translated
 
 ---
 
 ## 🔔 Notification System
 
-- Web Push notifications via VAPID keys
-- Appointment reminder automation (cron-based)
-- Waitlist slot availability alerts
-- Test notification capability in settings
-- Subscription management per device
+### Push Notifications
+- **Web Push API** - Browser-based push notifications
+- **VAPID Authentication** - Secure key-pair verification
+- **Subscription Management** - Per-device subscription storage
+
+### Notification Types
+- **Appointment Reminders** - 1-2 hours before scheduled time
+- **Waitlist Availability** - When slots open up
+- **Booking Confirmations** - After successful booking
+- **Cancellation Alerts** - When appointments are cancelled
+
+### Configuration
+- **Opt-In Flow** - User grants permission
+- **Test Notification** - Verify setup in settings
+- **Enable/Disable Toggle** - User control over notifications
 
 ---
 
-## 📊 Technical Highlights
-
-| Feature | Implementation |
-|---------|----------------|
-| Mobile-first design | Tailwind CSS with custom mobile utilities |
-| Push notifications | Web Push API + Supabase Edge Functions |
-| Real-time messaging | Supabase Realtime subscriptions |
-| AI-powered previews | Gemini 2.5 Flash via Lovable AI Gateway |
-| Location services | Browser Geolocation API |
-| No-show tracking | Dedicated tracking table with fee support |
-| Waitlist automation | Edge function triggered on cancellation |
-| Image storage | Supabase Storage buckets |
-
----
-
-## 🗄️ Database Schema
+## 🗄️ Database Architecture
 
 ### Core Tables
-- `customers` - Customer profiles with location
-- `stylists` - Stylist profiles with ratings
-- `appointments` - Booking records
-- `stylist_services` - Service offerings
-- `stylist_availability` - Weekly schedules
-- `stylist_portfolio` - Portfolio images
+| Table | Purpose |
+|-------|---------|
+| `customers` | Customer profiles with location, preferences |
+| `stylists` | Stylist profiles with credentials, ratings |
+| `appointments` | Booking records with status, payment info |
+| `stylist_services` | Service offerings with pricing, duration |
+| `stylist_availability` | Weekly schedule configuration |
+| `stylist_portfolio` | Portfolio images with tags |
 
 ### Supporting Tables
-- `user_roles` - Role-based access control
-- `customer_photos` - Multi-angle customer photos
-- `customer_generated_styles` - AI-generated previews
-- `reviews` - Customer feedback
-- `messages` - In-app messaging
-- `waitlist` - Waitlist entries
-- `push_subscriptions` - Notification subscriptions
-- `customer_no_shows` - No-show tracking
-- `appointment_feedback` - Post-appointment sentiment
-- `hair_styles` - Available style options
+| Table | Purpose |
+|-------|---------|
+| `user_roles` | RBAC role assignments |
+| `customer_photos` | Multi-angle hair photos |
+| `customer_generated_styles` | AI-generated style previews |
+| `reviews` | Customer feedback and ratings |
+| `messages` | In-app chat messages |
+| `waitlist` | Waitlist entries with preferences |
+| `push_subscriptions` | Push notification subscriptions |
+| `customer_no_shows` | No-show tracking with fees |
+| `appointment_feedback` | Post-appointment sentiment |
+| `hair_styles` | Available style catalog |
+
+### Database Views
+| View | Purpose |
+|------|---------|
+| `stylists_public` | Safe stylist data for public access (excludes email, phone, Stripe IDs) |
+
+### Database Functions
+| Function | Purpose |
+|----------|---------|
+| `get_user_role(uuid)` | Returns user's role |
+| `has_role(uuid, role)` | Checks if user has specific role |
+| `update_updated_at_column()` | Trigger for timestamp updates |
 
 ---
 
-## 🎨 Key Value Propositions
+## 🚀 Edge Functions
+
+| Function | Purpose | Security |
+|----------|---------|----------|
+| `generate-hairstyle` | AI image generation via Lovable AI Gateway | JWT auth |
+| `get-vapid-key` | Retrieve public VAPID key for push setup | Public |
+| `send-push-notification` | Deliver push notifications to subscribers | Service role |
+| `check-waitlist` | Match waitlist entries when slots open | JWT auth + rate limiting |
+
+---
+
+## 📊 Technical Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend Framework | React 18 with TypeScript |
+| Build Tool | Vite |
+| Styling | Tailwind CSS with custom design tokens |
+| UI Components | shadcn/ui (Radix primitives) |
+| State Management | React Query (TanStack) |
+| Routing | React Router v6 |
+| Forms | React Hook Form + Zod validation |
+| Backend | Supabase (Lovable Cloud) |
+| Database | PostgreSQL with RLS |
+| Auth | Supabase Auth (Email + Google OAuth) |
+| Storage | Supabase Storage |
+| Serverless | Deno Edge Functions |
+| AI | Lovable AI Gateway (Gemini 2.5 Flash) |
+| Push | Web Push API with VAPID |
+| i18n | react-i18next |
+| Mobile | Capacitor (Camera, Haptics) |
+| Animations | Tailwind Animate |
+| Charts | Recharts |
+| Date Handling | date-fns |
+| Carousels | Embla Carousel |
+
+---
+
+## 🎯 Value Propositions
 
 **For Customers:**
 > "See your new look before you book"
@@ -197,15 +367,4 @@ A dual-sided marketplace connecting customers with local hair stylists, powered 
 
 ---
 
-## 🚀 Edge Functions
-
-| Function | Purpose |
-|----------|---------|
-| `generate-hairstyle` | AI image generation |
-| `get-vapid-key` | Push notification setup |
-| `send-push-notification` | Notification delivery |
-| `check-waitlist` | Waitlist slot matching |
-
----
-
-*This summary is optimized for Gamma.app presentation slides and Gemini infographic generation.*
+*This documentation provides a complete reference for all platform capabilities across customer, stylist, and technical domains.*
