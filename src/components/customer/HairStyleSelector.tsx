@@ -18,25 +18,55 @@ interface HairStyleSelectorProps {
 }
 
 const styleTags: Record<string, string[]> = {
+  // Male styles
   "Fade": ["professional", "clean", "classic"],
   "Undercut": ["modern", "edgy", "bold"],
-  "Textured": ["casual", "trendy", "volume"],
-  "Pixie": ["short", "chic", "easy"],
-  "Bob": ["sleek", "elegant", "versatile"],
-  "Layered": ["volume", "movement", "natural"],
+  "Buzz Cut": ["minimal", "low-maintenance", "clean"],
+  "Crew Cut": ["classic", "professional", "neat"],
+  "Pompadour": ["retro", "voluminous", "stylish"],
+  "Quiff": ["modern", "volume", "versatile"],
+  "Slick Back": ["elegant", "formal", "polished"],
+  "Man Bun": ["trendy", "casual", "long-hair"],
+  // Female styles
+  "Pixie Cut": ["short", "chic", "easy"],
+  "Bob Cut": ["sleek", "elegant", "versatile"],
+  "Lob": ["shoulder-length", "modern", "low-maintenance"],
+  "Layers": ["volume", "movement", "natural"],
+  "Bangs/Fringe": ["face-framing", "trendy", "youthful"],
+  "Beach Waves": ["casual", "romantic", "effortless"],
+  "Updo": ["formal", "elegant", "special-occasion"],
+  // Unisex styles
   "Braids": ["protective", "stylish", "cultural"],
-  "Curly": ["natural", "defined", "bouncy"],
+  "Afro": ["natural", "voluminous", "textured"],
+  "Dreadlocks": ["cultural", "unique", "bold"],
+  "Mohawk": ["edgy", "punk", "statement"],
+  "Shag": ["retro", "textured", "rock-n-roll"],
 };
 
 const defaultImages: Record<string, string> = {
+  // Male styles
   "Fade": "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=300&h=300&fit=crop",
   "Undercut": "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=300&h=300&fit=crop",
-  "Textured": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=300&h=300&fit=crop",
-  "Pixie": "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=300&h=300&fit=crop",
-  "Bob": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&h=300&fit=crop",
-  "Layered": "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=300&h=300&fit=crop",
+  "Buzz Cut": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop",
+  "Crew Cut": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop",
+  "Pompadour": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&h=300&fit=crop",
+  "Quiff": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop",
+  "Slick Back": "https://images.unsplash.com/photo-1480455624313-e29b44bbfde1?w=300&h=300&fit=crop",
+  "Man Bun": "https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=300&h=300&fit=crop",
+  // Female styles
+  "Pixie Cut": "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=300&h=300&fit=crop",
+  "Bob Cut": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&h=300&fit=crop",
+  "Lob": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=300&h=300&fit=crop",
+  "Layers": "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=300&h=300&fit=crop",
+  "Bangs/Fringe": "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=300&h=300&fit=crop",
+  "Beach Waves": "https://images.unsplash.com/photo-1523263685509-57c1d050d19b?w=300&h=300&fit=crop",
+  "Updo": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=300&h=300&fit=crop",
+  // Unisex styles
   "Braids": "https://images.unsplash.com/photo-1522337094846-8a818192de1f?w=300&h=300&fit=crop",
-  "Curly": "https://images.unsplash.com/photo-1634038474395-91d2d4c25ab0?w=300&h=300&fit=crop",
+  "Afro": "https://images.unsplash.com/photo-1523824921871-d6f1a15151f1?w=300&h=300&fit=crop",
+  "Dreadlocks": "https://images.unsplash.com/photo-1506956191951-7a88da4435e5?w=300&h=300&fit=crop",
+  "Mohawk": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=300&fit=crop",
+  "Shag": "https://images.unsplash.com/photo-1585504198199-20277593b94f?w=300&h=300&fit=crop",
 };
 
 export const HairStyleSelector = ({ styles, selectedStyle, onSelect }: HairStyleSelectorProps) => {
