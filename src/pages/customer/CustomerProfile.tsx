@@ -80,12 +80,15 @@ const CustomerProfile = () => {
         }
       }
       
+      // Extract name from Google OAuth metadata
+      const googleName = user.user_metadata?.full_name || user.user_metadata?.name || "";
+      
       if (existingCustomer) {
         setExistingCustomerId(existingCustomer.id);
         setFormData({
           email: existingCustomer.email || user.email || "",
           phone: existingCustomer.phone || "",
-          name: existingCustomer.name || "",
+          name: existingCustomer.name || googleName || "",
           gender: existingCustomer.gender || "",
           age: existingCustomer.age?.toString() || "",
           preferred_style_description: existingCustomer.preferred_style_description || "",
@@ -101,7 +104,12 @@ const CustomerProfile = () => {
           setPhotos(photoMap);
         }
       } else {
-        setFormData(prev => ({ ...prev, email: user.email || "" }));
+        // Pre-fill from Google OAuth for new users
+        setFormData(prev => ({ 
+          ...prev, 
+          email: user.email || "",
+          name: googleName || ""
+        }));
       }
     };
     
