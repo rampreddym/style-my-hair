@@ -876,6 +876,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_customer_owner: { Args: { _customer_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "customer" | "stylist"
