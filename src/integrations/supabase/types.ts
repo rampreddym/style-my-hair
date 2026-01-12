@@ -876,6 +876,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_customer_for_stylist: {
+        Args: { _stylist_id: string }
+        Returns: boolean
+      }
       is_customer_owner: { Args: { _customer_id: string }; Returns: boolean }
       is_stylist_for_customer: {
         Args: { _customer_id: string }
