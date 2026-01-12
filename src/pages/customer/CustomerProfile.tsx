@@ -71,12 +71,19 @@ const CustomerProfile = () => {
           .maybeSingle();
         
         if (customerByEmail) {
-          await supabase
+          // Link existing orphaned record to current user
+          const { error: linkError } = await supabase
             .from("customers")
             .update({ user_id: user.id })
             .eq("id", customerByEmail.id);
           
-          existingCustomer = customerByEmail;
+          if (!linkError) {
+            existingCustomer = { ...customerByEmail, user_id: user.id };
+          } else {
+            console.error("Failed to link customer to user:", linkError);
+            // Still set existingCustomer to prevent duplicate insert
+            existingCustomer = customerByEmail;
+          }
         }
       }
       
