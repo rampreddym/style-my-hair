@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,6 +16,7 @@ import { CustomerLayout } from "@/components/layout/CustomerLayout";
 const CustomerStyle = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -110,13 +112,17 @@ const CustomerStyle = () => {
 
   const generateStyle = async () => {
     if (!stylePrompt && !selectedStyle) {
-      toast({ title: "Please describe your style", variant: "destructive" });
+      toast({ title: t("customerStyle.pleaseDescribeStyle"), variant: "destructive" });
       return;
     }
 
     const frontPhoto = photos.find((p) => p.photo_type === "front");
     if (!frontPhoto) {
-      toast({ title: "Front photo required", description: "Please upload a front-facing photo", variant: "destructive" });
+      toast({ 
+        title: t("customerStyle.frontPhotoRequired"), 
+        description: t("customerStyle.frontPhotoRequiredDesc"), 
+        variant: "destructive" 
+      });
       return;
     }
 
@@ -165,12 +171,19 @@ const CustomerStyle = () => {
           setGeneratedImages([...saved, ...generatedImages]);
         }
         
-        toast({ title: "Styles generated!", description: `${data.variations.length} new looks created` });
+        toast({ 
+          title: t("customerStyle.stylesGenerated"), 
+          description: t("customerStyle.newLooksCreated", { count: data.variations.length }) 
+        });
       } else {
-        toast({ title: "No images generated", description: "Please try again with a different description", variant: "destructive" });
+        toast({ 
+          title: t("customerStyle.noImagesGenerated"), 
+          description: t("customerStyle.tryDifferentDescription"), 
+          variant: "destructive" 
+        });
       }
     } catch (error: any) {
-      toast({ title: "Generation failed", description: error.message, variant: "destructive" });
+      toast({ title: t("customerStyle.generationFailed"), description: error.message, variant: "destructive" });
     } finally {
       clearInterval(progressInterval);
       setGenerationProgress(100);
@@ -193,12 +206,12 @@ const CustomerStyle = () => {
       .eq("id", imageId);
 
     setSelectedImage(imageId);
-    toast({ title: "Style selected!" });
+    toast({ title: t("customerStyle.styleSelected") });
   };
 
   const continueToBooking = () => {
     if (!selectedImage) {
-      toast({ title: "Please select a style first", variant: "destructive" });
+      toast({ title: t("customerStyle.pleaseSelectStyle"), variant: "destructive" });
       return;
     }
     navigate("/customer/booking");
@@ -225,12 +238,12 @@ const CustomerStyle = () => {
             <button 
               onClick={() => navigate("/customer")}
               className="min-w-[44px] min-h-[44px] flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors"
-              aria-label="Go back"
+              aria-label={t("common.back")}
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <h1 className="flex-1 text-center text-xl font-bold text-foreground pr-8">
-              Preview Your New Look
+              {t("customerStyle.title")}
             </h1>
           </div>
 
@@ -257,7 +270,7 @@ const CustomerStyle = () => {
                 >
                   <img
                     src={img.generated_image_url}
-                    alt="Generated style"
+                    alt={t("customer.style.selectStyle")}
                     className="w-full h-full object-cover"
                   />
                   {selectedImage === img.id && (
@@ -274,7 +287,7 @@ const CustomerStyle = () => {
           <Card>
             <CardContent className="p-4 space-y-4">
               <div className="space-y-2">
-                <Label className="font-medium">Style Category</Label>
+                <Label className="font-medium">{t("customerStyle.styleCategory")}</Label>
                 <div className="flex flex-wrap gap-2">
                   {hairStyles.map((style) => (
                     <button
@@ -293,12 +306,12 @@ const CustomerStyle = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="stylePrompt" className="font-medium">Describe Your Style</Label>
+                <Label htmlFor="stylePrompt" className="font-medium">{t("customerStyle.describeStyle")}</Label>
                 <Textarea
                   id="stylePrompt"
                   value={stylePrompt}
                   onChange={(e) => setStylePrompt(e.target.value)}
-                  placeholder="E.g., Short fade on sides, textured on top, modern look..."
+                  placeholder={t("customerStyle.stylePlaceholder")}
                   className="min-h-[80px] border-2 focus:border-primary"
                 />
               </div>
@@ -311,12 +324,12 @@ const CustomerStyle = () => {
                 {generating ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating ({Math.round(generationProgress)}%)
+                    {t("customerStyle.generating", { progress: Math.round(generationProgress) })}
                   </>
                 ) : (
                   <>
                     <RefreshCw className="w-4 h-4 mr-2" />
-                    Generate Preview
+                    {t("customerStyle.generatePreview")}
                   </>
                 )}
               </Button>
@@ -333,14 +346,14 @@ const CustomerStyle = () => {
                   className="flex-1 h-12"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
+                  {t("customerStyle.back")}
                 </Button>
                 <Button
                   onClick={continueToBooking}
                   disabled={!selectedImage}
                   className="flex-1 h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
                 >
-                  Approve
+                  {t("customerStyle.approve")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>

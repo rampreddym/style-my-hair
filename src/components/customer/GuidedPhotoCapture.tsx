@@ -6,48 +6,15 @@ import { useTranslation } from "react-i18next";
 
 interface PhotoGuide {
   id: string;
-  label: string;
-  instruction: string;
-  tip: string;
   icon: string;
 }
 
-const photoGuides: PhotoGuide[] = [
-  {
-    id: "front",
-    label: "Front View",
-    instruction: "Face the camera directly",
-    tip: "Keep shoulders relaxed, look straight ahead",
-    icon: "👤"
-  },
-  {
-    id: "left",
-    label: "Left Side",
-    instruction: "Turn 90° to your left",
-    tip: "Show your hair volume and layers",
-    icon: "👈"
-  },
-  {
-    id: "right",
-    label: "Right Side", 
-    instruction: "Turn 90° to your right",
-    tip: "Mirror the left side angle",
-    icon: "👉"
-  },
-  {
-    id: "back",
-    label: "Back View",
-    instruction: "Face away from camera",
-    tip: "Show full hair length and texture",
-    icon: "🔙"
-  },
-  {
-    id: "top",
-    label: "Top View",
-    instruction: "Tilt head forward slightly",
-    tip: "Bird's eye view to show thickness",
-    icon: "⬆️"
-  }
+const photoGuideIds: PhotoGuide[] = [
+  { id: "front", icon: "👤" },
+  { id: "left", icon: "👈" },
+  { id: "right", icon: "👉" },
+  { id: "back", icon: "🔙" },
+  { id: "top", icon: "⬆️" }
 ];
 
 // Haptic feedback helper
@@ -95,9 +62,14 @@ export const GuidedPhotoCapture = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
-  const currentGuide = photoGuides[currentStep];
+  const currentGuide = photoGuideIds[currentStep];
   const completedPhotos = Object.keys(photos).length;
-  const totalPhotos = photoGuides.length;
+  const totalPhotos = photoGuideIds.length;
+
+  // Helper to get translated guide text
+  const getGuideLabel = (id: string) => t(`photoCapture.guides.${id}.label`);
+  const getGuideInstruction = (id: string) => t(`photoCapture.guides.${id}.instruction`);
+  const getGuideTip = (id: string) => t(`photoCapture.guides.${id}.tip`);
 
   const handleCapture = useCallback(async () => {
     await triggerHaptic('medium');
@@ -132,7 +104,7 @@ export const GuidedPhotoCapture = ({
       await triggerHaptic('success');
       
       // Auto-advance to next uncaptured photo
-      if (currentStep < photoGuides.length - 1) {
+      if (currentStep < photoGuideIds.length - 1) {
         setTimeout(() => setCurrentStep(prev => prev + 1), 500);
       }
     } catch (error: any) {
@@ -158,7 +130,7 @@ export const GuidedPhotoCapture = ({
       setCapturedInSession(prev => new Set([...prev, currentGuide.id]));
       await triggerHaptic('success');
       
-      if (currentStep < photoGuides.length - 1) {
+      if (currentStep < photoGuideIds.length - 1) {
         setTimeout(() => setCurrentStep(prev => prev + 1), 500);
       }
     }
@@ -173,7 +145,7 @@ export const GuidedPhotoCapture = ({
       setCapturedInSession(prev => new Set([...prev, currentGuide.id]));
       await triggerHaptic('success');
       
-      if (currentStep < photoGuides.length - 1) {
+      if (currentStep < photoGuideIds.length - 1) {
         setTimeout(() => setCurrentStep(prev => prev + 1), 500);
       }
     }
@@ -199,7 +171,7 @@ export const GuidedPhotoCapture = ({
   const startGuidedCapture = async () => {
     await triggerHaptic('medium');
     // Find first empty slot
-    const firstEmpty = photoGuides.findIndex(g => !photos[g.id]);
+    const firstEmpty = photoGuideIds.findIndex(g => !photos[g.id]);
     setCurrentStep(firstEmpty >= 0 ? firstEmpty : 0);
     setIsGuidedMode(true);
   };
@@ -217,16 +189,16 @@ export const GuidedPhotoCapture = ({
           </button>
           <div className="text-center">
             <p className="text-sm font-medium text-muted-foreground">
-              {t("photoCapture.step", "Step {{current}} of {{total}}", { current: currentStep + 1, total: totalPhotos })}
+              {t("photoCapture.step", { current: currentStep + 1, total: totalPhotos })}
             </p>
-            <h2 className="text-lg font-bold text-foreground">{currentGuide.label}</h2>
+            <h2 className="text-lg font-bold text-foreground">{getGuideLabel(currentGuide.id)}</h2>
           </div>
           <div className="w-10" /> {/* Spacer */}
         </div>
 
         {/* Progress bar - Fixed */}
         <div className="flex-shrink-0 flex gap-1 px-4 py-2">
-          {photoGuides.map((guide, idx) => (
+          {photoGuideIds.map((guide, idx) => (
             <div 
               key={guide.id}
               className={cn(
@@ -247,7 +219,7 @@ export const GuidedPhotoCapture = ({
                 <>
                   <img 
                     src={photos[currentGuide.id]} 
-                    alt={currentGuide.label}
+                    alt={getGuideLabel(currentGuide.id)}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
@@ -258,7 +230,7 @@ export const GuidedPhotoCapture = ({
                 <div className="w-full h-full bg-muted/30 flex flex-col items-center justify-center">
                   <span className="text-5xl sm:text-6xl mb-3">{currentGuide.icon}</span>
                   <p className="text-sm text-muted-foreground text-center px-4">
-                    {currentGuide.instruction}
+                    {getGuideInstruction(currentGuide.id)}
                   </p>
                 </div>
               )}
@@ -273,15 +245,15 @@ export const GuidedPhotoCapture = ({
             {/* Guidance tip */}
             <div className="flex items-start gap-3 bg-primary/5 rounded-xl p-3 max-w-sm w-full">
               <Lightbulb className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-foreground">{currentGuide.tip}</p>
+              <p className="text-sm text-foreground">{getGuideTip(currentGuide.id)}</p>
             </div>
 
             {/* Quality tips */}
             <div className="flex flex-wrap justify-center gap-2 max-w-sm">
               {[
-                t("photoCapture.goodLighting", "Good lighting"),
-                t("photoCapture.faceVisible", "Face visible"),
-                t("photoCapture.inFocus", "In focus")
+                t("photoCapture.goodLighting"),
+                t("photoCapture.faceVisible"),
+                t("photoCapture.inFocus")
               ].map((tip) => (
                 <span 
                   key={tip}
@@ -307,13 +279,13 @@ export const GuidedPhotoCapture = ({
                 }}
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
-                {t("photoCapture.retake", "Retake")}
+                {t("photoCapture.retake")}
               </Button>
               <Button 
                 className="flex-1 h-12 bg-primary hover:bg-primary/90"
                 onClick={async () => {
                   await triggerHaptic('light');
-                  if (currentStep < photoGuides.length - 1) {
+                  if (currentStep < photoGuideIds.length - 1) {
                     setCurrentStep(prev => prev + 1);
                   } else {
                     await triggerHaptic('success');
@@ -321,10 +293,10 @@ export const GuidedPhotoCapture = ({
                   }
                 }}
               >
-                {currentStep < photoGuides.length - 1 ? (
-                  <>{t("common.next", "Next")} <ChevronRight className="w-4 h-4 ml-2" /></>
+                {currentStep < photoGuideIds.length - 1 ? (
+                  <>{t("common.next")} <ChevronRight className="w-4 h-4 ml-2" /></>
                 ) : (
-                  <>{t("common.done", "Done")} <Check className="w-4 h-4 ml-2" /></>
+                  <>{t("common.done")} <Check className="w-4 h-4 ml-2" /></>
                 )}
               </Button>
             </div>
@@ -336,7 +308,7 @@ export const GuidedPhotoCapture = ({
                 disabled={!!uploadingPhoto}
               >
                 <Camera className="w-5 h-5 mr-2" />
-                {t("photoCapture.takePhoto", "Take Photo")}
+                {t("photoCapture.takePhoto")}
               </Button>
               <Button 
                 variant="outline"
@@ -345,14 +317,14 @@ export const GuidedPhotoCapture = ({
                 disabled={!!uploadingPhoto}
               >
                 <ImagePlus className="w-5 h-5 mr-2" />
-                {t("photoCapture.upload", "Upload")}
+                {t("photoCapture.upload")}
               </Button>
             </div>
           )}
 
           {/* Navigation dots */}
           <div className="flex justify-center gap-2 pt-1">
-            {photoGuides.map((guide, idx) => (
+            {photoGuideIds.map((guide, idx) => (
               <button
                 key={guide.id}
                 onClick={async () => {
@@ -407,16 +379,16 @@ export const GuidedPhotoCapture = ({
           <Camera className="w-8 h-8 text-primary" />
         </div>
         <p className="font-semibold text-foreground">
-          {completedPhotos === 0 ? "Start Photo Capture" : "Continue Capture"}
+          {completedPhotos === 0 ? t("photoCapture.startCapture") : t("photoCapture.continueCapture")}
         </p>
         <p className="text-sm text-muted-foreground mt-1">
-          Guided step-by-step process
+          {t("photoCapture.guidedProcess")}
         </p>
         
         {/* Progress indicator */}
         <div className="flex items-center gap-2 mt-3">
           <div className="flex gap-1">
-            {photoGuides.map((guide) => (
+            {photoGuideIds.map((guide) => (
               <div 
                 key={guide.id}
                 className={cn(
@@ -427,7 +399,7 @@ export const GuidedPhotoCapture = ({
             ))}
           </div>
           <span className="text-xs text-muted-foreground">
-            {completedPhotos}/{totalPhotos} photos
+            {t("photoCapture.photosCount", { completed: completedPhotos, total: totalPhotos })}
           </span>
         </div>
       </button>
@@ -436,23 +408,23 @@ export const GuidedPhotoCapture = ({
       {completedPhotos > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-foreground">Your Photos</p>
+            <p className="text-sm font-medium text-foreground">{t("photoCapture.yourPhotos")}</p>
             {completedPhotos < 2 && (
               <div className="flex items-center gap-1 text-amber-600 text-xs">
                 <AlertCircle className="w-3 h-3" />
-                <span>Minimum 2 required</span>
+                <span>{t("photoCapture.minimum2Required")}</span>
               </div>
             )}
           </div>
           
           <div className="grid grid-cols-5 gap-2">
-            {photoGuides.map((guide) => (
+            {photoGuideIds.map((guide) => (
               <div key={guide.id} className="relative group">
                 {photos[guide.id] ? (
                   <div className="aspect-square rounded-lg overflow-hidden border-2 border-primary">
                     <img 
                       src={photos[guide.id]} 
-                      alt={guide.label}
+                      alt={getGuideLabel(guide.id)}
                       className="w-full h-full object-cover"
                     />
                     <button
@@ -464,7 +436,7 @@ export const GuidedPhotoCapture = ({
                     </button>
                     <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-1">
                       <p className="text-[10px] text-white text-center truncate">
-                        {guide.label.split(' ')[0]}
+                        {getGuideLabel(guide.id).split(' ')[0]}
                       </p>
                     </div>
                   </div>
@@ -476,15 +448,9 @@ export const GuidedPhotoCapture = ({
                   >
                     <span className="text-lg">{guide.icon}</span>
                     <p className="text-[8px] text-muted-foreground mt-0.5">
-                      {guide.label.split(' ')[0]}
+                      {getGuideLabel(guide.id).split(' ')[0]}
                     </p>
                   </button>
-                )}
-                
-                {uploadingPhoto === guide.id && (
-                  <div className="absolute inset-0 bg-background/80 rounded-lg flex items-center justify-center">
-                    <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  </div>
                 )}
               </div>
             ))}

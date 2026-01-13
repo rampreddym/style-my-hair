@@ -407,7 +407,54 @@
     "guidedProcess": "Guided step-by-step process",
     "photosCount": "{{completed}}/{{total}} photos",
     "yourPhotos": "Your Photos",
-    "minimum2Required": "Minimum 2 required"
+    "minimum2Required": "Minimum 2 required",
+    "guides": {
+      "front": {
+        "label": "Front View",
+        "instruction": "Face the camera directly",
+        "tip": "Keep shoulders relaxed, look straight ahead"
+      },
+      "left": {
+        "label": "Left Side",
+        "instruction": "Turn 90° to your left",
+        "tip": "Show your hair volume and layers"
+      },
+      "right": {
+        "label": "Right Side",
+        "instruction": "Turn 90° to your right",
+        "tip": "Mirror the left side angle"
+      },
+      "back": {
+        "label": "Back View",
+        "instruction": "Face away from camera",
+        "tip": "Show full hair length and texture"
+      },
+      "top": {
+        "label": "Top View",
+        "instruction": "Tilt head forward slightly",
+        "tip": "Bird's eye view to show thickness"
+      }
+    }
+  },
+  "customerStyle": {
+    "title": "Preview Your New Look",
+    "styleCategory": "Style Category",
+    "describeStyle": "Describe Your Style",
+    "stylePlaceholder": "E.g., Short fade on sides, textured on top, modern look...",
+    "generatePreview": "Generate Preview",
+    "generating": "Generating ({{progress}}%)",
+    "pleaseDescribeStyle": "Please describe your style",
+    "frontPhotoRequired": "Front photo required",
+    "frontPhotoRequiredDesc": "Please upload a front-facing photo",
+    "stylesGenerated": "Styles generated!",
+    "newLooksCreated": "{{count}} new looks created",
+    "noImagesGenerated": "No images generated",
+    "tryDifferentDescription": "Please try again with a different description",
+    "generationFailed": "Generation failed",
+    "styleSelected": "Style selected!",
+    "pleaseSelectStyle": "Please select a style first",
+    "back": "Back",
+    "approve": "Approve"
   },
   "stylistServices": {
     "title": "Configure Your Services",
@@ -588,5 +635,39 @@
     "skipForNow": "Skip for now",
     "submitting": "Submitting...",
     "submit": "Submit Review"
+  },
+  "stylistProfile": {
+    "title": "Create Your Stylist Profile",
+    "editTitle": "Edit Your Profile",
+    "subtitle": "Showcase your skills and attract new clients",
+    "profilePhoto": "Profile Photo",
+    "uploading": "Uploading...",
+    "basicInfo": "Basic Information",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "businessName": "Business Name",
+    "businessNamePlaceholder": "Salon or business name",
+    "phone": "Phone",
+    "phonePlaceholder": "+1 234 567 8900",
+    "addressLabel": "Address",
+    "addressPlaceholder": "Your salon or studio address",
+    "aboutYou": "About You",
+    "bioPlaceholder": "Tell clients about your experience, style philosophy, and what makes you unique...",
+    "locationDetected": "Location detected for client matching",
+    "specialties": "Specialties",
+    "aiSuggest": "AI Suggest",
+    "generating": "Generating...",
+    "addSpecialtyPlaceholder": "Add a specialty...",
+    "add": "Add",
+    "addBioFirst": "Please add a bio first",
+    "specialtiesGenerated": "Specialties generated!",
+    "generationFailed": "Generation failed",
+    "notAuthenticated": "Not authenticated",
+    "requiredFields": "Required fields missing",
+    "fillName": "Please fill in your name",
+    "profileSaved": "Profile saved!",
+    "back": "Back",
+    "continue": "Continue",
+    "saving": "Saving..."
   }
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ import { StylistLayout } from "@/components/layout/StylistLayout";
 const StylistProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { user, userRole, loading: authLoading, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -104,7 +106,7 @@ const StylistProfile = () => {
       .upload(filePath, file);
 
     if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
       setUploadingPhoto(false);
       return;
     }
@@ -130,7 +132,7 @@ const StylistProfile = () => {
 
   const generateSpecialties = async () => {
     if (!formData.bio) {
-      toast({ title: "Please add a bio first", variant: "destructive" });
+      toast({ title: t("stylistProfile.addBioFirst"), variant: "destructive" });
       return;
     }
 
@@ -152,9 +154,9 @@ const StylistProfile = () => {
       const random = suggested.sort(() => Math.random() - 0.5).slice(0, 4);
       setSpecialties([...new Set([...specialties, ...random])]);
       
-      toast({ title: "Specialties generated!" });
+      toast({ title: t("stylistProfile.specialtiesGenerated") });
     } catch (error: any) {
-      toast({ title: "Generation failed", description: error.message, variant: "destructive" });
+      toast({ title: t("stylistProfile.generationFailed"), description: error.message, variant: "destructive" });
     } finally {
       setGenerating(false);
     }
@@ -162,12 +164,12 @@ const StylistProfile = () => {
 
   const handleSubmit = async () => {
     if (!user) {
-      toast({ title: "Not authenticated", variant: "destructive" });
+      toast({ title: t("stylistProfile.notAuthenticated"), variant: "destructive" });
       return;
     }
 
     if (!formData.name) {
-      toast({ title: "Required fields missing", description: "Please fill in your name", variant: "destructive" });
+      toast({ title: t("stylistProfile.requiredFields"), description: t("stylistProfile.fillName"), variant: "destructive" });
       return;
     }
 
@@ -219,10 +221,10 @@ const StylistProfile = () => {
       }
 
       sessionStorage.setItem("stylistId", stylistId);
-      toast({ title: "Profile saved!" });
+      toast({ title: t("stylistProfile.profileSaved") });
       navigate("/stylist/services");
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -232,7 +234,7 @@ const StylistProfile = () => {
     return (
       <StylistLayout>
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
-          <div className="animate-pulse text-muted-foreground">Loading...</div>
+          <div className="animate-pulse text-muted-foreground">{t("common.loading")}</div>
         </div>
       </StylistLayout>
     );
@@ -244,8 +246,8 @@ const StylistProfile = () => {
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="flex justify-between items-start">
             <div className="text-center flex-1 space-y-2">
-              <h1 className="text-2xl font-bold text-foreground">{existingStylistId ? "Edit Your Profile" : "Create Your Stylist Profile"}</h1>
-              <p className="text-sm text-muted-foreground">Showcase your skills and attract new clients</p>
+              <h1 className="text-2xl font-bold text-foreground">{existingStylistId ? t("stylistProfile.editTitle") : t("stylistProfile.title")}</h1>
+              <p className="text-sm text-muted-foreground">{t("stylistProfile.subtitle")}</p>
             </div>
             <Button variant="ghost" size="icon" onClick={signOut} className="min-w-[44px] min-h-[44px]">
               <LogOut className="w-5 h-5" />
@@ -254,7 +256,7 @@ const StylistProfile = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Profile Photo</CardTitle>
+            <CardTitle>{t("stylistProfile.profilePhoto")}</CardTitle>
           </CardHeader>
           <CardContent>
             <label className="block cursor-pointer mx-auto w-32">
@@ -264,7 +266,7 @@ const StylistProfile = () => {
                 {photoUrl ? (
                   <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
                 ) : uploadingPhoto ? (
-                  <div className="animate-pulse text-muted-foreground text-sm">Uploading...</div>
+                  <div className="animate-pulse text-muted-foreground text-sm">{t("stylistProfile.uploading")}</div>
                 ) : (
                   <Camera className="w-8 h-8 text-muted-foreground" />
                 )}
@@ -286,34 +288,34 @@ const StylistProfile = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-accent" />
-              Basic Information
+              {t("stylistProfile.basicInfo")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
+                <Label htmlFor="name">{t("stylistProfile.name")} *</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Your name"
+                  placeholder={t("stylistProfile.namePlaceholder")}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="business_name">Business Name</Label>
+                <Label htmlFor="business_name">{t("stylistProfile.businessName")}</Label>
                 <Input
                   id="business_name"
                   value={formData.business_name}
                   onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
-                  placeholder="Salon or business name"
+                  placeholder={t("stylistProfile.businessNamePlaceholder")}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("common.email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -323,40 +325,40 @@ const StylistProfile = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">{t("stylistProfile.phone")}</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+1 234 567 8900"
+                  placeholder={t("stylistProfile.phonePlaceholder")}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="address">{t("stylistProfile.addressLabel")}</Label>
               <Input
                 id="address"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                placeholder="Your salon or studio address"
+                placeholder={t("stylistProfile.addressPlaceholder")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="bio">About You</Label>
+              <Label htmlFor="bio">{t("stylistProfile.aboutYou")}</Label>
               <Textarea
                 id="bio"
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                placeholder="Tell clients about your experience, style philosophy, and what makes you unique..."
+                placeholder={t("stylistProfile.bioPlaceholder")}
                 rows={4}
               />
             </div>
 
             {location && (
               <p className="text-sm text-muted-foreground flex items-center gap-1">
-                <MapPin className="w-4 h-4" /> Location detected for client matching
+                <MapPin className="w-4 h-4" /> {t("stylistProfile.locationDetected")}
               </p>
             )}
           </CardContent>
@@ -365,7 +367,7 @@ const StylistProfile = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>Specialties</span>
+              <span>{t("stylistProfile.specialties")}</span>
               <Button
                 variant="outline"
                 size="sm"
@@ -374,7 +376,7 @@ const StylistProfile = () => {
                 className="min-h-[44px]"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                {generating ? "Generating..." : "AI Suggest"}
+                {generating ? t("stylistProfile.generating") : t("stylistProfile.aiSuggest")}
               </Button>
             </CardTitle>
           </CardHeader>
@@ -383,11 +385,11 @@ const StylistProfile = () => {
               <Input
                 value={newSpecialty}
                 onChange={(e) => setNewSpecialty(e.target.value)}
-                placeholder="Add a specialty..."
+                placeholder={t("stylistProfile.addSpecialtyPlaceholder")}
                 onKeyPress={(e) => e.key === "Enter" && addSpecialty()}
                 className="h-12"
               />
-              <Button onClick={addSpecialty} variant="outline" className="min-h-[44px]">Add</Button>
+              <Button onClick={addSpecialty} variant="outline" className="min-h-[44px]">{t("stylistProfile.add")}</Button>
             </div>
             
             <div className="flex flex-wrap gap-2">
@@ -405,14 +407,14 @@ const StylistProfile = () => {
 
         <div className="flex gap-4">
           <Button variant="outline" onClick={() => navigate("/")} className="flex-1 h-14">
-            Back
+            {t("stylistProfile.back")}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={loading}
             className="flex-1 h-14 bg-gradient-to-r from-accent to-primary hover:opacity-90"
           >
-            {loading ? "Saving..." : "Continue"}
+            {loading ? t("stylistProfile.saving") : t("stylistProfile.continue")}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>

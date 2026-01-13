@@ -407,7 +407,54 @@
     "guidedProcess": "Proceso guiado paso a paso",
     "photosCount": "{{completed}}/{{total}} fotos",
     "yourPhotos": "Tus Fotos",
-    "minimum2Required": "Mínimo 2 requeridas"
+    "minimum2Required": "Mínimo 2 requeridas",
+    "guides": {
+      "front": {
+        "label": "Vista Frontal",
+        "instruction": "Mira directamente a la cámara",
+        "tip": "Mantén los hombros relajados, mira al frente"
+      },
+      "left": {
+        "label": "Lado Izquierdo",
+        "instruction": "Gira 90° a tu izquierda",
+        "tip": "Muestra el volumen y capas de tu cabello"
+      },
+      "right": {
+        "label": "Lado Derecho",
+        "instruction": "Gira 90° a tu derecha",
+        "tip": "Refleja el ángulo del lado izquierdo"
+      },
+      "back": {
+        "label": "Vista Trasera",
+        "instruction": "Da la espalda a la cámara",
+        "tip": "Muestra el largo y textura completa del cabello"
+      },
+      "top": {
+        "label": "Vista Superior",
+        "instruction": "Inclina la cabeza ligeramente hacia adelante",
+        "tip": "Vista desde arriba para mostrar el grosor"
+      }
+    }
+  },
+  "customerStyle": {
+    "title": "Previsualiza Tu Nuevo Look",
+    "styleCategory": "Categoría de Estilo",
+    "describeStyle": "Describe Tu Estilo",
+    "stylePlaceholder": "Ej., Degradado corto en los lados, texturizado arriba, look moderno...",
+    "generatePreview": "Generar Vista Previa",
+    "generating": "Generando ({{progress}}%)",
+    "pleaseDescribeStyle": "Por favor describe tu estilo",
+    "frontPhotoRequired": "Foto frontal requerida",
+    "frontPhotoRequiredDesc": "Por favor sube una foto de frente",
+    "stylesGenerated": "¡Estilos generados!",
+    "newLooksCreated": "{{count}} nuevos looks creados",
+    "noImagesGenerated": "No se generaron imágenes",
+    "tryDifferentDescription": "Por favor intenta de nuevo con una descripción diferente",
+    "generationFailed": "Error en la generación",
+    "styleSelected": "¡Estilo seleccionado!",
+    "pleaseSelectStyle": "Por favor selecciona un estilo primero",
+    "back": "Atrás",
+    "approve": "Aprobar"
   },
   "stylistServices": {
     "title": "Configura Tus Servicios",
@@ -588,5 +635,39 @@
     "skipForNow": "Omitir por ahora",
     "submitting": "Enviando...",
     "submit": "Enviar Reseña"
+  },
+  "stylistProfile": {
+    "title": "Crea Tu Perfil de Estilista",
+    "editTitle": "Editar Tu Perfil",
+    "subtitle": "Muestra tus habilidades y atrae nuevos clientes",
+    "profilePhoto": "Foto de Perfil",
+    "uploading": "Subiendo...",
+    "basicInfo": "Información Básica",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "businessName": "Nombre del Negocio",
+    "businessNamePlaceholder": "Nombre del salón o negocio",
+    "phone": "Teléfono",
+    "phonePlaceholder": "+1 234 567 8900",
+    "addressLabel": "Dirección",
+    "addressPlaceholder": "Dirección de tu salón o estudio",
+    "aboutYou": "Sobre Ti",
+    "bioPlaceholder": "Cuéntales a los clientes sobre tu experiencia, filosofía de estilo y lo que te hace único...",
+    "locationDetected": "Ubicación detectada para emparejar clientes",
+    "specialties": "Especialidades",
+    "aiSuggest": "Sugerir con IA",
+    "generating": "Generando...",
+    "addSpecialtyPlaceholder": "Agregar una especialidad...",
+    "add": "Agregar",
+    "addBioFirst": "Por favor agrega una biografía primero",
+    "specialtiesGenerated": "¡Especialidades generadas!",
+    "generationFailed": "Error en la generación",
+    "notAuthenticated": "No autenticado",
+    "requiredFields": "Campos requeridos faltantes",
+    "fillName": "Por favor ingresa tu nombre",
+    "profileSaved": "¡Perfil guardado!",
+    "back": "Atrás",
+    "continue": "Continuar",
+    "saving": "Guardando..."
   }
 }
