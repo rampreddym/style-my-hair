@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { openInMaps } from "@/components/map/StylistLocationLink";
+import { MapPreview } from "@/components/map/MapPreview";
 
 interface Stylist {
   id: string;
@@ -192,32 +193,55 @@ export const EnhancedStylistCard = ({
           </p>
         )}
 
-        {/* Quick action on selected */}
+        {/* Map preview and quick actions on selected */}
         {isSelected && (
-          <div className="flex gap-2 mt-4 pt-3 border-t">
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="flex-1 min-h-[44px]"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <MessageSquare className="w-4 h-4 mr-1" />
-              Message
-            </Button>
-            <Button 
-              size="sm" 
-              variant="outline"
-              className="min-h-[44px]"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <Camera className="w-4 h-4 mr-1" />
-              Portfolio
-            </Button>
-          </div>
+          <>
+            {/* Map Preview */}
+            {stylist.latitude && stylist.longitude && (
+              <div 
+                className="mt-3"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openInMaps(stylist.address, stylist.latitude, stylist.longitude, stylist.name);
+                }}
+              >
+                <MapPreview
+                  latitude={stylist.latitude}
+                  longitude={stylist.longitude}
+                  label={stylist.business_name || stylist.name}
+                  className="h-[120px] cursor-pointer hover:opacity-90 transition-opacity"
+                />
+                <p className="text-xs text-muted-foreground text-center mt-1">
+                  Tap map to get directions
+                </p>
+              </div>
+            )}
+
+            <div className="flex gap-2 mt-4 pt-3 border-t">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="flex-1 min-h-[44px]"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <MessageSquare className="w-4 h-4 mr-1" />
+                Message
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline"
+                className="min-h-[44px]"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Camera className="w-4 h-4 mr-1" />
+                Portfolio
+              </Button>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>
