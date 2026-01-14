@@ -14,6 +14,7 @@ import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 import { PullToRefreshIndicator } from "@/components/ui/pull-to-refresh-indicator";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar, Clock, MessageSquare, Star, CheckCircle, X, RefreshCw } from "lucide-react";
+import { StylistLocationLink } from "@/components/map/StylistLocationLink";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 
@@ -62,7 +63,7 @@ const CustomerAppointments = () => {
       .from("appointments")
       .select(`
         *,
-        stylist:stylists(id, name, photo_url, address, user_id),
+        stylist:stylists(id, name, photo_url, address, user_id, latitude, longitude),
         service:stylist_services(id, name, duration_minutes, price),
         feedback:appointment_feedback(sentiment)
       `)
@@ -195,6 +196,8 @@ const CustomerAppointments = () => {
                           appointmentDate={appointment.appointment_date}
                           stylistName={appointment.stylist?.name || "Your stylist"}
                           stylistAddress={appointment.stylist?.address}
+                          stylistLatitude={appointment.stylist?.latitude}
+                          stylistLongitude={appointment.stylist?.longitude}
                           onConfirm={() => fetchCustomerAndAppointments()}
                         />
                       )}
@@ -233,6 +236,16 @@ const CustomerAppointments = () => {
                                   })}
                                 </span>
                               </div>
+                              {(appointment.stylist?.address || appointment.stylist?.latitude) && (
+                                <StylistLocationLink
+                                  address={appointment.stylist.address}
+                                  latitude={appointment.stylist.latitude}
+                                  longitude={appointment.stylist.longitude}
+                                  stylistName={appointment.stylist.name}
+                                  variant="inline"
+                                  className="mt-1"
+                                />
+                              )}
                             </div>
                             <span className="font-semibold text-primary">${appointment.price}</span>
                           </div>

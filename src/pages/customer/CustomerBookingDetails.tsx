@@ -7,7 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Clock, ArrowLeft, Image, Star, MapPin } from "lucide-react";
+import { Clock, ArrowLeft, Image, Star } from "lucide-react";
+import { StylistLocationLink } from "@/components/map/StylistLocationLink";
 import { PriceBreakdown } from "@/components/booking/PriceBreakdown";
 import { BookingConfirmation } from "@/components/booking/BookingConfirmation";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
@@ -277,11 +278,14 @@ const CustomerBookingDetails = () => {
                         {stylist.rating.toFixed(1)}
                       </span>
                     )}
-                    {stylist.address && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {stylist.address}
-                      </span>
+                    {(stylist.address || stylist.latitude) && (
+                      <StylistLocationLink
+                        address={stylist.address}
+                        latitude={stylist.latitude}
+                        longitude={stylist.longitude}
+                        stylistName={stylist.name}
+                        variant="inline"
+                      />
                     )}
                   </div>
                 </div>

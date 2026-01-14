@@ -4,9 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Star, MapPin, Clock, CheckCircle, MessageSquare, 
-  ChevronRight, Award, Camera 
+  ChevronRight, Award, Camera, Navigation
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { openInMaps } from "@/components/map/StylistLocationLink";
 
 interface Stylist {
   id: string;
@@ -19,6 +20,8 @@ interface Stylist {
   address?: string;
   distance?: number;
   bio?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 interface EnhancedStylistCardProps {
@@ -112,13 +115,20 @@ export const EnhancedStylistCard = ({
                 )}
               </span>
               {stylist.distance !== undefined && stylist.distance !== null && (
-                <span className="flex items-center gap-1 text-muted-foreground">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openInMaps(stylist.address, stylist.latitude, stylist.longitude, stylist.name);
+                  }}
+                  className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                >
                   <MapPin className="w-4 h-4" />
                   {stylist.distance.toFixed(1)} km
                   {travelTime && (
                     <span className="text-xs">· ~{travelTime} min</span>
                   )}
-                </span>
+                  <Navigation className="w-3 h-3 ml-1" />
+                </button>
               )}
             </div>
           </div>

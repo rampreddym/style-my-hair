@@ -2,17 +2,18 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-  Check, Calendar, Clock, MapPin, Share2, Bell, 
+  Check, Calendar, Clock, Share2, Bell, 
   RefreshCw, MessageSquare, X 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { StylistLocationLink } from "@/components/map/StylistLocationLink";
 
 interface BookingConfirmationProps {
   booking: {
     id: string;
     appointment_date: string;
     price: number;
-    stylist: { name: string; address?: string; phone?: string };
+    stylist: { name: string; address?: string; phone?: string; latitude?: number; longitude?: number };
     service: { name: string; duration_minutes: number };
   };
   onDone: () => void;
@@ -108,11 +109,14 @@ export const BookingConfirmation = ({
                 </span>
               </div>
 
-              {booking.stylist.address && (
-                <div className="flex items-center gap-3 text-sm">
-                  <MapPin className="w-4 h-4 text-primary" />
-                  <span>{booking.stylist.address}</span>
-                </div>
+              {(booking.stylist.address || booking.stylist.latitude) && (
+                <StylistLocationLink
+                  address={booking.stylist.address}
+                  latitude={booking.stylist.latitude}
+                  longitude={booking.stylist.longitude}
+                  stylistName={booking.stylist.name}
+                  variant="card"
+                />
               )}
 
               <div className="border-t border-border pt-3 mt-3 flex justify-between font-semibold">

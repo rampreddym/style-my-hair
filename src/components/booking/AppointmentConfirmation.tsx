@@ -3,15 +3,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, Clock, MapPin, Calendar } from "lucide-react";
+import { CheckCircle, Clock, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { StylistLocationLink } from "@/components/map/StylistLocationLink";
 
 interface AppointmentConfirmationProps {
   appointmentId: string;
   appointmentDate: string;
   stylistName: string;
   stylistAddress?: string;
+  stylistLatitude?: number;
+  stylistLongitude?: number;
   onConfirm: () => void;
 }
 
@@ -20,6 +23,8 @@ export const AppointmentConfirmation = ({
   appointmentDate,
   stylistName,
   stylistAddress,
+  stylistLatitude,
+  stylistLongitude,
   onConfirm,
 }: AppointmentConfirmationProps) => {
   const { t } = useTranslation();
@@ -92,11 +97,15 @@ export const AppointmentConfirmation = ({
                   {appointmentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </span>
               </div>
-              {stylistAddress && (
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">{stylistAddress}</span>
-                </div>
+              {(stylistAddress || stylistLatitude) && (
+                <StylistLocationLink
+                  address={stylistAddress}
+                  latitude={stylistLatitude}
+                  longitude={stylistLongitude}
+                  stylistName={stylistName}
+                  variant="inline"
+                  className="text-sm"
+                />
               )}
             </div>
 

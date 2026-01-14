@@ -1,4 +1,9 @@
 {
+  "map": {
+    "viewOnMap": "Ver en el Mapa",
+    "getDirections": "Obtener Direcciones",
+    "viewLocation": "Ver Ubicación"
+  },
   "common": {
     "loading": "Cargando...",
     "save": "Guardar",
