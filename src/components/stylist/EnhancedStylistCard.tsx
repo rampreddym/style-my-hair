@@ -209,7 +209,9 @@ export const EnhancedStylistCard = ({
                   latitude={stylist.latitude}
                   longitude={stylist.longitude}
                   label={stylist.business_name || stylist.name}
-                  className="h-[120px] cursor-pointer hover:opacity-90 transition-opacity"
+                  avatarUrl={stylist.photo_url}
+                  avatarFallback={stylist.name}
+                  className="h-[160px] cursor-pointer hover:opacity-90 transition-opacity"
                 />
                 <p className="text-xs text-muted-foreground text-center mt-1">
                   Tap map to get directions
