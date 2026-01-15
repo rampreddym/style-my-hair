@@ -9,6 +9,7 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { DistanceSlider } from "@/components/booking/DistanceSlider";
 import { EnhancedStylistCard } from "@/components/stylist/EnhancedStylistCard";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
+import { StylistProfileSheet } from "@/components/stylist/StylistProfileSheet";
 
 const CustomerBooking = () => {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ const CustomerBooking = () => {
   const [selectedStyle, setSelectedStyle] = useState<any>(null);
   const [maxDistance, setMaxDistance] = useState(50);
   const [customerId, setCustomerId] = useState<string | null>(null);
+  const [selectedStylist, setSelectedStylist] = useState<any | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   // Fetch customer ID from auth
   useEffect(() => {
@@ -110,11 +113,16 @@ const CustomerBooking = () => {
     return R * c;
   };
 
+  const handleStylistSelect = (stylist: any) => {
+    setSelectedStylist(stylist);
+    setIsSheetOpen(true);
+  };
+
   const selectStylist = (stylist: any) => {
     navigate(`/customer/booking/${stylist.id}`);
   };
 
-  const filteredStylists = stylists.filter(s => 
+  const filteredStylists = stylists.filter(s =>
     s.distance === null || s.distance === undefined || s.distance <= maxDistance
   );
 
@@ -184,11 +192,32 @@ const CustomerBooking = () => {
                   key={stylist.id}
                   stylist={stylist}
                   isSelected={false}
-                  onSelect={() => selectStylist(stylist)}
+                  onSelect={() => handleStylistSelect(stylist)}
                 />
               ))}
             </div>
           )}
+
+          {/* Stylist Profile Sheet */}
+          <StylistProfileSheet
+            stylist={selectedStylist}
+            isOpen={isSheetOpen}
+            onClose={() => setIsSheetOpen(false)}
+            onNewAppointment={() => selectedStylist && selectStylist(selectedStylist)}
+            onViewHistory={() => navigate("/customer/appointments")}
+            onMessage={() => {
+              toast({
+                title: "Coming soon",
+                description: "Messaging feature is under development",
+              });
+            }}
+            onCall={() => {
+              toast({
+                title: "Coming soon", 
+                description: "Call feature is under development",
+              });
+            }}
+          />
         </div>
       </div>
     </CustomerLayout>
