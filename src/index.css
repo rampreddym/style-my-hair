@@ -176,3 +176,38 @@ Teal/Turquoise color palette inspired by salon/styling marketplace design.
     animation: pulldown 0.3s ease-out;
   }
 }
+
+/* Leaflet custom avatar marker styles */
+.custom-avatar-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.map-avatar-marker {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid hsl(var(--background));
+  box-shadow: 0 4px 16px -4px hsl(0 0% 0% / 0.3);
+  overflow: hidden;
+  background: hsl(var(--card));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.map-avatar-fallback {
+  background: hsl(var(--primary));
+}
+
+.map-avatar-fallback span {
+  color: hsl(var(--primary-foreground));
+  font-size: 1.25rem;
+  font-weight: 600;
+}
