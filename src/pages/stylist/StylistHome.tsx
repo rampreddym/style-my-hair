@@ -70,7 +70,7 @@ const StylistHome = () => {
 
   if (authLoading || checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse text-muted-foreground">{t("common.loading")}</div>
       </div>
     );
@@ -78,7 +78,7 @@ const StylistHome = () => {
 
   // Show prompt to complete setup
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4 safe-area-top relative">
+    <div className="min-h-screen bg-background p-4 safe-area-top relative">
       {/* Language Switcher */}
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />

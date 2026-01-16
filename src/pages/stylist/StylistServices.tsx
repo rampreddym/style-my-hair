@@ -164,7 +164,7 @@ const StylistServices = () => {
 
   return (
     <StylistLayout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/10 p-4">
+      <div className="min-h-screen bg-background p-4">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold text-foreground">{t("stylistServices.title")}</h1>
