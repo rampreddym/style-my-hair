@@ -2,96 +2,139 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-Teal/Turquoise color palette inspired by salon/styling marketplace design.
+/* 
+  Design System: Luxe Beauty Palette
+  A warm, sophisticated color scheme for a premium hair styling marketplace.
+  Features soft rose, warm neutrals, and elegant accent tones.
+  All colors in HSL format.
 */
 
 @layer base {
   :root {
+    /* Pure white background for clean, airy feel */
     --background: 0 0% 100%;
-    --foreground: 220 15% 15%;
+    --foreground: 240 10% 12%;
 
-    --card: 0 0% 96%;
-    --card-foreground: 220 15% 15%;
+    /* Warm off-white card backgrounds for subtle depth */
+    --card: 30 20% 97%;
+    --card-foreground: 240 10% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 240 10% 12%;
 
-    --primary: 174 56% 45%;
+    /* Rose gold primary - elegant and warm */
+    --primary: 350 65% 58%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 97%;
-    --secondary-foreground: 220 15% 20%;
+    /* Warm beige secondary */
+    --secondary: 30 15% 94%;
+    --secondary-foreground: 240 10% 20%;
 
-    --muted: 220 10% 94%;
-    --muted-foreground: 220 10% 45%;
+    /* Soft warm grey for muted elements */
+    --muted: 30 10% 92%;
+    --muted-foreground: 240 5% 45%;
 
-    --accent: 174 60% 40%;
+    /* Warm coral accent */
+    --accent: 15 80% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    /* Soft red for errors */
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 88%;
-    --input: 220 15% 88%;
-    --ring: 174 56% 45%;
+    /* Subtle warm borders */
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 350 65% 58%;
 
-    --radius: 0.75rem;
+    --radius: 0.875rem;
     
-    --gradient-primary: linear-gradient(135deg, hsl(174 56% 45%), hsl(174 60% 55%));
-    --gradient-soft: linear-gradient(180deg, hsl(0 0% 98%), hsl(0 0% 96%));
-    --shadow-soft: 0 8px 24px -8px hsl(220 15% 50% / 0.15);
-    --shadow-card: 0 4px 20px -4px hsl(220 10% 40% / 0.12);
+    /* Premium gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(350 65% 58%), hsl(15 80% 60%));
+    --gradient-soft: linear-gradient(180deg, hsl(0 0% 100%), hsl(30 20% 97%));
+    --gradient-warm: linear-gradient(135deg, hsl(30 20% 97%), hsl(30 15% 94%));
+    
+    /* Elegant shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(240 10% 40% / 0.08);
+    --shadow-card: 0 8px 32px -8px hsl(240 10% 40% / 0.12);
+    --shadow-elevated: 0 16px 48px -12px hsl(240 10% 40% / 0.16);
+    
+    /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 220 15% 26%;
-    --sidebar-primary: 174 56% 45%;
+    /* Sidebar - warm neutral tones */
+    --sidebar-background: 30 15% 98%;
+    --sidebar-foreground: 240 10% 26%;
+    --sidebar-primary: 350 65% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 174 30% 95%;
-    --sidebar-accent-foreground: 174 56% 35%;
-    --sidebar-border: 220 15% 91%;
-    --sidebar-ring: 174 56% 45%;
+    --sidebar-accent: 30 25% 95%;
+    --sidebar-accent-foreground: 350 50% 40%;
+    --sidebar-border: 30 15% 91%;
+    --sidebar-ring: 350 65% 58%;
+    
+    /* Success/Info states */
+    --success: 145 60% 42%;
+    --success-foreground: 0 0% 100%;
+    --info: 200 80% 50%;
+    --info-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
   }
 
   .dark {
-    --background: 220 15% 6%;
-    --foreground: 0 0% 95%;
+    /* Rich dark background */
+    --background: 240 15% 8%;
+    --foreground: 30 20% 95%;
 
-    --card: 220 12% 12%;
-    --card-foreground: 0 0% 95%;
+    /* Elevated card surfaces */
+    --card: 240 12% 12%;
+    --card-foreground: 30 20% 95%;
 
-    --popover: 220 12% 12%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 240 12% 10%;
+    --popover-foreground: 30 20% 95%;
 
-    --primary: 174 56% 45%;
+    /* Rose gold primary - slightly brighter for dark mode */
+    --primary: 350 70% 62%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 10% 15%;
-    --secondary-foreground: 0 0% 95%;
+    /* Dark warm secondary */
+    --secondary: 240 10% 16%;
+    --secondary-foreground: 30 20% 95%;
 
-    --muted: 220 8% 18%;
-    --muted-foreground: 220 5% 65%;
+    /* Muted dark tones */
+    --muted: 240 8% 18%;
+    --muted-foreground: 30 10% 60%;
 
-    --accent: 174 50% 40%;
+    /* Warm accent */
+    --accent: 15 75% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 50%;
+    /* Softer destructive in dark mode */
+    --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 8% 20%;
-    --input: 220 8% 20%;
-    --ring: 174 56% 45%;
+    /* Subtle dark borders */
+    --border: 240 8% 20%;
+    --input: 240 8% 20%;
+    --ring: 350 70% 62%;
 
-    --sidebar-background: 220 15% 10%;
-    --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 174 56% 45%;
+    /* Dark sidebar */
+    --sidebar-background: 240 15% 10%;
+    --sidebar-foreground: 30 15% 96%;
+    --sidebar-primary: 350 70% 62%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 10% 15%;
-    --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 220 8% 18%;
-    --sidebar-ring: 174 56% 45%;
+    --sidebar-accent: 240 10% 15%;
+    --sidebar-accent-foreground: 30 15% 96%;
+    --sidebar-border: 240 8% 18%;
+    --sidebar-ring: 350 70% 62%;
+    
+    /* Dark mode state colors */
+    --success: 145 55% 48%;
+    --success-foreground: 0 0% 100%;
+    --info: 200 75% 55%;
+    --info-foreground: 0 0% 100%;
+    --warning: 38 85% 55%;
+    --warning-foreground: 0 0% 100%;
   }
 }
 
@@ -101,14 +144,45 @@ Teal/Turquoise color palette inspired by salon/styling marketplace design.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  /* Smooth focus states */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 }
 
 @layer utilities {
   .border-dashed-primary {
     border: 2px dashed hsl(var(--primary));
+  }
+  
+  /* Premium gradient backgrounds */
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .bg-gradient-soft {
+    background: var(--gradient-soft);
+  }
+  
+  .bg-gradient-warm {
+    background: var(--gradient-warm);
+  }
+  
+  /* Elegant shadows */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
   }
   
   /* Safe area padding for notched devices */
@@ -175,6 +249,17 @@ Teal/Turquoise color palette inspired by salon/styling marketplace design.
   .animate-pulldown {
     animation: pulldown 0.3s ease-out;
   }
+  
+  /* Glassmorphism effect */
+  .glass {
+    backdrop-filter: blur(12px);
+    background: hsl(var(--background) / 0.8);
+  }
+  
+  .glass-card {
+    backdrop-filter: blur(16px);
+    background: hsl(var(--card) / 0.9);
+  }
 }
 
 /* Leaflet custom avatar marker styles */
@@ -188,7 +273,7 @@ Teal/Turquoise color palette inspired by salon/styling marketplace design.
   height: 56px;
   border-radius: 50%;
   border: 3px solid hsl(var(--background));
-  box-shadow: 0 4px 16px -4px hsl(0 0% 0% / 0.3);
+  box-shadow: var(--shadow-elevated);
   overflow: hidden;
   background: hsl(var(--card));
   display: flex;
