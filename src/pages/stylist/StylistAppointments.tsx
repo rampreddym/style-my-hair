@@ -276,7 +276,7 @@ const StylistAppointments = () => {
                               alt="Requested style"
                               className="w-full rounded-lg"
                             />
-                            <div className="bg-muted/50 rounded-lg p-4">
+                            <div className="bg-card rounded-lg p-4 border">
                               <p className="text-sm font-medium mb-1">AI Description:</p>
                               <p className="text-muted-foreground text-sm">
                                 {appointment.ai_style_description || appointment.generated_style.style_prompt}
@@ -289,7 +289,7 @@ const StylistAppointments = () => {
 
                     {/* Previous notes preview */}
                     {appointment.stylist_notes && (
-                      <div className="bg-muted/30 rounded-lg p-3 text-sm">
+                      <div className="bg-card rounded-lg p-3 text-sm border">
                         <p className="text-xs text-muted-foreground mb-1">Your previous notes:</p>
                         <p className="text-foreground line-clamp-2">{appointment.stylist_notes}</p>
                       </div>

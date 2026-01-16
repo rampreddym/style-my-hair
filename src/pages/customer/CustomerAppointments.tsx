@@ -119,7 +119,7 @@ const CustomerAppointments = () => {
     if (feedbackAppointment) {
       return (
         <CustomerLayout>
-          <div className="min-h-screen bg-gradient-to-br from-background to-muted p-4">
+          <div className="min-h-screen bg-background p-4">
             <div className="max-w-md mx-auto pt-8">
               <PostAppointmentFeedback
                 appointmentId={showFeedback}
@@ -151,7 +151,7 @@ const CustomerAppointments = () => {
   return (
     <CustomerLayout>
       <div 
-        className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4 scroll-smooth-touch"
+        className="min-h-screen bg-background p-4 scroll-smooth-touch"
         {...handlers}
       >
         <PullToRefreshIndicator 

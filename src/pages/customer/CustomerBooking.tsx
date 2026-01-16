@@ -144,7 +144,7 @@ const CustomerBooking = () => {
 
   return (
     <CustomerLayout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-primary/10 p-4 pb-24">
+      <div className="min-h-screen bg-background p-4 pb-24">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold text-foreground">{t('customer.booking.title')}</h1>
