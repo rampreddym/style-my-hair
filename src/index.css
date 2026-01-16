@@ -9,10 +9,10 @@ Teal/Turquoise color palette inspired by salon/styling marketplace design.
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
+    --background: 0 0% 100%;
     --foreground: 220 15% 15%;
 
-    --card: 0 0% 100%;
+    --card: 0 0% 96%;
     --card-foreground: 220 15% 15%;
 
     --popover: 0 0% 100%;
@@ -56,13 +56,13 @@ Teal/Turquoise color palette inspired by salon/styling marketplace design.
   }
 
   .dark {
-    --background: 220 15% 8%;
+    --background: 220 15% 6%;
     --foreground: 0 0% 95%;
 
-    --card: 220 12% 10%;
+    --card: 220 12% 12%;
     --card-foreground: 0 0% 95%;
 
-    --popover: 220 12% 10%;
+    --popover: 220 12% 12%;
     --popover-foreground: 0 0% 95%;
 
     --primary: 174 56% 45%;
