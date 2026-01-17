@@ -105,9 +105,9 @@ const Auth = () => {
         <LanguageSwitcher />
       </div>
       
-      <Card variant="elevated" className="w-full max-w-md shadow-elevated border-0 card-shine">
+      <Card variant="glow" className="w-full max-w-md shadow-elevated border border-primary/20">
         <CardHeader className="text-center space-y-4 pb-2">
-          <CardTitle className="text-2xl font-bold uppercase tracking-wide">{t("auth.welcome")}</CardTitle>
+          <CardTitle className="text-2xl font-bold uppercase tracking-wide text-foreground">{t("auth.welcome")}</CardTitle>
           <CardDescription className="text-muted-foreground">
             {t("auth.signInOrCreate")}
           </CardDescription>
@@ -117,27 +117,27 @@ const Auth = () => {
             <span className="text-sm font-medium text-primary">
               {isStylist ? t("auth.stylist") : t("auth.customer")}
             </span>
-            <div className="flex bg-muted rounded-full p-1">
+            <div className="flex bg-secondary rounded-full p-1 border border-border/50">
               <button
                 onClick={() => setIsStylist(false)}
                 className={`flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-full text-sm font-medium transition-all no-tap-highlight active:scale-95 ${
                   !isStylist 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    ? 'bg-primary text-primary-foreground shadow-[0_0_15px_hsl(12_90%_64%/0.4)]' 
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <User className="w-4 h-4" />
+                <User className={`w-4 h-4 ${!isStylist ? 'icon-glow-primary' : ''}`} />
                 {t("auth.customer")}
               </button>
               <button
                 onClick={() => setIsStylist(true)}
                 className={`flex items-center gap-2 px-4 py-3 min-h-[44px] rounded-full text-sm font-medium transition-all no-tap-highlight active:scale-95 ${
                   isStylist 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    ? 'bg-primary text-primary-foreground shadow-[0_0_15px_hsl(12_90%_64%/0.4)]' 
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <Scissors className="w-4 h-4" />
+                <Scissors className={`w-4 h-4 ${isStylist ? 'icon-glow-primary' : ''}`} />
                 {t("auth.stylist")}
               </button>
             </div>
@@ -148,7 +148,7 @@ const Auth = () => {
           {/* Google Login */}
           <Button 
             variant="outline" 
-            className="w-full gap-2 h-14 border-2 hover:bg-muted/50 no-tap-highlight active:scale-[0.98]" 
+            className="w-full gap-2 h-14 border-2 border-accent/30 bg-accent/10 hover:bg-accent/20 text-accent no-tap-highlight active:scale-[0.98]" 
             onClick={handleGoogleLogin}
             disabled={isSubmitting}
           >
@@ -166,16 +166,16 @@ const Auth = () => {
           </div>
 
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-muted/50 h-12">
+            <TabsList className="grid w-full grid-cols-2 bg-secondary h-12 border border-border/50">
               <TabsTrigger 
                 value="signin" 
-                className="min-h-[40px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                className="min-h-[40px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_hsl(12_90%_64%/0.3)]"
               >
                 {t("auth.signIn")}
               </TabsTrigger>
               <TabsTrigger 
                 value="signup" 
-                className="min-h-[40px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                className="min-h-[40px] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_0_15px_hsl(12_90%_64%/0.3)]"
               >
                 {t("auth.signUp")}
               </TabsTrigger>
@@ -183,9 +183,9 @@ const Auth = () => {
 
             <TabsContent value="signin" className="space-y-4 mt-6">
               <div className="space-y-2">
-                <Label htmlFor="signin-email" className="font-medium">{t("common.email")}</Label>
+                <Label htmlFor="signin-email" className="font-medium text-foreground">{t("common.email")}</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-4 h-4 w-4 text-primary" />
                   <Input
                     id="signin-email"
                     type="email"
@@ -193,29 +193,29 @@ const Auth = () => {
                     autoComplete="email"
                     autoCapitalize="none"
                     placeholder={t("auth.emailPlaceholder")}
-                    className="pl-10 h-14 border-2 focus:border-primary text-base"
+                    className="pl-10 h-14 border-2 border-border bg-secondary focus:border-primary focus:ring-primary/20 text-base text-foreground"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signin-password" className="font-medium">{t("common.password")}</Label>
+                <Label htmlFor="signin-password" className="font-medium text-foreground">{t("common.password")}</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-4 h-4 w-4 text-accent" />
                   <Input
                     id="signin-password"
                     type="password"
                     autoComplete="current-password"
                     placeholder={t("auth.passwordPlaceholder")}
-                    className="pl-10 h-14 border-2 focus:border-primary text-base"
+                    className="pl-10 h-14 border-2 border-border bg-secondary focus:border-primary focus:ring-primary/20 text-base text-foreground"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
               </div>
               <Button 
-                className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base active:scale-[0.98]" 
+                className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base active:scale-[0.98] shadow-[0_0_20px_hsl(12_90%_64%/0.3)]" 
                 onClick={handleSignIn}
                 disabled={isSubmitting}
               >

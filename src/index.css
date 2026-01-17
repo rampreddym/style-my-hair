@@ -11,131 +11,124 @@
 
 @layer base {
   :root {
-    /* Soft cream background with warm undertones for luxury feel */
-    --background: 35 30% 98%;
-    --foreground: 240 10% 12%;
+    /* Deep charcoal background for rich, modern feel */
+    --background: 220 20% 10%;
+    --foreground: 0 0% 98%;
 
-    /* Pure white card backgrounds for crisp contrast */
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 12%;
+    /* Elevated dark card surfaces */
+    --card: 220 18% 14%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 12%;
+    --popover: 220 18% 12%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Rose gold primary - elegant and warm */
-    --primary: 350 65% 58%;
-    --primary-foreground: 0 0% 100%;
+    /* Vibrant coral/salmon primary - pops against dark */
+    --primary: 12 90% 64%;
+    --primary-foreground: 220 20% 10%;
 
-    /* Warm beige secondary */
-    --secondary: 30 25% 95%;
-    --secondary-foreground: 240 10% 20%;
+    /* Deep slate secondary */
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 0 0% 95%;
 
-    /* Soft warm grey for muted elements */
-    --muted: 30 15% 93%;
-    --muted-foreground: 240 5% 45%;
+    /* Muted dark tones */
+    --muted: 220 12% 20%;
+    --muted-foreground: 220 10% 55%;
 
-    /* Warm coral accent */
-    --accent: 15 80% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* Electric teal accent - high contrast pop */
+    --accent: 174 80% 50%;
+    --accent-foreground: 220 20% 10%;
 
-    /* Soft red for errors */
-    --destructive: 0 72% 55%;
+    /* Vivid red for errors */
+    --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Subtle warm borders */
-    --border: 30 20% 90%;
-    --input: 30 20% 90%;
-    --ring: 350 65% 58%;
+    /* Subtle dark borders with glow potential */
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 12 90% 64%;
 
     --radius: 0.875rem;
     
-    /* Premium gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(350 65% 58%), hsl(15 80% 60%));
-    --gradient-soft: linear-gradient(180deg, hsl(35 30% 98%), hsl(30 20% 96%));
-    --gradient-warm: linear-gradient(135deg, hsl(30 20% 97%), hsl(30 15% 94%));
-    --gradient-page: linear-gradient(180deg, hsl(35 30% 98%) 0%, hsl(30 25% 96%) 50%, hsl(35 20% 97%) 100%);
+    /* Vibrant gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(12 90% 64%), hsl(350 85% 60%));
+    --gradient-accent: linear-gradient(135deg, hsl(174 80% 50%), hsl(160 70% 45%));
+    --gradient-page: linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 22% 8%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(220 18% 16%) 0%, hsl(220 18% 12%) 100%);
     
-    /* Elegant shadows with warm tint */
-    --shadow-soft: 0 4px 20px -4px hsl(350 30% 40% / 0.06);
-    --shadow-card: 0 8px 32px -8px hsl(350 30% 40% / 0.1);
-    --shadow-elevated: 0 16px 48px -12px hsl(350 30% 40% / 0.14);
+    /* Glowing shadows for dark mode */
+    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.5);
+    --shadow-card: 0 8px 32px -8px hsl(0 0% 0% / 0.6);
+    --shadow-elevated: 0 16px 48px -12px hsl(0 0% 0% / 0.7);
+    --shadow-glow-primary: 0 0 20px hsl(12 90% 64% / 0.3);
+    --shadow-glow-accent: 0 0 20px hsl(174 80% 50% / 0.3);
     
     /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Sidebar - warm neutral tones */
-    --sidebar-background: 30 15% 98%;
-    --sidebar-foreground: 240 10% 26%;
-    --sidebar-primary: 350 65% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 25% 95%;
-    --sidebar-accent-foreground: 350 50% 40%;
-    --sidebar-border: 30 15% 91%;
-    --sidebar-ring: 350 65% 58%;
+    /* Sidebar - dark matching tones */
+    --sidebar-background: 220 20% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 12 90% 64%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 220 15% 16%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 12 90% 64%;
     
-    /* Success/Info states */
-    --success: 145 60% 42%;
-    --success-foreground: 0 0% 100%;
-    --info: 200 80% 50%;
-    --info-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    /* Vibrant state colors */
+    --success: 155 75% 50%;
+    --success-foreground: 220 20% 10%;
+    --info: 200 90% 55%;
+    --info-foreground: 220 20% 10%;
+    --warning: 45 100% 55%;
+    --warning-foreground: 220 20% 10%;
   }
 
   .dark {
-    /* Rich dark background */
-    --background: 240 15% 8%;
-    --foreground: 30 20% 95%;
+    /* Even deeper dark for dark mode toggle */
+    --background: 220 25% 6%;
+    --foreground: 0 0% 98%;
 
-    /* Elevated card surfaces */
-    --card: 240 12% 12%;
-    --card-foreground: 30 20% 95%;
+    --card: 220 20% 10%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 240 12% 10%;
-    --popover-foreground: 30 20% 95%;
+    --popover: 220 20% 8%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Rose gold primary - slightly brighter for dark mode */
-    --primary: 350 70% 62%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 12 95% 62%;
+    --primary-foreground: 220 25% 6%;
 
-    /* Dark warm secondary */
-    --secondary: 240 10% 16%;
-    --secondary-foreground: 30 20% 95%;
+    --secondary: 220 18% 14%;
+    --secondary-foreground: 0 0% 95%;
 
-    /* Muted dark tones */
-    --muted: 240 8% 18%;
-    --muted-foreground: 30 10% 60%;
+    --muted: 220 15% 16%;
+    --muted-foreground: 220 10% 50%;
 
-    /* Warm accent */
-    --accent: 15 75% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 174 85% 48%;
+    --accent-foreground: 220 25% 6%;
 
-    /* Softer destructive in dark mode */
-    --destructive: 0 65% 50%;
+    --destructive: 0 90% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Subtle dark borders */
-    --border: 240 8% 20%;
-    --input: 240 8% 20%;
-    --ring: 350 70% 62%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 12 95% 62%;
 
-    /* Dark sidebar */
-    --sidebar-background: 240 15% 10%;
-    --sidebar-foreground: 30 15% 96%;
-    --sidebar-primary: 350 70% 62%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 10% 15%;
-    --sidebar-accent-foreground: 30 15% 96%;
-    --sidebar-border: 240 8% 18%;
-    --sidebar-ring: 350 70% 62%;
+    --sidebar-background: 220 25% 5%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 12 95% 62%;
+    --sidebar-primary-foreground: 220 25% 6%;
+    --sidebar-accent: 220 18% 12%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 220 15% 15%;
+    --sidebar-ring: 12 95% 62%;
     
-    /* Dark mode state colors */
-    --success: 145 55% 48%;
-    --success-foreground: 0 0% 100%;
-    --info: 200 75% 55%;
-    --info-foreground: 0 0% 100%;
-    --warning: 38 85% 55%;
-    --warning-foreground: 0 0% 100%;
+    --success: 155 80% 48%;
+    --success-foreground: 220 25% 6%;
+    --info: 200 95% 52%;
+    --info-foreground: 220 25% 6%;
+    --warning: 45 100% 52%;
+    --warning-foreground: 220 25% 6%;
   }
 }
 
@@ -161,11 +154,29 @@
   min-height: 100vh;
 }
 
-/* Alternative: radial fade from center */
+/* Dark radial glow effect */
 .page-radial {
-  background: radial-gradient(ellipse at 50% 0%, hsl(350 65% 58% / 0.04) 0%, transparent 50%),
-              linear-gradient(180deg, hsl(35 30% 98%) 0%, hsl(30 25% 96%) 100%);
+  background: radial-gradient(ellipse at 50% 0%, hsl(12 90% 64% / 0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 80%, hsl(174 80% 50% / 0.05) 0%, transparent 40%),
+              var(--gradient-page);
   min-height: 100vh;
+}
+
+/* Icon glow utilities */
+.icon-glow-primary {
+  filter: drop-shadow(0 0 8px hsl(12 90% 64% / 0.5));
+}
+
+.icon-glow-accent {
+  filter: drop-shadow(0 0 8px hsl(174 80% 50% / 0.5));
+}
+
+.icon-glow-success {
+  filter: drop-shadow(0 0 8px hsl(155 75% 50% / 0.5));
+}
+
+.icon-glow-warning {
+  filter: drop-shadow(0 0 8px hsl(45 100% 55% / 0.5));
 }
 
 @layer utilities {

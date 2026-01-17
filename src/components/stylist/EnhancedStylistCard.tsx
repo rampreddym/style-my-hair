@@ -34,9 +34,9 @@ interface EnhancedStylistCardProps {
 }
 
 const proficiencyLevels: Record<string, { label: string; color: string }> = {
-  expert: { label: "Expert", color: "text-primary bg-primary/10" },
-  advanced: { label: "Advanced", color: "text-amber-600 bg-amber-100" },
-  skilled: { label: "Skilled", color: "text-blue-600 bg-blue-100" },
+  expert: { label: "Expert", color: "text-primary bg-primary/20 border border-primary/30" },
+  advanced: { label: "Advanced", color: "text-accent bg-accent/20 border border-accent/30" },
+  skilled: { label: "Skilled", color: "text-info bg-info/20 border border-info/30" },
 };
 
 export const EnhancedStylistCard = ({ 
@@ -67,7 +67,7 @@ export const EnhancedStylistCard = ({
         <div className="flex gap-4">
           {/* Profile photo with verified badge */}
           <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center overflow-hidden ring-2 ring-primary/30">
               {stylist.photo_url ? (
                 <img 
                   src={stylist.photo_url} 
@@ -75,14 +75,14 @@ export const EnhancedStylistCard = ({
                   className="w-full h-full object-cover" 
                 />
               ) : (
-                <span className="text-2xl font-bold text-muted-foreground">
+                <span className="text-2xl font-bold text-primary">
                   {stylist.name.charAt(0)}
                 </span>
               )}
             </div>
-            {/* Verified badge */}
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center border-2 border-background">
-              <CheckCircle className="w-3 h-3 text-primary-foreground" />
+            {/* Verified badge with glow */}
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-accent rounded-full flex items-center justify-center border-2 border-background shadow-[0_0_10px_hsl(174_80%_50%/0.5)]">
+              <CheckCircle className="w-3 h-3 text-accent-foreground" />
             </div>
           </div>
 
@@ -107,8 +107,8 @@ export const EnhancedStylistCard = ({
 
             {/* Rating and distance */}
             <div className="flex items-center gap-4 mt-1 text-sm">
-              <span className="flex items-center gap-1 text-amber-500">
-                <Star className="w-4 h-4 fill-current" />
+              <span className="flex items-center gap-1 text-warning">
+                <Star className="w-4 h-4 fill-current icon-glow-warning" />
                 {stylist.rating?.toFixed(1) || "New"}
                 {stylist.total_reviews && (
                   <span className="text-muted-foreground">

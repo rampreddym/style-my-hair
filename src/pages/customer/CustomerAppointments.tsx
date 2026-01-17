@@ -171,11 +171,11 @@ const CustomerAppointments = () => {
           </div>
 
           {/* Upcoming Appointments */}
-          <Card variant="accent" className="border-2 border-primary/20 shadow-card">
+          <Card variant="glow" className="border-2 border-primary/30 shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-primary" />
-                Upcoming ({upcomingAppointments.length})
+                <Calendar className="w-5 h-5 text-primary icon-glow-primary" />
+                <span className="text-foreground">Upcoming ({upcomingAppointments.length})</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -203,9 +203,9 @@ const CustomerAppointments = () => {
                       )}
 
                       {!showConfirmation && (
-                        <div className="p-4 border rounded-xl">
+                        <div className="p-4 border border-border/50 rounded-xl bg-secondary/30">
                           <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden ring-2 ring-primary/30">
                               {appointment.stylist?.photo_url ? (
                                 <img
                                   src={appointment.stylist.photo_url}
@@ -223,13 +223,13 @@ const CustomerAppointments = () => {
                               <p className="text-sm text-muted-foreground">
                                 {appointment.service?.name}
                               </p>
-                              <div className="flex items-center gap-3 mt-2 text-sm">
+                              <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3" />
+                                  <Calendar className="w-3 h-3 text-accent" />
                                   {new Date(appointment.appointment_date).toLocaleDateString()}
                                 </span>
                                 <span className="flex items-center gap-1">
-                                  <Clock className="w-3 h-3" />
+                                  <Clock className="w-3 h-3 text-info" />
                                   {new Date(appointment.appointment_date).toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -247,13 +247,13 @@ const CustomerAppointments = () => {
                                 />
                               )}
                             </div>
-                            <span className="font-semibold text-primary">${appointment.price}</span>
+                            <span className="font-bold text-lg text-primary">${appointment.price}</span>
                           </div>
 
                           <div className="flex flex-wrap gap-2 mt-3">
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button className="min-h-[44px]" variant="outline" onClick={() => setShowChat(appointment.id)}>
+                                <Button className="min-h-[44px] bg-accent/20 text-accent hover:bg-accent/30 border border-accent/30" variant="outline" onClick={() => setShowChat(appointment.id)}>
                                   <MessageSquare className="w-4 h-4 mr-1" />
                                   Message
                                 </Button>
@@ -271,7 +271,7 @@ const CustomerAppointments = () => {
                             </Dialog>
                             
                             <Button
-                              className="min-h-[44px]"
+                              className="min-h-[44px] bg-info/20 text-info hover:bg-info/30 border border-info/30"
                               variant="outline"
                               onClick={() => setRescheduleAppointment(appointment)}
                             >
