@@ -103,8 +103,8 @@ const CustomerAppointments = () => {
   if (loading) {
     return (
       <CustomerLayout>
-        <div className="min-h-screen bg-background p-4">
-          <div className="max-w-2xl mx-auto space-y-6">
+        <div className="page-gradient p-4">
+          <div className="max-w-2xl mx-auto space-y-6 pt-2">
             <h1 className="text-3xl font-bold text-foreground">My Appointments</h1>
             <CardSkeleton count={3} />
           </div>
@@ -119,7 +119,7 @@ const CustomerAppointments = () => {
     if (feedbackAppointment) {
       return (
         <CustomerLayout>
-          <div className="min-h-screen bg-background p-4">
+          <div className="page-gradient p-4">
             <div className="max-w-md mx-auto pt-8">
               <PostAppointmentFeedback
                 appointmentId={showFeedback}
@@ -151,7 +151,7 @@ const CustomerAppointments = () => {
   return (
     <CustomerLayout>
       <div 
-        className="min-h-screen bg-background p-4 scroll-smooth-touch"
+        className="page-gradient p-4 scroll-smooth-touch"
         {...handlers}
       >
         <PullToRefreshIndicator 
@@ -159,19 +159,19 @@ const CustomerAppointments = () => {
           isRefreshing={isRefreshing} 
         />
         
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-2xl mx-auto space-y-6 pt-2">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground">My Appointments</h1>
               <p className="text-sm text-muted-foreground">Manage your bookings</p>
             </div>
-            <Button variant="outline" onClick={() => navigate("/customer/booking")} className="min-h-[44px]">
+            <Button variant="outline" onClick={() => navigate("/customer/booking")} className="min-h-[44px] shadow-soft">
               Book New
             </Button>
           </div>
 
           {/* Upcoming Appointments */}
-          <Card className="border-2 border-primary/20">
+          <Card variant="accent" className="border-2 border-primary/20 shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-primary" />

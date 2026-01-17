@@ -54,14 +54,15 @@ export const EnhancedStylistCard = ({
   return (
     <Card
       onClick={onSelect}
+      variant={isSelected ? "accent" : "default"}
       className={cn(
-        "cursor-pointer transition-all overflow-hidden no-tap-highlight active:scale-[0.99]",
+        "cursor-pointer transition-all overflow-hidden no-tap-highlight active:scale-[0.98] card-shine",
         isSelected 
-          ? "ring-2 ring-primary border-primary" 
-          : "hover:border-primary/50"
+          ? "ring-2 ring-primary border-primary shadow-elevated" 
+          : "hover:border-primary/30 hover:shadow-elevated"
       )}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-4 relative z-10">
         {/* Header with photo and basic info */}
         <div className="flex gap-4">
           {/* Profile photo with verified badge */}

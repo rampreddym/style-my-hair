@@ -92,20 +92,20 @@ const Auth = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background safe-area-top">
+      <div className="page-gradient flex items-center justify-center safe-area-top">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 safe-area-top safe-area-bottom relative">
+    <div className="page-radial flex items-center justify-center p-4 safe-area-top safe-area-bottom relative">
       {/* Language Switcher */}
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />
       </div>
       
-      <Card className="w-full max-w-md shadow-lg border-0">
+      <Card variant="elevated" className="w-full max-w-md shadow-elevated border-0 card-shine">
         <CardHeader className="text-center space-y-4 pb-2">
           <CardTitle className="text-2xl font-bold uppercase tracking-wide">{t("auth.welcome")}</CardTitle>
           <CardDescription className="text-muted-foreground">
