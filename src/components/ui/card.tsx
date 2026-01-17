@@ -8,11 +8,12 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default: "shadow-card border-border/50 hover:shadow-elevated hover:border-border",
-        glaze: "shadow-card border-white/20 bg-gradient-to-br from-card via-card to-primary/5 backdrop-blur-sm mirror-glaze",
-        elevated: "shadow-elevated border-transparent bg-gradient-to-br from-card to-secondary/30",
-        accent: "shadow-card border-primary/20 bg-gradient-to-br from-card via-card to-primary/10",
-        warm: "shadow-card border-accent/20 bg-gradient-to-br from-card via-card to-accent/10",
+        default: "shadow-card border-border/50 hover:shadow-elevated hover:border-border bg-gradient-to-br from-card to-card/80",
+        glaze: "shadow-card border-primary/20 bg-gradient-to-br from-card via-card to-primary/10 backdrop-blur-sm mirror-glaze",
+        elevated: "shadow-elevated border-transparent bg-gradient-to-br from-card via-secondary/20 to-card",
+        accent: "shadow-card border-accent/30 bg-gradient-to-br from-card via-card to-accent/10",
+        warm: "shadow-card border-primary/20 bg-gradient-to-br from-card via-card to-primary/5",
+        glow: "shadow-card border-primary/30 bg-card hover:shadow-[0_0_30px_hsl(12_90%_64%/0.15)]",
       },
     },
     defaultVariants: {
