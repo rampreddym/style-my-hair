@@ -260,6 +260,73 @@
     backdrop-filter: blur(16px);
     background: hsl(var(--card) / 0.9);
   }
+  
+  /* Mirror glaze effect - premium glossy overlay */
+  .mirror-glaze {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .mirror-glaze::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(
+      180deg, 
+      hsl(var(--background) / 0.6) 0%, 
+      hsl(var(--background) / 0.2) 40%,
+      transparent 100%
+    );
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 1;
+  }
+  
+  .mirror-glaze::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.03) 0%,
+      transparent 50%,
+      hsl(var(--accent) / 0.03) 100%
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  
+  /* Card shine animation on hover */
+  .card-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--background) / 0.3) 50%,
+      transparent 100%
+    );
+    transform: skewX(-25deg);
+    transition: left 0.5s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+  
+  .card-shine:hover::before {
+    left: 150%;
+  }
 }
 
 /* Leaflet custom avatar marker styles */
