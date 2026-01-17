@@ -129,8 +129,8 @@ const CustomerBooking = () => {
   if (loading || authLoading) {
     return (
       <CustomerLayout>
-        <div className="min-h-screen bg-background p-4">
-          <div className="max-w-2xl mx-auto space-y-6">
+        <div className="page-gradient p-4">
+          <div className="max-w-2xl mx-auto space-y-6 pt-2">
             <div className="text-center space-y-2">
               <h1 className="text-3xl font-bold text-foreground">{t('customer.booking.title')}</h1>
               <p className="text-muted-foreground">{t('customer.booking.findingStylists')}</p>
@@ -144,31 +144,31 @@ const CustomerBooking = () => {
 
   return (
     <CustomerLayout>
-      <div className="min-h-screen bg-background p-4 pb-24">
-        <div className="max-w-2xl mx-auto space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">{t('customer.booking.title')}</h1>
+      <div className="page-gradient p-4 pb-24">
+        <div className="max-w-2xl mx-auto space-y-6 pt-2">
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">{t('customer.booking.title')}</h1>
             <p className="text-muted-foreground">{t('customer.booking.selectStylistSubtitle')}</p>
           </div>
 
           {selectedStyle && (
-            <Card>
-              <CardContent className="p-4 flex gap-4 items-center">
+            <Card variant="accent" className="card-shine">
+              <CardContent className="p-4 flex gap-4 items-center relative z-10">
                 <img
                   src={selectedStyle.generated_image_url}
                   alt={t('customer.booking.selectedStyle')}
-                  className="w-16 h-16 rounded-lg object-cover"
+                  className="w-16 h-16 rounded-xl object-cover shadow-soft ring-2 ring-primary/20"
                 />
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{t('customer.booking.yourSelectedStyle')}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{selectedStyle.style_prompt}</p>
+                  <p className="text-sm font-semibold text-foreground">{t('customer.booking.yourSelectedStyle')}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{selectedStyle.style_prompt}</p>
                 </div>
               </CardContent>
             </Card>
           )}
 
           {/* Distance Slider */}
-          <Card className="p-4">
+          <Card variant="default" className="p-4 shadow-card">
             <DistanceSlider value={maxDistance} onChange={setMaxDistance} maxDistance={50} />
           </Card>
 
