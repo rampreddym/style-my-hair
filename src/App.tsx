@@ -13,6 +13,7 @@ import CustomerStyle from "./pages/customer/CustomerStyle";
 import CustomerBooking from "./pages/customer/CustomerBooking";
 import CustomerBookingDetails from "./pages/customer/CustomerBookingDetails";
 import CustomerAppointments from "./pages/customer/CustomerAppointments";
+import StylistProfile from "./pages/customer/StylistProfile";
 import StylistOnboarding from "./pages/stylist/StylistOnboarding";
 import StylistHome from "./pages/stylist/StylistHome";
 import StylistServices from "./pages/stylist/StylistServices";
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/customer/booking" element={<CustomerBooking />} />
             <Route path="/customer/booking/:stylistId" element={<CustomerBookingDetails />} />
             <Route path="/customer/appointments" element={<CustomerAppointments />} />
+            <Route path="/customer/stylist/:stylistId" element={<StylistProfile />} />
             
             {/* Stylist Routes */}
             <Route path="/stylist" element={<StylistHome />} />
