@@ -29,6 +29,7 @@ interface StylistProfileSheetProps {
   onViewHistory?: () => void;
   onMessage?: () => void;
   onCall?: () => void;
+  onViewProfile?: () => void;
 }
 
 export const StylistProfileSheet = ({
@@ -39,6 +40,7 @@ export const StylistProfileSheet = ({
   onViewHistory,
   onMessage,
   onCall,
+  onViewProfile,
 }: StylistProfileSheetProps) => {
   const { t } = useTranslation();
 
@@ -95,7 +97,7 @@ export const StylistProfileSheet = ({
               className="ml-3 rounded-full px-5"
               onClick={() => {
                 onClose();
-                onNewAppointment();
+                onViewProfile?.();
               }}
             >
               {t('common.profile', 'Profile')}

@@ -288,6 +288,11 @@
       "platformFee": "Platform Fee",
       "payoutSchedule": "Payout Schedule",
       "payoutsWeekly": "Payouts are processed weekly"
+    },
+    "profile": {
+      "portfolio": "Portfolio",
+      "portfolioWork": "Portfolio work",
+      "yearsExperience": "years experience"
     }
   },
   "booking": {
@@ -385,10 +390,13 @@
   },
   "messaging": {
     "title": "Messages",
-    "sendMessage": "Send a message...",
+    "sendMessage": "Send a message",
     "send": "Send",
     "noMessages": "No messages yet",
-    "startConversation": "Start the conversation"
+    "startConversation": "Start the conversation!",
+    "typeMessage": "Type a message...",
+    "noPhoneAvailable": "Phone not available",
+    "useMessaging": "Please use messaging to contact this stylist"
   },
   "notifications": {
     "enable": "Enable Notifications",

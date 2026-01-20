@@ -205,17 +205,18 @@ const CustomerBooking = () => {
             onClose={() => setIsSheetOpen(false)}
             onNewAppointment={() => selectedStylist && selectStylist(selectedStylist)}
             onViewHistory={() => navigate("/customer/appointments")}
-            onMessage={() => {
-              toast({
-                title: "Coming soon",
-                description: "Messaging feature is under development",
-              });
-            }}
+            onViewProfile={() => selectedStylist && navigate(`/customer/stylist/${selectedStylist.id}`)}
+            onMessage={() => selectedStylist && navigate(`/customer/stylist/${selectedStylist.id}`, { state: { openMessaging: true } })}
             onCall={() => {
-              toast({
-                title: "Coming soon", 
-                description: "Call feature is under development",
-              });
+              if (selectedStylist?.phone) {
+                window.location.href = `tel:${selectedStylist.phone}`;
+              } else {
+                // Navigate to profile where they can message instead
+                toast({
+                  title: t('messaging.noPhoneAvailable', 'Phone not available'),
+                  description: t('messaging.useMessaging', 'Please use messaging to contact this stylist'),
+                });
+              }
             }}
           />
         </div>
