@@ -20,6 +20,7 @@ import { StylistLocationLink } from "@/components/map/StylistLocationLink";
 import { MapPreview } from "@/components/map/MapPreview";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
 
 const StylistProfile = () => {
   const navigate = useNavigate();
@@ -32,7 +33,8 @@ const StylistProfile = () => {
   const [services, setServices] = useState<any[]>([]);
   const [portfolioPhotos, setPortfolioPhotos] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
-
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   useEffect(() => {
     if (!stylistId) {
       navigate("/customer/booking");
@@ -243,17 +245,36 @@ const StylistProfile = () => {
               <CardContent>
                 <div className="grid grid-cols-3 gap-2">
                   {portfolioPhotos.map((photo, i) => (
-                    <img
+                    <button
                       key={photo.id || i}
-                      src={photo.image_url}
-                      alt={photo.description || t('stylist.profile.portfolioWork')}
-                      className="aspect-square rounded-lg object-cover"
-                    />
+                      onClick={() => {
+                        setLightboxIndex(i);
+                        setLightboxOpen(true);
+                      }}
+                      className="aspect-square rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary transition-transform hover:scale-[1.02] active:scale-95"
+                    >
+                      <img
+                        src={photo.image_url}
+                        alt={photo.description || t('stylist.profile.portfolioWork')}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
                   ))}
                 </div>
               </CardContent>
             </Card>
           )}
+
+          {/* Portfolio Lightbox */}
+          <ImageLightbox
+            images={portfolioPhotos.map((photo) => ({
+              url: photo.image_url,
+              alt: photo.description || t('stylist.profile.portfolioWork'),
+            }))}
+            initialIndex={lightboxIndex}
+            open={lightboxOpen}
+            onOpenChange={setLightboxOpen}
+          />
 
           {/* Services */}
           <Card variant="default">
