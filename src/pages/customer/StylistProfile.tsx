@@ -132,15 +132,15 @@ const StylistProfile = () => {
               label={stylist.business_name || stylist.name}
               avatarUrl={stylist.photo_url}
               avatarFallback={stylist.name}
-              className="h-[180px] rounded-none"
+              className="h-[200px] rounded-none"
             />
           ) : (
-            <div className="h-[120px] bg-gradient-to-br from-primary/20 to-accent/20" />
+            <div className="h-[140px] bg-gradient-to-br from-primary/20 to-accent/20" />
           )}
         </div>
 
-        {/* Profile Content - Overlapping the header */}
-        <div className="px-4 -mt-16 space-y-4 relative z-10">
+        {/* Profile Content - Below the header with slight overlap */}
+        <div className="px-4 -mt-6 space-y-4 relative z-10">
           {/* Profile Header Card */}
           <Card variant="elevated" className="shadow-lg">
             <CardContent className="p-4">
