@@ -17,6 +17,8 @@ import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 import { CancelAppointmentDialog } from "@/components/booking/CancelAppointmentDialog";
 import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
+import { SmartBookingSuggestionDialog } from "@/components/booking/SmartBookingSuggestionDialog";
+import { useSmartBookingSuggestion } from "@/hooks/useSmartBookingSuggestion";
 
 const CustomerBookingDetails = () => {
   const navigate = useNavigate();
@@ -40,20 +42,26 @@ const CustomerBookingDetails = () => {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
   const [customerId, setCustomerId] = useState<string | null>(null);
+  const [customerLocation, setCustomerLocation] = useState<{ latitude: number | null; longitude: number | null }>({ latitude: null, longitude: null });
+  const [showSmartSuggestion, setShowSmartSuggestion] = useState(false);
 
-  // Fetch customer ID from auth
+  // Fetch customer ID and location from auth
   useEffect(() => {
-    const fetchCustomerId = async () => {
+    const fetchCustomerData = async () => {
       if (!user) return;
       
       const { data: customerData } = await supabase
         .from("customers")
-        .select("id")
+        .select("id, latitude, longitude")
         .eq("user_id", user.id)
         .maybeSingle();
       
       if (customerData) {
         setCustomerId(customerData.id);
+        setCustomerLocation({
+          latitude: customerData.latitude,
+          longitude: customerData.longitude,
+        });
       } else {
         navigate("/customer");
       }
@@ -63,10 +71,50 @@ const CustomerBookingDetails = () => {
       if (!user) {
         navigate("/auth");
       } else {
-        fetchCustomerId();
+        fetchCustomerData();
       }
     }
   }, [user, authLoading, navigate]);
+
+  // Smart booking suggestion hook
+  const {
+    lastBooking,
+    aiRecommendations,
+    loading: smartSuggestionLoading,
+    showSuggestion,
+    setShowSuggestion,
+    getBestRecommendation,
+  } = useSmartBookingSuggestion({
+    customerId,
+    selectedServiceName: selectedService?.name || null,
+    customerLatitude: customerLocation.latitude,
+    customerLongitude: customerLocation.longitude,
+  });
+
+  // Show suggestion dialog when service is selected and we have suggestions
+  useEffect(() => {
+    if (selectedService && showSuggestion && (lastBooking || aiRecommendations.length > 0)) {
+      setShowSmartSuggestion(true);
+      setShowSuggestion(false);
+    }
+  }, [selectedService, showSuggestion, lastBooking, aiRecommendations]);
+
+  const handleSmartSelectStylist = (stylistId: string) => {
+    setShowSmartSuggestion(false);
+    navigate(`/customer/booking/${stylistId}`);
+  };
+
+  const handleAutoSelect = () => {
+    const best = getBestRecommendation();
+    if (best) {
+      setShowSmartSuggestion(false);
+      navigate(`/customer/booking/${best.id}`);
+      toast({
+        title: t("booking.smartSuggestion.title"),
+        description: `${t("booking.smartSuggestion.bestMatch")}: ${best.name}`,
+      });
+    }
+  };
 
   useEffect(() => {
     if (!stylistId) {
@@ -439,6 +487,18 @@ const CustomerBookingDetails = () => {
             </>
           )}
         </div>
+
+        {/* Smart Booking Suggestion Dialog */}
+        <SmartBookingSuggestionDialog
+          open={showSmartSuggestion}
+          onOpenChange={setShowSmartSuggestion}
+          serviceName={selectedService?.name || ""}
+          lastBooking={lastBooking}
+          aiRecommendations={aiRecommendations}
+          loading={smartSuggestionLoading}
+          onSelectStylist={handleSmartSelectStylist}
+          onAutoSelect={handleAutoSelect}
+        />
       </div>
     </CustomerLayout>
   );

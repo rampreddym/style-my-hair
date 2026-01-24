@@ -318,7 +318,21 @@
     "subtotal": "Subtotal",
     "dueAtSalon": "Due at salon",
     "securePayment": "Secure payment",
-    "refundPolicy": "Free cancellation up to 24 hours before"
+    "refundPolicy": "Free cancellation up to 24 hours before",
+    "smartSuggestion": {
+      "title": "Smart Booking",
+      "description": "We found options based on your history for {{service}}",
+      "lastBooking": "Your last booking",
+      "or": "or",
+      "findBestMatch": "Find best match with AI",
+      "aiRecommendations": "AI Recommendations",
+      "basedOn": "Rating + Proximity + Service",
+      "letAiChoose": "Let AI choose the best",
+      "autoSelectDesc": "We'll pick the optimal stylist and proceed to booking",
+      "noMatches": "No stylists offer this service nearby",
+      "bestMatch": "Best",
+      "browseAll": "Browse all stylists instead"
+    }
   },
   "appointment": {
     "cancel": {

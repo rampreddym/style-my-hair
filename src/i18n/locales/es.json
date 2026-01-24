@@ -313,7 +313,21 @@
     "subtotal": "Subtotal",
     "dueAtSalon": "A pagar en el salón",
     "securePayment": "Pago seguro",
-    "refundPolicy": "Cancelación gratuita hasta 24 horas antes"
+    "refundPolicy": "Cancelación gratuita hasta 24 horas antes",
+    "smartSuggestion": {
+      "title": "Reserva Inteligente",
+      "description": "Encontramos opciones basadas en tu historial para {{service}}",
+      "lastBooking": "Tu última reserva",
+      "or": "o",
+      "findBestMatch": "Encontrar la mejor opción con IA",
+      "aiRecommendations": "Recomendaciones de IA",
+      "basedOn": "Calificación + Proximidad + Servicio",
+      "letAiChoose": "Dejar que IA elija lo mejor",
+      "autoSelectDesc": "Elegiremos el estilista óptimo y procederemos a la reserva",
+      "noMatches": "No hay estilistas que ofrezcan este servicio cerca",
+      "bestMatch": "Mejor",
+      "browseAll": "Explorar todos los estilistas"
+    }
   },
   "appointment": {
     "cancel": {
