@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.check-waitlist]
 verify_jwt = true
+
+[functions.send-booking-sms]
+verify_jwt = true
