@@ -209,6 +209,34 @@ const CustomerBookingDetails = () => {
 
       if (error) throw error;
 
+      // Fetch customer and stylist phone numbers for SMS
+      const [customerResult, stylistResult] = await Promise.all([
+        supabase.from("customers").select("name, phone").eq("id", customerId).single(),
+        supabase.from("stylists").select("name, phone").eq("id", stylist.id).single(),
+      ]);
+
+      // Send SMS notifications (fire and forget - don't block booking confirmation)
+      supabase.functions.invoke("send-booking-sms", {
+        body: {
+          appointmentId: appointment.id,
+          customerPhone: customerResult.data?.phone || "",
+          customerName: customerResult.data?.name || "Customer",
+          stylistPhone: stylistResult.data?.phone || "",
+          stylistName: stylistResult.data?.name || stylist.name,
+          serviceName: selectedService.name,
+          appointmentDate: appointmentDateTime,
+          price: selectedService.price,
+        },
+      }).then((result) => {
+        if (result.data?.success) {
+          console.log("SMS notifications sent:", result.data);
+        } else {
+          console.log("SMS notification result:", result.data);
+        }
+      }).catch((err) => {
+        console.error("SMS notification error:", err);
+      });
+
       setBookingDetails({
         ...appointment,
         stylist: stylist,
