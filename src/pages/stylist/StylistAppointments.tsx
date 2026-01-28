@@ -16,6 +16,7 @@ import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { cn } from "@/lib/utils";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
 import { StylistLayout } from "@/components/layout/StylistLayout";
+import { StylistInstructionsCard } from "@/components/stylist/StylistInstructionsCard";
 
 const StylistAppointments = () => {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ const StylistAppointments = () => {
       .from("appointments")
       .select(`
         *,
-        customer:customers(id, name, email, phone, gender, age, preferred_style_description),
+        customer:customers(id, name, email, phone, gender, age, preferred_style_description, user_id),
         service:stylist_services(name, duration_minutes, price),
         generated_style:customer_generated_styles(style_prompt, generated_image_url)
       `)
@@ -294,6 +295,26 @@ const StylistAppointments = () => {
                         <p className="text-foreground line-clamp-2">{appointment.stylist_notes}</p>
                       </div>
                     )}
+
+                    {/* AI Stylist Instructions */}
+                    <StylistInstructionsCard
+                      appointmentId={appointment.id}
+                      serviceName={appointment.service?.name || "Service"}
+                      styleDescription={appointment.ai_style_description || appointment.generated_style?.style_prompt}
+                      styleImageUrl={appointment.generated_style?.generated_image_url}
+                      customerGender={appointment.customer?.gender}
+                      customerAge={appointment.customer?.age}
+                      preferredStyleDescription={appointment.customer?.preferred_style_description}
+                      previousNotes={appointment.stylist_notes}
+                      existingInstructions={appointment.stylist_instructions}
+                      onInstructionsGenerated={(instructions) => {
+                        setAppointments(
+                          appointments.map((a) =>
+                            a.id === appointment.id ? { ...a, stylist_instructions: instructions } : a
+                          )
+                        );
+                      }}
+                    />
 
                     {/* Quick actions */}
                     <div className="flex flex-wrap gap-2">

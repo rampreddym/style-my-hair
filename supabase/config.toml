@@ -5,3 +5,12 @@ verify_jwt = true
 
 [functions.send-push-notification]
 verify_jwt = false
+
+[functions.generate-stylist-instructions]
+verify_jwt = true
+
+[functions.get-vapid-key]
+verify_jwt = false
+
+[functions.check-waitlist]
+verify_jwt = true

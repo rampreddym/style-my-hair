@@ -288,6 +288,24 @@
       "platformFee": "Comisión de Plataforma",
       "payoutSchedule": "Calendario de Pagos",
       "payoutsWeekly": "Los pagos se procesan semanalmente"
+    },
+    "profile": {
+      "portfolio": "Portafolio",
+      "portfolioWork": "Trabajo de portafolio",
+      "yearsExperience": "años de experiencia"
+    },
+    "instructions": {
+      "title": "Instrucciones Profesionales",
+      "description": "Genera instrucciones de estilista experto para este servicio basado en las preferencias del cliente",
+      "generate": "Generar Instrucciones",
+      "generating": "Generando instrucciones de experto...",
+      "generated": "Instrucciones Listas",
+      "generatedDescription": "Se han generado instrucciones de estilista experto",
+      "generationFailed": "Error al generar instrucciones",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "viewFull": "Ver Completo",
+      "regenerate": "Regenerar"
     }
   },
   "booking": {
