@@ -13,9 +13,10 @@ import CustomerStyle from "./pages/customer/CustomerStyle";
 import CustomerBooking from "./pages/customer/CustomerBooking";
 import CustomerBookingDetails from "./pages/customer/CustomerBookingDetails";
 import CustomerAppointments from "./pages/customer/CustomerAppointments";
-import StylistProfile from "./pages/customer/StylistProfile";
+import CustomerStylistProfile from "./pages/customer/StylistProfile";
 import StylistOnboarding from "./pages/stylist/StylistOnboarding";
 import StylistHome from "./pages/stylist/StylistHome";
+import StylistProfile from "./pages/stylist/StylistProfile";
 import StylistServices from "./pages/stylist/StylistServices";
 import StylistAppointments from "./pages/stylist/StylistAppointments";
 import StylistPayments from "./pages/stylist/StylistPayments";
@@ -43,11 +44,12 @@ const App = () => (
             <Route path="/customer/booking" element={<CustomerBooking />} />
             <Route path="/customer/booking/:stylistId" element={<CustomerBookingDetails />} />
             <Route path="/customer/appointments" element={<CustomerAppointments />} />
-            <Route path="/customer/stylist/:stylistId" element={<StylistProfile />} />
+            <Route path="/customer/stylist/:stylistId" element={<CustomerStylistProfile />} />
             
             {/* Stylist Routes */}
             <Route path="/stylist" element={<StylistHome />} />
             <Route path="/stylist/onboarding" element={<StylistOnboarding />} />
+            <Route path="/stylist/profile" element={<StylistProfile />} />
             <Route path="/stylist/services" element={<StylistServices />} />
             <Route path="/stylist/appointments" element={<StylistAppointments />} />
             <Route path="/stylist/payments" element={<StylistPayments />} />
