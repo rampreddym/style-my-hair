@@ -83,6 +83,7 @@ export type Database = {
           status: string
           stripe_payment_intent_id: string | null
           stylist_id: string
+          stylist_instructions: string | null
           stylist_notes: string | null
           updated_at: string
         }
@@ -103,6 +104,7 @@ export type Database = {
           status?: string
           stripe_payment_intent_id?: string | null
           stylist_id: string
+          stylist_instructions?: string | null
           stylist_notes?: string | null
           updated_at?: string
         }
@@ -123,6 +125,7 @@ export type Database = {
           status?: string
           stripe_payment_intent_id?: string | null
           stylist_id?: string
+          stylist_instructions?: string | null
           stylist_notes?: string | null
           updated_at?: string
         }

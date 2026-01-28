@@ -293,6 +293,19 @@
       "portfolio": "Portfolio",
       "portfolioWork": "Portfolio work",
       "yearsExperience": "years experience"
+    },
+    "instructions": {
+      "title": "Professional Instructions",
+      "description": "Generate expert hairstylist instructions for this service based on customer preferences",
+      "generate": "Generate Instructions",
+      "generating": "Generating expert instructions...",
+      "generated": "Instructions Ready",
+      "generatedDescription": "Expert hairstylist instructions have been generated",
+      "generationFailed": "Failed to generate instructions",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "viewFull": "View Full",
+      "regenerate": "Regenerate"
     }
   },
   "booking": {

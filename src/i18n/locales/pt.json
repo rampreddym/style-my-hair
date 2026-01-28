@@ -288,6 +288,24 @@
       "platformFee": "Taxa da Plataforma",
       "payoutSchedule": "Cronograma de Pagamentos",
       "payoutsWeekly": "Os pagamentos são processados semanalmente"
+    },
+    "profile": {
+      "portfolio": "Portfólio",
+      "portfolioWork": "Trabalho do portfólio",
+      "yearsExperience": "anos de experiência"
+    },
+    "instructions": {
+      "title": "Instruções Profissionais",
+      "description": "Gere instruções de cabeleireiro especialista para este serviço com base nas preferências do cliente",
+      "generate": "Gerar Instruções",
+      "generating": "Gerando instruções de especialista...",
+      "generated": "Instruções Prontas",
+      "generatedDescription": "Instruções de cabeleireiro especialista foram geradas",
+      "generationFailed": "Falha ao gerar instruções",
+      "copy": "Copiar",
+      "copied": "Copiado!",
+      "viewFull": "Ver Completo",
+      "regenerate": "Regenerar"
     }
   },
   "booking": {
