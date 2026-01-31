@@ -10,7 +10,7 @@ interface NavItem {
 }
 
 const stylistNavItems: NavItem[] = [
-  { path: "/stylist", labelKey: "navigation.profile", icon: User },
+  { path: "/stylist/profile", labelKey: "navigation.profile", icon: User },
   { path: "/stylist/services", labelKey: "navigation.services", icon: Scissors },
   { path: "/stylist/appointments", labelKey: "navigation.appointments", icon: Calendar },
   { path: "/stylist/payments", labelKey: "navigation.payments", icon: DollarSign },
