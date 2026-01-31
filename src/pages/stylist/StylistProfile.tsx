@@ -176,9 +176,8 @@ const StylistProfile = () => {
     setLoading(true);
 
     try {
-      let stylistId: string;
-
       if (existingStylistId) {
+        // Update existing profile
         const { error } = await supabase
           .from("stylists")
           .update({
@@ -195,8 +194,10 @@ const StylistProfile = () => {
           .eq("id", existingStylistId);
 
         if (error) throw error;
-        stylistId = existingStylistId;
+        toast({ title: t("stylistProfile.profileSaved") });
+        // Stay on profile page for existing profiles
       } else {
+        // Create new profile
         const { data: newStylist, error } = await supabase
           .from("stylists")
           .insert({
@@ -216,13 +217,12 @@ const StylistProfile = () => {
           .single();
 
         if (error) throw error;
-        stylistId = newStylist.id;
-        setExistingStylistId(stylistId);
+        setExistingStylistId(newStylist.id);
+        sessionStorage.setItem("stylistId", newStylist.id);
+        toast({ title: t("stylistProfile.profileSaved") });
+        // Redirect to services setup for new profiles
+        navigate("/stylist/services");
       }
-
-      sessionStorage.setItem("stylistId", stylistId);
-      toast({ title: t("stylistProfile.profileSaved") });
-      navigate("/stylist/services");
     } catch (error: any) {
       toast({ title: t("common.error"), description: error.message, variant: "destructive" });
     } finally {
