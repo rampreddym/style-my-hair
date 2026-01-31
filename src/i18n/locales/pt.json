@@ -145,7 +145,8 @@
       "profileSaved": "Perfil salvo!",
       "letsGenerate": "Vamos gerar seu novo visual",
       "shareAiStyles": "Compartilhar Estilos IA com Estilista",
-      "shareAiStylesDescription": "Permitir que estilistas vejam suas visualizações de penteados geradas por IA ao reservar"
+      "shareAiStylesDescription": "Permitir que estilistas vejam suas visualizações de penteados geradas por IA ao reservar",
+      "photoSaveError": "Falha ao salvar as fotos"
     },
     "style": {
       "title": "Escolha Seu Estilo",

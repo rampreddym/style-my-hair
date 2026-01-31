@@ -145,7 +145,8 @@
       "profileSaved": "Profile saved!",
       "letsGenerate": "Let's generate your new look",
       "shareAiStyles": "Share AI Styles with Stylist",
-      "shareAiStylesDescription": "Allow stylists to see your AI-generated hairstyle previews when booking"
+      "shareAiStylesDescription": "Allow stylists to see your AI-generated hairstyle previews when booking",
+      "photoSaveError": "Failed to save photos"
     },
     "style": {
       "title": "Choose Your Style",
