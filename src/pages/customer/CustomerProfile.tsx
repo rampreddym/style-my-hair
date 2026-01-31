@@ -254,15 +254,38 @@ const CustomerProfile = () => {
         setExistingCustomerId(customerId);
       }
 
-      await supabase.from("customer_photos").delete().eq("customer_id", customerId);
+      // Delete existing photos first
+      const { error: deleteError } = await supabase
+        .from("customer_photos")
+        .delete()
+        .eq("customer_id", customerId);
+      
+      if (deleteError) {
+        console.error("Error deleting existing photos:", deleteError);
+      }
 
-      const photoInserts = Object.entries(photos).map(([type, url]) => ({
-        customer_id: customerId,
-        photo_url: url,
-        photo_type: type,
-      }));
+      // Insert new photos
+      if (Object.keys(photos).length > 0) {
+        const photoInserts = Object.entries(photos).map(([type, url]) => ({
+          customer_id: customerId,
+          photo_url: url,
+          photo_type: type,
+        }));
 
-      await supabase.from("customer_photos").insert(photoInserts);
+        const { error: insertError } = await supabase
+          .from("customer_photos")
+          .insert(photoInserts);
+        
+        if (insertError) {
+          console.error("Error inserting photos:", insertError);
+          toast({ 
+            title: t("common.error"), 
+            description: t("customer.profile.photoSaveError", "Failed to save photos"), 
+            variant: "destructive" 
+          });
+          return;
+        }
+      }
 
       sessionStorage.setItem("customerId", customerId);
 
