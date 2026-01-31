@@ -10,8 +10,15 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Camera, ArrowRight, MapPin, Sparkles, X, LogOut } from "lucide-react";
+import { Camera, ArrowRight, MapPin, Sparkles, X, LogOut, Image, Plus } from "lucide-react";
 import { StylistLayout } from "@/components/layout/StylistLayout";
+
+interface PortfolioPhoto {
+  id?: string;
+  image_url: string;
+  hair_type?: string;
+  style_type?: string;
+}
 
 const StylistProfile = () => {
   const navigate = useNavigate();
@@ -23,6 +30,10 @@ const StylistProfile = () => {
   const [photoUrl, setPhotoUrl] = useState("");
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [existingStylistId, setExistingStylistId] = useState<string | null>(null);
+  
+  // Portfolio state
+  const [portfolio, setPortfolio] = useState<PortfolioPhoto[]>([]);
+  const [uploadingPortfolio, setUploadingPortfolio] = useState(false);
   
   const [formData, setFormData] = useState({
     email: "",
@@ -70,6 +81,16 @@ const StylistProfile = () => {
         });
         setSpecialties(existingStylist.specialties || []);
         setPhotoUrl(existingStylist.photo_url || "");
+        
+        // Load portfolio photos
+        const { data: portfolioData } = await supabase
+          .from("stylist_portfolio")
+          .select("*")
+          .eq("stylist_id", existingStylist.id);
+        
+        if (portfolioData) {
+          setPortfolio(portfolioData);
+        }
       } else {
         // Pre-fill email from auth
         setFormData(prev => ({ ...prev, email: user.email || "" }));
@@ -128,6 +149,60 @@ const StylistProfile = () => {
 
   const removeSpecialty = (specialty: string) => {
     setSpecialties(specialties.filter((s) => s !== specialty));
+  };
+
+  // Portfolio photo upload
+  const handlePortfolioUpload = async (file: File) => {
+    if (!user) return;
+    setUploadingPortfolio(true);
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `portfolio-${Date.now()}.${fileExt}`;
+    const filePath = `${user.id}/portfolio-photos/${fileName}`;
+
+    const { error } = await supabase.storage.from("user-photos").upload(filePath, file);
+
+    if (error) {
+      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      setUploadingPortfolio(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage.from("user-photos").getPublicUrl(filePath);
+    
+    // If stylist exists, save to DB immediately
+    if (existingStylistId) {
+      const { data: newPhoto, error: insertError } = await supabase
+        .from("stylist_portfolio")
+        .insert({
+          stylist_id: existingStylistId,
+          image_url: urlData.publicUrl,
+        })
+        .select()
+        .single();
+      
+      if (insertError) {
+        toast({ title: t("common.error"), description: insertError.message, variant: "destructive" });
+      } else if (newPhoto) {
+        setPortfolio([...portfolio, newPhoto]);
+        toast({ title: "Photo added to portfolio" });
+      }
+    } else {
+      setPortfolio([...portfolio, { image_url: urlData.publicUrl }]);
+    }
+    
+    setUploadingPortfolio(false);
+  };
+
+  const removePortfolioPhoto = async (index: number) => {
+    const photo = portfolio[index];
+    
+    if (photo.id && existingStylistId) {
+      await supabase.from("stylist_portfolio").delete().eq("id", photo.id);
+    }
+    
+    setPortfolio(portfolio.filter((_, i) => i !== index));
+    toast({ title: "Photo removed" });
   };
 
   const generateSpecialties = async () => {
@@ -361,6 +436,60 @@ const StylistProfile = () => {
                 <MapPin className="w-4 h-4" /> {t("stylistProfile.locationDetected")}
               </p>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Portfolio Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Image className="w-5 h-5 text-accent" />
+              Portfolio Photos
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-3 gap-3">
+              {portfolio.map((photo, index) => (
+                <div
+                  key={photo.id || index}
+                  className="relative aspect-square rounded-lg overflow-hidden border-2 border-border"
+                >
+                  <img src={photo.image_url} alt="Portfolio" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => removePortfolioPhoto(index)}
+                    className="absolute top-1 right-1 w-6 h-6 bg-background/80 rounded-full flex items-center justify-center"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Add photo button */}
+              {portfolio.length < 9 && (
+                <label className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-primary/50 flex flex-col items-center justify-center cursor-pointer transition-colors">
+                  {uploadingPortfolio ? (
+                    <div className="animate-pulse text-muted-foreground text-sm">Uploading...</div>
+                  ) : (
+                    <>
+                      <Plus className="w-8 h-8 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground mt-1">Add Photo</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handlePortfolioUpload(file);
+                    }}
+                  />
+                </label>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground text-center">
+              {portfolio.length} of 9 photos
+            </p>
           </CardContent>
         </Card>
 
