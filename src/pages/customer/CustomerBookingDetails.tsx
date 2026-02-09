@@ -17,8 +17,6 @@ import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 import { CancelAppointmentDialog } from "@/components/booking/CancelAppointmentDialog";
 import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
-import { SmartBookingSuggestionDialog } from "@/components/booking/SmartBookingSuggestionDialog";
-import { useSmartBookingSuggestion } from "@/hooks/useSmartBookingSuggestion";
 import { ServiceCart } from "@/components/booking/ServiceCart";
 import { TipSelector } from "@/components/booking/TipSelector";
 
@@ -53,7 +51,6 @@ const CustomerBookingDetails = () => {
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [customerLocation, setCustomerLocation] = useState<{ latitude: number | null; longitude: number | null }>({ latitude: null, longitude: null });
-  const [showSmartSuggestion, setShowSmartSuggestion] = useState(false);
   const [tip, setTip] = useState(0);
 
   // Fetch customer ID and location from auth
@@ -87,46 +84,8 @@ const CustomerBookingDetails = () => {
     }
   }, [user, authLoading, navigate]);
 
-  // Smart booking suggestion hook
+  // Primary service reference for calculations
   const primaryService = selectedServices[0];
-  const {
-    lastBooking,
-    aiRecommendations,
-    loading: smartSuggestionLoading,
-    showSuggestion,
-    setShowSuggestion,
-    getBestRecommendation,
-  } = useSmartBookingSuggestion({
-    customerId,
-    selectedServiceName: primaryService?.name || null,
-    customerLatitude: customerLocation.latitude,
-    customerLongitude: customerLocation.longitude,
-  });
-
-  // Show suggestion dialog when service is selected and we have suggestions
-  useEffect(() => {
-    if (primaryService && showSuggestion && (lastBooking || aiRecommendations.length > 0)) {
-      setShowSmartSuggestion(true);
-      setShowSuggestion(false);
-    }
-  }, [primaryService, showSuggestion, lastBooking, aiRecommendations]);
-
-  const handleSmartSelectStylist = (stylistId: string) => {
-    setShowSmartSuggestion(false);
-    navigate(`/customer/booking/${stylistId}`);
-  };
-
-  const handleAutoSelect = () => {
-    const best = getBestRecommendation();
-    if (best) {
-      setShowSmartSuggestion(false);
-      navigate(`/customer/booking/${best.id}`);
-      toast({
-        title: t("booking.smartSuggestion.title"),
-        description: `${t("booking.smartSuggestion.bestMatch")}: ${best.name}`,
-      });
-    }
-  };
 
   useEffect(() => {
     if (!stylistId) {
@@ -538,18 +497,6 @@ const CustomerBookingDetails = () => {
             </>
           )}
         </div>
-
-        {/* Smart Booking Suggestion Dialog */}
-        <SmartBookingSuggestionDialog
-          open={showSmartSuggestion}
-          onOpenChange={setShowSmartSuggestion}
-          serviceName={primaryService?.name || ""}
-          lastBooking={lastBooking}
-          aiRecommendations={aiRecommendations}
-          loading={smartSuggestionLoading}
-          onSelectStylist={handleSmartSelectStylist}
-          onAutoSelect={handleAutoSelect}
-        />
       </div>
     </CustomerLayout>
   );
