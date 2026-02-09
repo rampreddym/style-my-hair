@@ -39,7 +39,9 @@
     "success": "Success",
     "warning": "Warning",
     "info": "Info",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "selected": "Selected",
+    "total": "total"
   },
   "notFound": {
     "title": "Oops! Page not found",
