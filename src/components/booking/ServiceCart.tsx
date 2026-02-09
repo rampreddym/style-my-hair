@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Plus, Minus, ShoppingCart } from "lucide-react";
+import { Clock, ShoppingCart, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface Service {
@@ -26,8 +25,16 @@ export const ServiceCart = ({
 }: ServiceCartProps) => {
   const { t } = useTranslation();
 
-  const getServiceCount = (serviceId: string) => {
-    return selectedServices.filter((s) => s.id === serviceId).length;
+  const isServiceSelected = (serviceId: string) => {
+    return selectedServices.some((s) => s.id === serviceId);
+  };
+
+  const handleServiceClick = (service: Service) => {
+    if (isServiceSelected(service.id)) {
+      onRemoveService(service.id);
+    } else {
+      onAddService(service);
+    }
   };
 
   const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
@@ -41,16 +48,16 @@ export const ServiceCart = ({
         </p>
       ) : (
         services.map((service) => {
-          const count = getServiceCount(service.id);
-          const isSelected = count > 0;
+          const isSelected = isServiceSelected(service.id);
 
           return (
             <div
               key={service.id}
-              className={`p-4 rounded-lg border-2 transition-all ${
+              onClick={() => handleServiceClick(service)}
+              className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
                 isSelected
                   ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/50"
+                  : "border-border hover:border-primary/50 hover:bg-muted/50"
               }`}
             >
               <div className="flex justify-between items-start gap-4">
@@ -58,8 +65,9 @@ export const ServiceCart = ({
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{service.name}</span>
                     {isSelected && (
-                      <Badge variant="secondary" className="text-xs">
-                        ×{count}
+                      <Badge variant="default" className="text-xs">
+                        <Check className="w-3 h-3 mr-1" />
+                        {t("common.selected")}
                       </Badge>
                     )}
                   </div>
@@ -78,28 +86,11 @@ export const ServiceCart = ({
                   <span className="font-semibold text-primary whitespace-nowrap">
                     ${service.price}
                   </span>
-                  <div className="flex items-center gap-1">
-                    {isSelected && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => onRemoveService(service.id)}
-                      >
-                        <Minus className="w-4 h-4" />
-                      </Button>
-                    )}
-                    <Button
-                      type="button"
-                      variant={isSelected ? "outline" : "default"}
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => onAddService(service)}
-                    >
-                      <Plus className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  {isSelected && (
+                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                      <Check className="w-4 h-4 text-primary-foreground" />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -114,13 +105,13 @@ export const ServiceCart = ({
             <div className="flex items-center gap-2">
               <ShoppingCart className="w-5 h-5 text-primary" />
               <span className="font-medium">
-                {selectedServices.length} service{selectedServices.length > 1 ? "s" : ""} selected
+                {selectedServices.length} {t("booking.servicesSelected", { count: selectedServices.length })}
               </span>
             </div>
             <div className="text-right">
               <p className="font-semibold text-primary">${totalPrice.toFixed(2)}</p>
               <p className="text-xs text-muted-foreground">
-                {totalDuration} {t("customer.bookingDetails.min")} total
+                {totalDuration} {t("customer.bookingDetails.min")} {t("common.total")}
               </p>
             </div>
           </div>
