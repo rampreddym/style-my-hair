@@ -8,12 +8,16 @@ import {
 } from "@/components/ui/tooltip";
 import { PaymentTiming } from "./PaymentTimingSelector";
 
+interface Service {
+  id?: string;
+  name: string;
+  price: number;
+  duration_minutes: number;
+}
+
 interface PriceBreakdownProps {
-  service: {
-    name: string;
-    price: number;
-    duration_minutes: number;
-  };
+  service?: Service;
+  services?: Service[];
   tip?: number;
   platformFeePercent?: number;
   paymentTiming?: PaymentTiming;
@@ -21,13 +25,30 @@ interface PriceBreakdownProps {
 
 export const PriceBreakdown = ({ 
   service, 
+  services,
   tip = 0, 
   platformFeePercent = 0,
   paymentTiming = "pay_now"
 }: PriceBreakdownProps) => {
-  const subtotal = service.price + tip;
+  // Support both single service and multiple services
+  const serviceList = services || (service ? [service] : []);
+  const serviceTotal = serviceList.reduce((sum, s) => sum + s.price, 0);
+  const totalDuration = serviceList.reduce((sum, s) => sum + s.duration_minutes, 0);
+  
+  const subtotal = serviceTotal + tip;
   const platformFee = subtotal * (platformFeePercent / 100);
   const total = subtotal + platformFee;
+
+  // Group services by name for display
+  const groupedServices = serviceList.reduce((acc, s) => {
+    const key = s.name;
+    if (!acc[key]) {
+      acc[key] = { ...s, count: 1 };
+    } else {
+      acc[key].count++;
+    }
+    return acc;
+  }, {} as Record<string, Service & { count: number }>);
 
   return (
     <Card className="border-2">
@@ -38,16 +59,21 @@ export const PriceBreakdown = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Service */}
-        <div className="flex justify-between items-center">
-          <div>
-            <span className="text-foreground">{service.name}</span>
-            <span className="text-xs text-muted-foreground ml-2">
-              ({service.duration_minutes} min)
-            </span>
+        {/* Services */}
+        {Object.values(groupedServices).map((s, index) => (
+          <div key={index} className="flex justify-between items-center">
+            <div>
+              <span className="text-foreground">
+                {s.name}
+                {s.count > 1 && <span className="text-muted-foreground ml-1">×{s.count}</span>}
+              </span>
+              <span className="text-xs text-muted-foreground ml-2">
+                ({s.duration_minutes * s.count} min)
+              </span>
+            </div>
+            <span className="font-medium">${(s.price * s.count).toFixed(2)}</span>
           </div>
-          <span className="font-medium">${service.price.toFixed(2)}</span>
-        </div>
+        ))}
 
         {/* Tip (if applicable) */}
         {tip > 0 && (
@@ -59,7 +85,10 @@ export const PriceBreakdown = ({
 
         {/* Subtotal */}
         <div className="flex justify-between items-center pt-2 border-t border-border">
-          <span className="text-muted-foreground">Subtotal</span>
+          <div>
+            <span className="text-muted-foreground">Subtotal</span>
+            <span className="text-xs text-muted-foreground ml-2">({totalDuration} min total)</span>
+          </div>
           <span>${subtotal.toFixed(2)}</span>
         </div>
 

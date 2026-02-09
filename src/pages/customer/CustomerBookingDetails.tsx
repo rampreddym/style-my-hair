@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { Clock, ArrowLeft, Image, Star } from "lucide-react";
+import { ArrowLeft, Image, Star } from "lucide-react";
 import { StylistLocationLink } from "@/components/map/StylistLocationLink";
 import { PriceBreakdown } from "@/components/booking/PriceBreakdown";
 import { BookingConfirmation } from "@/components/booking/BookingConfirmation";
@@ -19,6 +19,16 @@ import { CancelAppointmentDialog } from "@/components/booking/CancelAppointmentD
 import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 import { SmartBookingSuggestionDialog } from "@/components/booking/SmartBookingSuggestionDialog";
 import { useSmartBookingSuggestion } from "@/hooks/useSmartBookingSuggestion";
+import { ServiceCart } from "@/components/booking/ServiceCart";
+import { TipSelector } from "@/components/booking/TipSelector";
+
+interface Service {
+  id: string;
+  name: string;
+  price: number;
+  duration_minutes: number;
+  description?: string;
+}
 
 const CustomerBookingDetails = () => {
   const navigate = useNavigate();
@@ -30,8 +40,8 @@ const CustomerBookingDetails = () => {
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [stylist, setStylist] = useState<any>(null);
-  const [services, setServices] = useState<any[]>([]);
-  const [selectedService, setSelectedService] = useState<any>(null);
+  const [services, setServices] = useState<Service[]>([]);
+  const [selectedServices, setSelectedServices] = useState<Service[]>([]);
   const [selectedStyle, setSelectedStyle] = useState<any>(null);
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
@@ -44,6 +54,7 @@ const CustomerBookingDetails = () => {
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [customerLocation, setCustomerLocation] = useState<{ latitude: number | null; longitude: number | null }>({ latitude: null, longitude: null });
   const [showSmartSuggestion, setShowSmartSuggestion] = useState(false);
+  const [tip, setTip] = useState(0);
 
   // Fetch customer ID and location from auth
   useEffect(() => {
@@ -77,6 +88,7 @@ const CustomerBookingDetails = () => {
   }, [user, authLoading, navigate]);
 
   // Smart booking suggestion hook
+  const primaryService = selectedServices[0];
   const {
     lastBooking,
     aiRecommendations,
@@ -86,18 +98,18 @@ const CustomerBookingDetails = () => {
     getBestRecommendation,
   } = useSmartBookingSuggestion({
     customerId,
-    selectedServiceName: selectedService?.name || null,
+    selectedServiceName: primaryService?.name || null,
     customerLatitude: customerLocation.latitude,
     customerLongitude: customerLocation.longitude,
   });
 
   // Show suggestion dialog when service is selected and we have suggestions
   useEffect(() => {
-    if (selectedService && showSuggestion && (lastBooking || aiRecommendations.length > 0)) {
+    if (primaryService && showSuggestion && (lastBooking || aiRecommendations.length > 0)) {
       setShowSmartSuggestion(true);
       setShowSuggestion(false);
     }
-  }, [selectedService, showSuggestion, lastBooking, aiRecommendations]);
+  }, [primaryService, showSuggestion, lastBooking, aiRecommendations]);
 
   const handleSmartSelectStylist = (stylistId: string) => {
     setShowSmartSuggestion(false);
@@ -125,6 +137,29 @@ const CustomerBookingDetails = () => {
       fetchData();
     }
   }, [customerId, stylistId]);
+
+  // Calculate totals for multi-service
+  const serviceTotal = selectedServices.reduce((sum, s) => sum + s.price, 0);
+  const totalDuration = selectedServices.reduce((sum, s) => sum + s.duration_minutes, 0);
+
+  const handleAddService = (service: Service) => {
+    setSelectedServices([...selectedServices, service]);
+    // Reset time slot when services change
+    setAppointmentDate("");
+    setAppointmentTime("");
+  };
+
+  const handleRemoveService = (serviceId: string) => {
+    const index = selectedServices.findIndex((s) => s.id === serviceId);
+    if (index !== -1) {
+      const newServices = [...selectedServices];
+      newServices.splice(index, 1);
+      setSelectedServices(newServices);
+      // Reset time slot when services change
+      setAppointmentDate("");
+      setAppointmentTime("");
+    }
+  };
 
   const fetchData = async () => {
     if (!customerId) return;
@@ -181,7 +216,7 @@ const CustomerBookingDetails = () => {
   };
 
   const handleBooking = async () => {
-    if (!selectedService || !appointmentDate || !appointmentTime || !customerId) {
+    if (selectedServices.length === 0 || !appointmentDate || !appointmentTime || !customerId) {
       toast({ title: t('customer.bookingDetails.completeAllFields'), variant: "destructive" });
       return;
     }
@@ -190,19 +225,26 @@ const CustomerBookingDetails = () => {
 
     try {
       const appointmentDateTime = `${appointmentDate}T${appointmentTime}:00`;
-
+      const primaryService = selectedServices[0];
+      const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
+      
+      // Create appointment with primary service (multi-service support can be extended)
       const { data: appointment, error } = await supabase
         .from("appointments")
         .insert({
           customer_id: customerId,
           stylist_id: stylist.id,
-          service_id: selectedService.id,
+          service_id: primaryService.id,
           generated_style_id: selectedStyle?.id,
           appointment_date: appointmentDateTime,
-          price: selectedService.price,
+          price: totalPrice,
+          tip_amount: tip,
           status: "pending",
           payment_status: paymentTiming === "pay_now" ? "pending" : "pay_later",
           ai_style_description: selectedStyle?.style_prompt,
+          stylist_notes: selectedServices.length > 1 
+            ? `Services: ${selectedServices.map(s => s.name).join(", ")}` 
+            : null,
         })
         .select()
         .single();
@@ -216,6 +258,7 @@ const CustomerBookingDetails = () => {
       ]);
 
       // Send SMS notifications (fire and forget - don't block booking confirmation)
+      const serviceNames = selectedServices.map(s => s.name).join(", ");
       supabase.functions.invoke("send-booking-sms", {
         body: {
           appointmentId: appointment.id,
@@ -223,9 +266,9 @@ const CustomerBookingDetails = () => {
           customerName: customerResult.data?.name || "Customer",
           stylistPhone: stylistResult.data?.phone || "",
           stylistName: stylistResult.data?.name || stylist.name,
-          serviceName: selectedService.name,
+          serviceName: serviceNames,
           appointmentDate: appointmentDateTime,
-          price: selectedService.price,
+          price: totalPrice + tip,
         },
       }).then((result) => {
         if (result.data?.success) {
@@ -240,7 +283,9 @@ const CustomerBookingDetails = () => {
       setBookingDetails({
         ...appointment,
         stylist: stylist,
-        service: selectedService,
+        service: primaryService,
+        services: selectedServices,
+        tip_amount: tip,
       });
       setBooked(true);
       toast({ title: t('booking.bookingConfirmed'), description: t('customer.bookingDetails.appointmentScheduled') });
@@ -419,46 +464,18 @@ const CustomerBookingDetails = () => {
                 {t('booking.selectService')}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {services.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">{t('customer.bookingDetails.noServicesAvailable')}</p>
-              ) : (
-                services.map((service) => (
-                  <button
-                    key={service.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedService(service);
-                      setAppointmentDate("");
-                      setAppointmentTime("");
-                    }}
-                    className={`w-full min-h-[56px] p-4 rounded-lg border-2 cursor-pointer transition-all text-left active:scale-[0.98] ${
-                      selectedService?.id === service.id
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{service.name}</span>
-                      <span className="font-semibold text-primary">${service.price}</span>
-                    </div>
-                    <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {service.duration_minutes} {t('customer.bookingDetails.min')}
-                      </span>
-                      {service.description && (
-                        <span className="truncate">{service.description}</span>
-                      )}
-                    </div>
-                  </button>
-                ))
-              )}
+            <CardContent>
+              <ServiceCart
+                services={services}
+                selectedServices={selectedServices}
+                onAddService={handleAddService}
+                onRemoveService={handleRemoveService}
+              />
             </CardContent>
           </Card>
 
           {/* Step 2: Select Time Slot */}
-          {selectedService && (
+          {selectedServices.length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -469,20 +486,20 @@ const CustomerBookingDetails = () => {
               <CardContent>
                 <TimeSlotPicker
                   stylistId={stylist.id}
-                  serviceDuration={selectedService.duration_minutes}
+                  serviceDuration={totalDuration}
                   onSlotSelect={handleSlotSelect}
                   selectedDate={appointmentDate}
                   selectedTime={appointmentTime}
                   customerId={customerId || undefined}
-                  serviceId={selectedService.id}
-                  serviceName={selectedService.name}
+                  serviceId={selectedServices[0].id}
+                  serviceName={selectedServices.map(s => s.name).join(", ")}
                 />
               </CardContent>
             </Card>
           )}
 
           {/* Step 3: Payment & Confirm */}
-          {selectedService && appointmentDate && appointmentTime && (
+          {selectedServices.length > 0 && appointmentDate && appointmentTime && (
             <>
               <Card>
                 <CardHeader>
@@ -495,10 +512,16 @@ const CustomerBookingDetails = () => {
                   <PaymentTimingSelector
                     value={paymentTiming}
                     onChange={setPaymentTiming}
-                    servicePrice={selectedService.price}
+                    servicePrice={serviceTotal}
+                  />
+                  <TipSelector
+                    serviceTotal={serviceTotal}
+                    tip={tip}
+                    onTipChange={setTip}
                   />
                   <PriceBreakdown 
-                    service={selectedService}
+                    services={selectedServices}
+                    tip={tip}
                     platformFeePercent={0}
                     paymentTiming={paymentTiming}
                   />
@@ -520,7 +543,7 @@ const CustomerBookingDetails = () => {
         <SmartBookingSuggestionDialog
           open={showSmartSuggestion}
           onOpenChange={setShowSmartSuggestion}
-          serviceName={selectedService?.name || ""}
+          serviceName={primaryService?.name || ""}
           lastBooking={lastBooking}
           aiRecommendations={aiRecommendations}
           loading={smartSuggestionLoading}
