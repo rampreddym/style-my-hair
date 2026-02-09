@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Camera, ArrowRight, MapPin, Sparkles, X, LogOut, Image, Plus } from "lucide-react";
 import { StylistLayout } from "@/components/layout/StylistLayout";
+import { GoogleReviewImport } from "@/components/reviews/GoogleReviewImport";
 
 interface PortfolioPhoto {
   id?: string;
@@ -34,6 +35,7 @@ const StylistProfile = () => {
   // Portfolio state
   const [portfolio, setPortfolio] = useState<PortfolioPhoto[]>([]);
   const [uploadingPortfolio, setUploadingPortfolio] = useState(false);
+  const [googlePlaceId, setGooglePlaceId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     email: "",
@@ -81,6 +83,7 @@ const StylistProfile = () => {
         });
         setSpecialties(existingStylist.specialties || []);
         setPhotoUrl(existingStylist.photo_url || "");
+        setGooglePlaceId(existingStylist.google_place_id || null);
         
         // Load portfolio photos
         const { data: portfolioData } = await supabase
@@ -533,6 +536,15 @@ const StylistProfile = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Google Review Import - Only show for existing stylists */}
+        {existingStylistId && (
+          <GoogleReviewImport
+            stylistId={existingStylistId}
+            currentPlaceId={googlePlaceId}
+            onPlaceConnected={(placeId) => setGooglePlaceId(placeId)}
+          />
+        )}
 
         <div className="flex gap-4">
           <Button variant="outline" onClick={() => navigate("/")} className="flex-1 h-14">

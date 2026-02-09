@@ -85,6 +85,7 @@ export type Database = {
           stylist_id: string
           stylist_instructions: string | null
           stylist_notes: string | null
+          tip_amount: number | null
           updated_at: string
         }
         Insert: {
@@ -106,6 +107,7 @@ export type Database = {
           stylist_id: string
           stylist_instructions?: string | null
           stylist_notes?: string | null
+          tip_amount?: number | null
           updated_at?: string
         }
         Update: {
@@ -127,6 +129,7 @@ export type Database = {
           stylist_id?: string
           stylist_instructions?: string | null
           stylist_notes?: string | null
+          tip_amount?: number | null
           updated_at?: string
         }
         Relationships: [
