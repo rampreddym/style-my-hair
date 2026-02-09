@@ -10,6 +10,8 @@ import { DistanceSlider } from "@/components/booking/DistanceSlider";
 import { EnhancedStylistCard } from "@/components/stylist/EnhancedStylistCard";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 import { StylistProfileSheet } from "@/components/stylist/StylistProfileSheet";
+import { SmartBookingSuggestionDialog } from "@/components/booking/SmartBookingSuggestionDialog";
+import { useSmartBookingSuggestion } from "@/hooks/useSmartBookingSuggestion";
 
 const CustomerBooking = () => {
   const navigate = useNavigate();
@@ -21,8 +23,35 @@ const CustomerBooking = () => {
   const [selectedStyle, setSelectedStyle] = useState<any>(null);
   const [maxDistance, setMaxDistance] = useState(50);
   const [customerId, setCustomerId] = useState<string | null>(null);
+  const [customerLocation, setCustomerLocation] = useState<{ latitude: number | null; longitude: number | null }>({ latitude: null, longitude: null });
   const [selectedStylist, setSelectedStylist] = useState<any | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [showSmartSuggestion, setShowSmartSuggestion] = useState(false);
+  const [hasShownSuggestion, setHasShownSuggestion] = useState(false);
+
+  // Smart booking suggestion hook - uses selected style name as service hint
+  const {
+    lastBooking,
+    aiRecommendations,
+    loading: smartSuggestionLoading,
+    showSuggestion,
+    setShowSuggestion,
+    getBestRecommendation,
+  } = useSmartBookingSuggestion({
+    customerId,
+    selectedServiceName: selectedStyle?.style_prompt?.split(' ')[0] || null, // Use first word as hint
+    customerLatitude: customerLocation.latitude,
+    customerLongitude: customerLocation.longitude,
+  });
+
+  // Show suggestion dialog once when we have suggestions and haven't shown yet
+  useEffect(() => {
+    if (!hasShownSuggestion && showSuggestion && (lastBooking || aiRecommendations.length > 0)) {
+      setShowSmartSuggestion(true);
+      setHasShownSuggestion(true);
+      setShowSuggestion(false);
+    }
+  }, [showSuggestion, lastBooking, aiRecommendations, hasShownSuggestion, setShowSuggestion]);
 
   // Fetch customer ID from auth
   useEffect(() => {
@@ -31,12 +60,16 @@ const CustomerBooking = () => {
       
       const { data: customerData } = await supabase
         .from("customers")
-        .select("id")
+        .select("id, latitude, longitude")
         .eq("user_id", user.id)
         .maybeSingle();
       
       if (customerData) {
         setCustomerId(customerData.id);
+        setCustomerLocation({
+          latitude: customerData.latitude,
+          longitude: customerData.longitude,
+        });
       } else {
         navigate("/customer");
       }
@@ -120,6 +153,23 @@ const CustomerBooking = () => {
 
   const selectStylist = (stylist: any) => {
     navigate(`/customer/booking/${stylist.id}`);
+  };
+
+  const handleSmartSelectStylist = (stylistId: string) => {
+    setShowSmartSuggestion(false);
+    navigate(`/customer/booking/${stylistId}`);
+  };
+
+  const handleAutoSelect = () => {
+    const best = getBestRecommendation();
+    if (best) {
+      setShowSmartSuggestion(false);
+      navigate(`/customer/booking/${best.id}`);
+      toast({
+        title: t("booking.smartSuggestion.title"),
+        description: `${t("booking.smartSuggestion.bestMatch")}: ${best.name}`,
+      });
+    }
   };
 
   const filteredStylists = stylists.filter(s =>
@@ -218,6 +268,18 @@ const CustomerBooking = () => {
                 });
               }
             }}
+          />
+
+          {/* Smart Booking Suggestion Dialog */}
+          <SmartBookingSuggestionDialog
+            open={showSmartSuggestion}
+            onOpenChange={setShowSmartSuggestion}
+            serviceName={selectedStyle?.style_prompt || t('booking.service')}
+            lastBooking={lastBooking}
+            aiRecommendations={aiRecommendations}
+            loading={smartSuggestionLoading}
+            onSelectStylist={handleSmartSelectStylist}
+            onAutoSelect={handleAutoSelect}
           />
         </div>
       </div>
