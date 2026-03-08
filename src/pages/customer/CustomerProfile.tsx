@@ -178,17 +178,51 @@ const CustomerProfile = () => {
       .from("user-photos")
       .getPublicUrl(filePath);
 
-    setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
+    const publicUrl = urlData.publicUrl;
+
+    // Save to DB immediately if we have a customer record
+    if (existingCustomerId) {
+      // Delete existing photo of this type first
+      await supabase
+        .from("customer_photos")
+        .delete()
+        .eq("customer_id", existingCustomerId)
+        .eq("photo_type", photoType);
+
+      const { error: insertError } = await supabase
+        .from("customer_photos")
+        .insert({
+          customer_id: existingCustomerId,
+          photo_url: publicUrl,
+          photo_type: photoType,
+        });
+
+      if (insertError) {
+        console.error("Error saving photo to DB:", insertError);
+        toast({ title: t("common.error"), description: t("customer.profile.photoSaveError", "Failed to save photo"), variant: "destructive" });
+      }
+    }
+
+    setPhotos((prev) => ({ ...prev, [photoType]: publicUrl }));
     setUploadingPhoto(null);
   };
 
-  const handleDeletePhoto = (photoType: string) => {
+  const handleDeletePhoto = async (photoType: string) => {
+    // Delete from DB immediately if we have a customer record
+    if (existingCustomerId) {
+      await supabase
+        .from("customer_photos")
+        .delete()
+        .eq("customer_id", existingCustomerId)
+        .eq("photo_type", photoType);
+    }
+
     setPhotos((prev) => {
       const updated = { ...prev };
       delete updated[photoType];
       return updated;
     });
-    toast({ title: t("customer.profile.photoRemoved", "Photo removed"), description: t("customer.profile.rememberToSave", "Remember to save your profile") });
+    toast({ title: t("customer.profile.photoRemoved", "Photo removed") });
   };
 
   const handleSubmit = async () => {
@@ -254,36 +288,28 @@ const CustomerProfile = () => {
         setExistingCustomerId(customerId);
       }
 
-      // Delete existing photos first
-      const { error: deleteError } = await supabase
-        .from("customer_photos")
-        .delete()
-        .eq("customer_id", customerId);
-      
-      if (deleteError) {
-        console.error("Error deleting existing photos:", deleteError);
-      }
+      // For new customers, save photos now (existing customers save photos immediately on upload)
+      if (!existingCustomerId || customerId !== existingCustomerId) {
+        if (Object.keys(photos).length > 0) {
+          const photoInserts = Object.entries(photos).map(([type, url]) => ({
+            customer_id: customerId,
+            photo_url: url,
+            photo_type: type,
+          }));
 
-      // Insert new photos
-      if (Object.keys(photos).length > 0) {
-        const photoInserts = Object.entries(photos).map(([type, url]) => ({
-          customer_id: customerId,
-          photo_url: url,
-          photo_type: type,
-        }));
-
-        const { error: insertError } = await supabase
-          .from("customer_photos")
-          .insert(photoInserts);
-        
-        if (insertError) {
-          console.error("Error inserting photos:", insertError);
-          toast({ 
-            title: t("common.error"), 
-            description: t("customer.profile.photoSaveError", "Failed to save photos"), 
-            variant: "destructive" 
-          });
-          return;
+          const { error: insertError } = await supabase
+            .from("customer_photos")
+            .insert(photoInserts);
+          
+          if (insertError) {
+            console.error("Error inserting photos:", insertError);
+            toast({ 
+              title: t("common.error"), 
+              description: t("customer.profile.photoSaveError", "Failed to save photos"), 
+              variant: "destructive" 
+            });
+            return;
+          }
         }
       }
 
