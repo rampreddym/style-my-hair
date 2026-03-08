@@ -320,7 +320,7 @@ const StylistProfile = () => {
 
   return (
     <StylistLayout>
-      <div className="min-h-screen bg-background p-4">
+      <div className="page-radial min-h-screen p-4">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="flex justify-between items-start">
             <div className="text-center flex-1 space-y-2">
