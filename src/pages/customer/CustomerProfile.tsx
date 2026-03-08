@@ -207,13 +207,22 @@ const CustomerProfile = () => {
     setUploadingPhoto(null);
   };
 
-  const handleDeletePhoto = (photoType: string) => {
+  const handleDeletePhoto = async (photoType: string) => {
+    // Delete from DB immediately if we have a customer record
+    if (existingCustomerId) {
+      await supabase
+        .from("customer_photos")
+        .delete()
+        .eq("customer_id", existingCustomerId)
+        .eq("photo_type", photoType);
+    }
+
     setPhotos((prev) => {
       const updated = { ...prev };
       delete updated[photoType];
       return updated;
     });
-    toast({ title: t("customer.profile.photoRemoved", "Photo removed"), description: t("customer.profile.rememberToSave", "Remember to save your profile") });
+    toast({ title: t("customer.profile.photoRemoved", "Photo removed") });
   };
 
   const handleSubmit = async () => {
