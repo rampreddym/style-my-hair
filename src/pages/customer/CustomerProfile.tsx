@@ -178,7 +178,32 @@ const CustomerProfile = () => {
       .from("user-photos")
       .getPublicUrl(filePath);
 
-    setPhotos((prev) => ({ ...prev, [photoType]: urlData.publicUrl }));
+    const publicUrl = urlData.publicUrl;
+
+    // Save to DB immediately if we have a customer record
+    if (existingCustomerId) {
+      // Delete existing photo of this type first
+      await supabase
+        .from("customer_photos")
+        .delete()
+        .eq("customer_id", existingCustomerId)
+        .eq("photo_type", photoType);
+
+      const { error: insertError } = await supabase
+        .from("customer_photos")
+        .insert({
+          customer_id: existingCustomerId,
+          photo_url: publicUrl,
+          photo_type: photoType,
+        });
+
+      if (insertError) {
+        console.error("Error saving photo to DB:", insertError);
+        toast({ title: t("common.error"), description: t("customer.profile.photoSaveError", "Failed to save photo"), variant: "destructive" });
+      }
+    }
+
+    setPhotos((prev) => ({ ...prev, [photoType]: publicUrl }));
     setUploadingPhoto(null);
   };
 
