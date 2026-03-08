@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { DistanceSlider } from "@/components/booking/DistanceSlider";
+import { StylistSearchFilters, defaultFilters, type StylistFilters } from "@/components/booking/StylistSearchFilters";
 import { EnhancedStylistCard } from "@/components/stylist/EnhancedStylistCard";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 import { StylistProfileSheet } from "@/components/stylist/StylistProfileSheet";
@@ -29,6 +30,9 @@ const CustomerBooking = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [showSmartSuggestion, setShowSmartSuggestion] = useState(false);
   const [hasShownSuggestion, setHasShownSuggestion] = useState(false);
+  const [filters, setFilters] = useState<StylistFilters>(defaultFilters);
+  const [allServices, setAllServices] = useState<any[]>([]);
+  const [stylistServices, setStylistServices] = useState<Record<string, any[]>>({});
 
   const {
     lastBooking,
@@ -81,28 +85,30 @@ const CustomerBooking = () => {
     if (!customerId) return;
     setLoading(true);
 
-    const { data: styleData } = await supabase
-      .from("customer_generated_styles")
-      .select("*")
-      .eq("customer_id", customerId)
-      .eq("selected", true)
-      .maybeSingle();
-    if (styleData) setSelectedStyle(styleData);
+    const [styleRes, customerRes, stylistsRes, servicesRes] = await Promise.all([
+      supabase.from("customer_generated_styles").select("*").eq("customer_id", customerId).eq("selected", true).maybeSingle(),
+      supabase.from("customers").select("latitude, longitude").eq("id", customerId).single(),
+      supabase.from("stylists_public").select("*").order("rating", { ascending: false }),
+      supabase.from("stylist_services").select("*"),
+    ]);
 
-    const { data: customer } = await supabase
-      .from("customers")
-      .select("latitude, longitude")
-      .eq("id", customerId)
-      .single();
+    if (styleRes.data) setSelectedStyle(styleRes.data);
 
-    const { data: stylistsData } = await supabase
-      .from("stylists_public")
-      .select("*")
-      .order("rating", { ascending: false });
+    // Build stylist→services map
+    const svcMap: Record<string, any[]> = {};
+    if (servicesRes.data) {
+      for (const svc of servicesRes.data) {
+        if (!svcMap[svc.stylist_id]) svcMap[svc.stylist_id] = [];
+        svcMap[svc.stylist_id].push(svc);
+      }
+    }
+    setStylistServices(svcMap);
+    setAllServices(servicesRes.data || []);
 
-    if (stylistsData) {
+    if (stylistsRes.data) {
+      const customer = customerRes.data;
       if (customer?.latitude && customer?.longitude) {
-        const withDistance = stylistsData.map((s) => ({
+        const withDistance = stylistsRes.data.map((s) => ({
           ...s,
           distance: s.latitude && s.longitude
             ? calculateDistance(customer.latitude, customer.longitude, s.latitude, s.longitude)
@@ -110,7 +116,7 @@ const CustomerBooking = () => {
         }));
         setStylists(withDistance.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity)));
       } else {
-        setStylists(stylistsData);
+        setStylists(stylistsRes.data);
       }
     }
     setLoading(false);
@@ -120,11 +126,102 @@ const CustomerBooking = () => {
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
+
+  // Derived data for filters
+  const uniqueServices = useMemo(() => {
+    const seen = new Map<string, { id: string; name: string; price: number }>();
+    allServices.forEach((s) => {
+      if (!seen.has(s.name)) seen.set(s.name, { id: s.id, name: s.name, price: s.price });
+    });
+    return Array.from(seen.values());
+  }, [allServices]);
+
+  const availableSpecialties = useMemo(() => {
+    const set = new Set<string>();
+    stylists.forEach((s) => s.specialties?.forEach((sp: string) => set.add(sp)));
+    return Array.from(set).sort();
+  }, [stylists]);
+
+  const maxServicePrice = useMemo(() => {
+    if (allServices.length === 0) return 200;
+    return Math.ceil(Math.max(...allServices.map((s) => s.price)) / 5) * 5;
+  }, [allServices]);
+
+  // Apply all filters + sorting
+  const filteredStylists = useMemo(() => {
+    let list = stylists.filter((s) =>
+      s.distance === null || s.distance === undefined || s.distance <= maxDistance
+    );
+
+    // Search query
+    if (filters.searchQuery.trim()) {
+      const q = filters.searchQuery.toLowerCase();
+      list = list.filter((s) =>
+        s.name?.toLowerCase().includes(q) ||
+        s.business_name?.toLowerCase().includes(q) ||
+        s.specialties?.some((sp: string) => sp.toLowerCase().includes(q))
+      );
+    }
+
+    // Min rating
+    if (filters.minRating > 0) {
+      list = list.filter((s) => (s.rating ?? 0) >= filters.minRating);
+    }
+
+    // Service type
+    if (filters.serviceType) {
+      const stylistIdsWithService = new Set(
+        allServices.filter((svc) => svc.name === filters.serviceType).map((svc) => svc.stylist_id)
+      );
+      list = list.filter((s) => stylistIdsWithService.has(s.id));
+    }
+
+    // Max price
+    if (filters.maxPrice !== null) {
+      const stylistIdsInBudget = new Set<string>();
+      for (const [sid, svcs] of Object.entries(stylistServices)) {
+        if (svcs.some((svc) => svc.price <= filters.maxPrice!)) {
+          stylistIdsInBudget.add(sid);
+        }
+      }
+      list = list.filter((s) => stylistIdsInBudget.has(s.id));
+    }
+
+    // Specialties
+    if (filters.specialties.length > 0) {
+      list = list.filter((s) =>
+        filters.specialties.every((sp) => s.specialties?.includes(sp))
+      );
+    }
+
+    // Sort
+    switch (filters.sortBy) {
+      case "rating":
+        list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        break;
+      case "reviews":
+        list.sort((a, b) => (b.total_reviews ?? 0) - (a.total_reviews ?? 0));
+        break;
+      case "price": {
+        const minPrice = (id: string) => {
+          const svcs = stylistServices[id];
+          if (!svcs || svcs.length === 0) return Infinity;
+          return Math.min(...svcs.map((s) => s.price));
+        };
+        list.sort((a, b) => minPrice(a.id) - minPrice(b.id));
+        break;
+      }
+      default: // distance
+        list.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+    }
+
+    return list;
+  }, [stylists, maxDistance, filters, allServices, stylistServices]);
 
   const handleStylistSelect = (stylist: any) => {
     setSelectedStylist(stylist);
@@ -151,10 +248,6 @@ const CustomerBooking = () => {
       });
     }
   };
-
-  const filteredStylists = stylists.filter(s =>
-    s.distance === null || s.distance === undefined || s.distance <= maxDistance
-  );
 
   if (loading || authLoading) {
     return (
@@ -201,6 +294,15 @@ const CustomerBooking = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Search & Filters */}
+          <StylistSearchFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            availableServices={uniqueServices}
+            availableSpecialties={availableSpecialties}
+            maxServicePrice={maxServicePrice}
+          />
 
           {/* Distance Filter */}
           <Card className="p-4 shadow-card border border-border/30">
