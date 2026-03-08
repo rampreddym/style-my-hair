@@ -188,27 +188,32 @@ const StylistAppointments = () => {
 
   return (
     <StylistLayout>
-      <div className="min-h-screen bg-background p-4">
+      <div className="page-radial p-4">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Your Appointments</h1>
-              <p className="text-sm text-muted-foreground">Manage your bookings</p>
+              <h1 className="text-2xl font-bold text-foreground">{t("stylist.appointments.title", "Your Appointments")}</h1>
+              <p className="text-sm text-muted-foreground">{t("stylist.appointments.subtitle", "Manage your bookings")}</p>
             </div>
           </div>
 
           {/* Upcoming Appointments */}
-        <Card className="border-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-primary" />
-              Upcoming ({upcomingAppointments.length})
+        <Card className="border border-accent/20 shadow-card">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Calendar className="w-5 h-5 text-accent icon-glow-accent" />
+              {t("stylist.appointments.upcoming", "Upcoming")} ({upcomingAppointments.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
             {upcomingAppointments.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">No upcoming appointments</p>
+              <div className="text-center py-10 space-y-3">
+                <div className="w-14 h-14 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center">
+                  <Calendar className="w-7 h-7 text-accent" />
+                </div>
+                <p className="text-muted-foreground">{t("stylist.appointments.noUpcoming", "No upcoming appointments")}</p>
+              </div>
             ) : (
               <div className="space-y-4">
                 {upcomingAppointments.map((appointment) => (
