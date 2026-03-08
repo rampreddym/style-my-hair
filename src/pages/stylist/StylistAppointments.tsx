@@ -22,6 +22,7 @@ import { StylistInstructionsCard } from "@/components/stylist/StylistInstruction
 const StylistAppointments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [appointments, setAppointments] = useState<any[]>([]);
