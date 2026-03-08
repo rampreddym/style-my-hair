@@ -481,9 +481,9 @@ const StylistAppointments = () => {
         {/* Past Appointments */}
         {pastAppointments.length > 0 && (
           <Card>
-            <CardHeader>
-              <CardTitle className="text-muted-foreground">
-                Past Appointments ({pastAppointments.length})
+            <CardHeader className="pb-3">
+              <CardTitle className="text-muted-foreground text-base">
+                {t("stylist.appointments.past", "Past Appointments")} ({pastAppointments.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
