@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +14,7 @@ import { CancelAppointmentDialog } from "@/components/booking/CancelAppointmentD
 import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 import { PullToRefreshIndicator } from "@/components/ui/pull-to-refresh-indicator";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Calendar, Clock, MessageSquare, Star, CheckCircle, X, RefreshCw } from "lucide-react";
+import { Calendar, Clock, MessageSquare, Star, CheckCircle, X, RefreshCw, CalendarPlus, Sparkles } from "lucide-react";
 import { StylistLocationLink } from "@/components/map/StylistLocationLink";
 import { CardSkeleton } from "@/components/ui/skeleton-loader";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
@@ -21,6 +22,7 @@ import { CustomerLayout } from "@/components/layout/CustomerLayout";
 const CustomerAppointments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const feedbackAppointmentId = searchParams.get("feedback");
@@ -44,7 +46,6 @@ const CustomerAppointments = () => {
   const fetchCustomerAndAppointments = useCallback(async () => {
     if (!user) return;
 
-    // Get customer ID
     const { data: customer } = await supabase
       .from("customers")
       .select("id")
@@ -58,7 +59,6 @@ const CustomerAppointments = () => {
 
     setCustomerId(customer.id);
 
-    // Fetch appointments
     const { data: appointmentsData } = await supabase
       .from("appointments")
       .select(`
@@ -77,7 +77,6 @@ const CustomerAppointments = () => {
     setLoading(false);
   }, [user, navigate]);
 
-  // Pull to refresh
   const { isRefreshing, pullDistance, handlers } = usePullToRefresh({
     onRefresh: fetchCustomerAndAppointments,
   });
@@ -85,7 +84,7 @@ const CustomerAppointments = () => {
   const handleFeedbackComplete = () => {
     setShowFeedback(null);
     fetchCustomerAndAppointments();
-    toast({ title: "Thank you for your feedback!" });
+    toast({ title: t("customer.appointments.thankYouFeedback", "Thank you for your feedback!") });
   };
 
   const getAppointmentStatus = (appointment: any) => {
@@ -103,9 +102,9 @@ const CustomerAppointments = () => {
   if (loading) {
     return (
       <CustomerLayout>
-        <div className="page-gradient p-4">
+        <div className="page-radial p-4">
           <div className="max-w-2xl mx-auto space-y-6 pt-2">
-            <h1 className="text-3xl font-bold text-foreground">My Appointments</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t("customer.appointments.title", "My Appointments")}</h1>
             <CardSkeleton count={3} />
           </div>
         </div>
@@ -113,13 +112,12 @@ const CustomerAppointments = () => {
     );
   }
 
-  // Show feedback form if requested
   if (showFeedback && customerId) {
     const feedbackAppointment = appointments.find((a) => a.id === showFeedback);
     if (feedbackAppointment) {
       return (
         <CustomerLayout>
-          <div className="page-gradient p-4">
+          <div className="page-radial p-4">
             <div className="max-w-md mx-auto pt-8">
               <PostAppointmentFeedback
                 appointmentId={showFeedback}
@@ -132,7 +130,7 @@ const CustomerAppointments = () => {
                 onClick={() => setShowFeedback(null)}
                 className="w-full mt-4 min-h-[44px]"
               >
-                Skip for now
+                {t("common.skipForNow", "Skip for now")}
               </Button>
             </div>
           </div>
@@ -151,7 +149,7 @@ const CustomerAppointments = () => {
   return (
     <CustomerLayout>
       <div 
-        className="page-gradient p-4 scroll-smooth-touch"
+        className="page-radial p-4 scroll-smooth-touch"
         {...handlers}
       >
         <PullToRefreshIndicator 
@@ -162,34 +160,55 @@ const CustomerAppointments = () => {
         <div className="max-w-2xl mx-auto space-y-6 pt-2">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">My Appointments</h1>
-              <p className="text-sm text-muted-foreground">Manage your bookings</p>
+              <h1 className="text-2xl font-bold text-foreground">{t("customer.appointments.title", "My Appointments")}</h1>
+              <p className="text-sm text-muted-foreground">{t("customer.appointments.subtitle", "Manage your bookings")}</p>
             </div>
-            <Button variant="outline" onClick={() => navigate("/customer/booking")} className="min-h-[44px] shadow-soft">
-              Book New
+            <Button 
+              onClick={() => navigate("/customer/booking")} 
+              className="min-h-[44px] bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow-primary font-semibold gap-2"
+            >
+              <CalendarPlus className="w-4 h-4" />
+              {t("customer.appointments.bookNew", "Book New")}
             </Button>
           </div>
 
+          {/* Empty State */}
+          {appointments.length === 0 && (
+            <Card className="border-dashed border-2 border-primary/20">
+              <CardContent className="py-12 text-center space-y-4">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-primary icon-glow-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground text-lg">{t("customer.appointments.noAppointments", "No appointments yet")}</h3>
+                  <p className="text-muted-foreground text-sm mt-1">{t("customer.appointments.bookFirst", "Book your first appointment with a nearby stylist!")}</p>
+                </div>
+                <Button 
+                  onClick={() => navigate("/customer/booking")}
+                  className="bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow-primary"
+                >
+                  {t("customer.appointments.findStylists", "Find Stylists")}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Upcoming Appointments */}
-          <Card variant="glow" className="border-2 border-primary/30 shadow-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-primary icon-glow-primary" />
-                <span className="text-foreground">Upcoming ({upcomingAppointments.length})</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {upcomingAppointments.length === 0 ? (
-                <p className="text-center text-muted-foreground py-4">
-                  No upcoming appointments
-                </p>
-              ) : (
-                upcomingAppointments.map((appointment) => {
+          {upcomingAppointments.length > 0 && (
+            <Card variant="glow" className="border border-primary/20 shadow-card">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Calendar className="w-5 h-5 text-primary icon-glow-primary" />
+                  <span className="text-foreground">{t("customer.appointments.upcoming", "Upcoming")} ({upcomingAppointments.length})</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {upcomingAppointments.map((appointment) => {
                   const status = getAppointmentStatus(appointment);
                   const showConfirmation = status === "soon" && appointment.check_in_status === "pending";
 
                   return (
-                    <div key={appointment.id} className="space-y-3">
+                    <div key={appointment.id} className="space-y-3 animate-fade-in">
                       {showConfirmation && (
                         <AppointmentConfirmation
                           appointmentId={appointment.id}
@@ -203,26 +222,18 @@ const CustomerAppointments = () => {
                       )}
 
                       {!showConfirmation && (
-                        <div className="p-4 border border-border/50 rounded-xl bg-secondary/30">
+                        <div className="p-4 border border-border/50 rounded-xl bg-secondary/20 hover:bg-secondary/30 transition-colors">
                           <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden ring-2 ring-primary/30">
+                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden ring-2 ring-primary/30 flex-shrink-0">
                               {appointment.stylist?.photo_url ? (
-                                <img
-                                  src={appointment.stylist.photo_url}
-                                  alt={appointment.stylist.name}
-                                  className="w-full h-full object-cover"
-                                />
+                                <img src={appointment.stylist.photo_url} alt={appointment.stylist.name} className="w-full h-full object-cover" />
                               ) : (
-                                <span className="font-semibold text-primary">
-                                  {appointment.stylist?.name?.charAt(0)}
-                                </span>
+                                <span className="font-semibold text-primary">{appointment.stylist?.name?.charAt(0)}</span>
                               )}
                             </div>
-                            <div className="flex-1">
-                              <p className="font-semibold">{appointment.stylist?.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {appointment.service?.name}
-                              </p>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-foreground">{appointment.stylist?.name}</p>
+                              <p className="text-sm text-muted-foreground">{appointment.service?.name}</p>
                               <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                   <Calendar className="w-3 h-3 text-accent" />
@@ -230,10 +241,7 @@ const CustomerAppointments = () => {
                                 </span>
                                 <span className="flex items-center gap-1">
                                   <Clock className="w-3 h-3 text-info" />
-                                  {new Date(appointment.appointment_date).toLocaleTimeString([], {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  })}
+                                  {new Date(appointment.appointment_date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                 </span>
                               </div>
                               {(appointment.stylist?.address || appointment.stylist?.latitude) && (
@@ -247,15 +255,15 @@ const CustomerAppointments = () => {
                                 />
                               )}
                             </div>
-                            <span className="font-bold text-lg text-primary">${appointment.price}</span>
+                            <span className="font-bold text-lg text-gradient-primary flex-shrink-0">${appointment.price}</span>
                           </div>
 
                           <div className="flex flex-wrap gap-2 mt-3">
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button className="min-h-[44px] bg-accent/20 text-accent hover:bg-accent/30 border border-accent/30" variant="outline" onClick={() => setShowChat(appointment.id)}>
+                                <Button className="min-h-[44px] bg-accent/10 text-accent hover:bg-accent/20 border border-accent/20 font-medium" variant="outline" onClick={() => setShowChat(appointment.id)}>
                                   <MessageSquare className="w-4 h-4 mr-1" />
-                                  Message
+                                  {t("customer.appointments.message", "Message")}
                                 </Button>
                               </DialogTrigger>
                               <DialogContent className="max-w-md p-0">
@@ -271,62 +279,56 @@ const CustomerAppointments = () => {
                             </Dialog>
                             
                             <Button
-                              className="min-h-[44px] bg-info/20 text-info hover:bg-info/30 border border-info/30"
+                              className="min-h-[44px] bg-info/10 text-info hover:bg-info/20 border border-info/20 font-medium"
                               variant="outline"
                               onClick={() => setRescheduleAppointment(appointment)}
                             >
                               <RefreshCw className="w-4 h-4 mr-1" />
-                              Reschedule
+                              {t("customer.appointments.reschedule", "Reschedule")}
                             </Button>
                             
                             <Button
-                              className="min-h-[44px] text-destructive hover:text-destructive hover:bg-destructive/10"
+                              className="min-h-[44px] text-destructive hover:text-destructive hover:bg-destructive/10 border border-destructive/20 font-medium"
                               variant="outline"
                               onClick={() => setCancelAppointment(appointment)}
                             >
                               <X className="w-4 h-4 mr-1" />
-                              Cancel
+                              {t("customer.appointments.cancel", "Cancel")}
                             </Button>
                           </div>
                         </div>
                       )}
                     </div>
                   );
-                })
-              )}
-            </CardContent>
-          </Card>
+                })}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Past Appointments */}
           {pastAppointments.length > 0 && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-muted-foreground">
-                  Past Appointments ({pastAppointments.length})
+              <CardHeader className="pb-3">
+                <CardTitle className="text-muted-foreground text-base">
+                  {t("customer.appointments.past", "Past Appointments")} ({pastAppointments.length})
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {pastAppointments.slice(0, 10).map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="p-3 border rounded-lg flex items-center justify-between"
+                    className="p-3 border border-border/30 rounded-xl flex items-center justify-between hover:bg-secondary/20 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                         {appointment.stylist?.photo_url ? (
-                          <img
-                            src={appointment.stylist.photo_url}
-                            alt={appointment.stylist.name}
-                            className="w-full h-full object-cover rounded-full"
-                          />
+                          <img src={appointment.stylist.photo_url} alt={appointment.stylist.name} className="w-full h-full object-cover rounded-full" />
                         ) : (
-                          <span className="text-sm font-medium">
-                            {appointment.stylist?.name?.charAt(0)}
-                          </span>
+                          <span className="text-sm font-medium">{appointment.stylist?.name?.charAt(0)}</span>
                         )}
                       </div>
                       <div>
-                        <p className="font-medium">{appointment.stylist?.name}</p>
+                        <p className="font-medium text-foreground">{appointment.stylist?.name}</p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(appointment.appointment_date).toLocaleDateString()}
                         </p>
@@ -335,18 +337,18 @@ const CustomerAppointments = () => {
 
                     <div className="flex items-center gap-2">
                       {appointment.feedback ? (
-                        <span className="text-sm text-green-600 flex items-center gap-1">
+                        <span className="text-sm text-success flex items-center gap-1">
                           <CheckCircle className="w-4 h-4" />
-                          Reviewed
+                          {t("customer.appointments.reviewed", "Reviewed")}
                         </span>
                       ) : appointment.status === "completed" ? (
                         <Button
-                          className="min-h-[44px]"
+                          className="min-h-[44px] bg-warning/10 text-warning border border-warning/20 hover:bg-warning/20 font-medium"
                           variant="outline"
                           onClick={() => setShowFeedback(appointment.id)}
                         >
                           <Star className="w-4 h-4 mr-1" />
-                          Leave Feedback
+                          {t("customer.appointments.leaveFeedback", "Review")}
                         </Button>
                       ) : null}
                     </div>
@@ -356,7 +358,7 @@ const CustomerAppointments = () => {
             </Card>
           )}
 
-          {/* Cancel Dialog */}
+          {/* Dialogs */}
           {cancelAppointment && (
             <CancelAppointmentDialog
               open={!!cancelAppointment}
@@ -373,7 +375,6 @@ const CustomerAppointments = () => {
             />
           )}
 
-          {/* Reschedule Dialog */}
           {rescheduleAppointment && (
             <RescheduleDialog
               open={!!rescheduleAppointment}

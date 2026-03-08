@@ -231,7 +231,7 @@ const CustomerStyle = () => {
 
   return (
     <CustomerLayout>
-      <div className="min-h-screen bg-background p-4">
+      <div className="page-radial min-h-screen p-4">
         <div className="max-w-lg mx-auto space-y-6">
           {/* Header */}
           <div className="flex items-center">
