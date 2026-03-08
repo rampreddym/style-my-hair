@@ -4,11 +4,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Star, MapPin, Clock, CheckCircle, MessageSquare, 
-  ChevronRight, Award, Camera, Navigation
+  ChevronRight, Award, Camera, Navigation, DollarSign, Scissors
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { openInMaps } from "@/components/map/StylistLocationLink";
 import { MapPreview } from "@/components/map/MapPreview";
+
+interface StylistService {
+  id: string;
+  name: string;
+  price: number;
+  duration_minutes?: number;
+}
 
 interface Stylist {
   id: string;
@@ -31,6 +38,7 @@ interface EnhancedStylistCardProps {
   onSelect: () => void;
   recentWork?: string[];
   matchScore?: number;
+  services?: StylistService[];
 }
 
 const proficiencyLevels: Record<string, { label: string; color: string }> = {
@@ -44,12 +52,17 @@ export const EnhancedStylistCard = ({
   isSelected, 
   onSelect,
   recentWork = [],
-  matchScore
+  matchScore,
+  services = [],
 }: EnhancedStylistCardProps) => {
   const [showFullBio, setShowFullBio] = useState(false);
 
   // Estimate travel time (rough: 3 min per km)
   const travelTime = stylist.distance ? Math.round(stylist.distance * 3) : null;
+
+  // Derive starting price and most popular service
+  const startingPrice = services.length > 0 ? Math.min(...services.map(s => s.price)) : null;
+  const topService = services.length > 0 ? services[0] : null;
 
   return (
     <Card
@@ -96,11 +109,11 @@ export const EnhancedStylistCard = ({
                 )}
               </div>
               
-              {/* Match score badge */}
-              {matchScore && matchScore > 80 && (
-                <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">
-                  <Award className="w-3 h-3 mr-1" />
-                  {matchScore}% match
+              {/* Starting price badge */}
+              {startingPrice !== null && (
+                <Badge variant="secondary" className="bg-accent/10 text-accent border border-accent/20 text-xs font-semibold shrink-0">
+                  <DollarSign className="w-3 h-3 mr-0.5" />
+                  From ${startingPrice.toFixed(0)}
                 </Badge>
               )}
             </div>
@@ -136,10 +149,22 @@ export const EnhancedStylistCard = ({
           </div>
 
           <ChevronRight className={cn(
-            "w-5 h-5 text-muted-foreground transition-transform",
+            "w-5 h-5 text-muted-foreground transition-transform shrink-0 mt-1",
             isSelected && "rotate-90"
           )} />
         </div>
+
+        {/* Top service highlight */}
+        {topService && (
+          <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50 border border-border/30">
+            <Scissors className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="text-xs text-foreground font-medium truncate">{topService.name}</span>
+            <span className="text-xs text-muted-foreground ml-auto shrink-0">
+              ${topService.price.toFixed(0)}
+              {topService.duration_minutes && ` · ${topService.duration_minutes}min`}
+            </span>
+          </div>
+        )}
 
         {/* Portfolio preview */}
         {recentWork.length > 0 && (
