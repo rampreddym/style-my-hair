@@ -342,6 +342,7 @@ const CustomerBooking = () => {
                     stylist={stylist}
                     isSelected={false}
                     onSelect={() => handleStylistSelect(stylist)}
+                    services={stylistServices[stylist.id] || []}
                   />
                 </div>
               ))}
