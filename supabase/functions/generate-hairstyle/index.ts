@@ -17,25 +17,11 @@ const GenerateStyleSchema = z.object({
       { message: 'URL must use HTTPS' }
     )
   ).min(1, "At least one photo URL is required").max(5, "A maximum of 5 photo URLs is allowed"),
+  selectedPhotoUrl: z.string().url("Invalid selected photo URL format").refine(
+    (url) => url.startsWith('https://'),
+    { message: 'Selected photo URL must use HTTPS' }
+  ),
 });
-
-const photoPriority = ["front", "left", "right", "back", "top"];
-
-const selectBestPhotoUrl = (urls: string[]) => {
-  const scored = urls
-    .map((url) => {
-      const lowerUrl = url.toLowerCase();
-      const priorityIndex = photoPriority.findIndex((type) => lowerUrl.includes(`/${type}/`) || lowerUrl.includes(`-${type}.`) || lowerUrl.includes(type));
-
-      return {
-        url,
-        priority: priorityIndex === -1 ? Number.MAX_SAFE_INTEGER : priorityIndex,
-      };
-    })
-    .sort((a, b) => a.priority - b.priority);
-
-  return scored[0]?.url ?? urls[0];
-};
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -83,17 +69,24 @@ serve(async (req) => {
       });
     }
 
-    const { stylePrompt, userPhotoUrls } = validationResult.data;
+    const { stylePrompt, userPhotoUrls, selectedPhotoUrl } = validationResult.data;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    const userPhotoUrl = selectBestPhotoUrl(userPhotoUrls);
+    if (!userPhotoUrls.includes(selectedPhotoUrl)) {
+      return new Response(JSON.stringify({
+        error: 'selectedPhotoUrl must be one of the provided userPhotoUrls'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     console.log('Generating hairstyle with prompt:', stylePrompt);
-    console.log('Selected source photo:', userPhotoUrl);
+    console.log('Selected source photo:', selectedPhotoUrl);
 
     // Generate multiple hairstyle variations using the user's photo
     const variations = [];
@@ -123,7 +116,7 @@ serve(async (req) => {
                 {
                   type: 'image_url',
                   image_url: {
-                    url: userPhotoUrl
+                    url: selectedPhotoUrl
                   }
                 }
               ]
