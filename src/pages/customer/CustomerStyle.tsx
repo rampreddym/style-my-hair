@@ -13,6 +13,8 @@ import { AIPreviewGenerator } from "@/components/ai/AIPreviewGenerator";
 import { SkeletonLoader } from "@/components/ui/skeleton-loader";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 
+const PHOTO_TYPE_ORDER = ["front", "left", "right", "back", "top"] as const;
+
 const CustomerStyle = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -25,6 +27,7 @@ const CustomerStyle = () => {
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [hairStyles, setHairStyles] = useState<any[]>([]);
   const [photos, setPhotos] = useState<any[]>([]);
+  const [selectedPhotoType, setSelectedPhotoType] = useState<string | null>(null);
   const [generatedImages, setGeneratedImages] = useState<any[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
@@ -93,7 +96,14 @@ const CustomerStyle = () => {
       .select("*")
       .eq("customer_id", customerId);
 
-    if (photoData) setPhotos(photoData);
+    if (photoData) {
+      const orderedPhotos = [...photoData].sort(
+        (a, b) => PHOTO_TYPE_ORDER.indexOf(a.photo_type as typeof PHOTO_TYPE_ORDER[number]) - PHOTO_TYPE_ORDER.indexOf(b.photo_type as typeof PHOTO_TYPE_ORDER[number])
+      );
+
+      setPhotos(orderedPhotos);
+      setSelectedPhotoType((current) => current ?? orderedPhotos[0]?.photo_type ?? null);
+    }
 
     const { data: existingStyles } = await supabase
       .from("customer_generated_styles")
@@ -116,11 +126,10 @@ const CustomerStyle = () => {
       return;
     }
 
-    const frontPhoto = photos.find((p) => p.photo_type === "front");
-    if (!frontPhoto) {
+    if (photos.length === 0) {
       toast({ 
-        title: t("customerStyle.frontPhotoRequired"), 
-        description: t("customerStyle.frontPhotoRequiredDesc"), 
+        title: t("customerStyle.profilePhotosRequired", { defaultValue: "Profile photos required" }), 
+        description: t("customerStyle.profilePhotosRequiredDesc", { defaultValue: "Please upload your hair photos in Profile first." }), 
         variant: "destructive" 
       });
       return;
@@ -140,7 +149,7 @@ const CustomerStyle = () => {
       const { data, error } = await supabase.functions.invoke("generate-hairstyle", {
         body: {
           stylePrompt: fullPrompt,
-          userPhotoUrl: frontPhoto.photo_url,
+          userPhotoUrls: photos.map((photo) => photo.photo_url),
         },
       });
 
@@ -228,6 +237,7 @@ const CustomerStyle = () => {
   }
 
   const selectedGeneratedImage = generatedImages.find(img => img.id === selectedImage);
+  const selectedProfilePhoto = photos.find((photo) => photo.photo_type === selectedPhotoType) ?? photos[0];
 
   return (
     <CustomerLayout>
@@ -251,9 +261,59 @@ const CustomerStyle = () => {
           <AIPreviewGenerator
             isGenerating={generating}
             progress={generationProgress}
-            beforeImage={photos.find(p => p.photo_type === "front")?.photo_url}
+            beforeImage={selectedProfilePhoto?.photo_url}
             afterImage={selectedGeneratedImage?.generated_image_url}
           />
+
+          <Card>
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-medium text-foreground">
+                    {t("customerStyle.profilePhotoSelector", { defaultValue: "Profile photo selector" })}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {photos.length > 0
+                      ? t("customerStyle.chooseBeforePhoto", { defaultValue: "Choose the photo to use as your before image." })
+                      : t("customerStyle.uploadProfilePhotosFirst", { defaultValue: "Please upload your hair photos in Profile first." })}
+                  </p>
+                </div>
+              </div>
+
+              {photos.length > 0 ? (
+                <div className="flex gap-3 overflow-x-auto pb-1">
+                  {photos.map((photo) => {
+                    const isSelected = selectedProfilePhoto?.photo_type === photo.photo_type;
+
+                    return (
+                      <button
+                        key={photo.id}
+                        type="button"
+                        onClick={() => setSelectedPhotoType(photo.photo_type)}
+                        className={`relative flex-shrink-0 w-20 h-24 rounded-2xl overflow-hidden border-2 transition-all active:scale-95 ${
+                          isSelected ? "border-primary ring-2 ring-primary/20" : "border-border"
+                        }`}
+                        aria-pressed={isSelected}
+                      >
+                        <img
+                          src={photo.photo_url}
+                          alt={`${photo.photo_type} hair reference`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 bg-background/80 backdrop-blur-sm px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-foreground">
+                          {photo.photo_type}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+                  {t("customerStyle.uploadPhotosFirstMessage", { defaultValue: "Please upload your hair photos in Profile before generating previews." })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Generated Thumbnails */}
           {generatedImages.length > 0 && (
@@ -318,7 +378,7 @@ const CustomerStyle = () => {
 
               <Button
                 onClick={generateStyle}
-                disabled={generating || (!stylePrompt && !selectedStyle)}
+                disabled={generating || photos.length === 0 || (!stylePrompt && !selectedStyle)}
                 className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
               >
                 {generating ? (
