@@ -6,11 +6,12 @@ Copy everything below the line and paste it as your prompt to Claude Code.
 
 ## CRITICAL: DO NOT REBUILD THE APP
 
-The HairHalo iOS app is already built and running. Auth, routing, basic views, models, and design system are all working. **Do NOT recreate the project, models, auth, or view structure.**
+The iOS app is already built and running. Auth, routing, basic views, models, and design system are all working. **Do NOT recreate the project, models, auth, or view structure.**
 
 This prompt adds the **missing functional integrations** that are not yet working.
 
 ## Context Files
+
 - `CLAUDE_DELTA.md` — Lists what exists vs what needs to be added
 - `FEATURES_DELTA.md` — Contains complete Swift code for every missing feature
 
@@ -19,6 +20,7 @@ This prompt adds the **missing functional integrations** that are not yet workin
 Read `FEATURES_DELTA.md` and integrate the following into the EXISTING codebase:
 
 ### Step 1: Create New Service Files
+
 Create these two NEW files (they don't exist yet):
 
 1. **`Services/StorageService.swift`** — Copy from FEATURES_DELTA.md §1
@@ -37,6 +39,7 @@ Create these two NEW files (they don't exist yet):
    - Also adds `GooglePlaceResult` model
 
 ### Step 2: Create New Components
+
 Create these NEW component files:
 
 3. **`Components/BeforeAfterSlider.swift`** — Copy from FEATURES_DELTA.md §5
@@ -48,6 +51,7 @@ Create these NEW component files:
    - Optionally add MarkdownUI SPM package for richer rendering
 
 ### Step 3: Wire Up Photo Upload in Customer Profile
+
 Update the existing `CustomerProfileVM` (or whichever ViewModel manages the profile):
 
 5. Add methods from FEATURES_DELTA.md §3:
@@ -58,6 +62,7 @@ Update the existing `CustomerProfileVM` (or whichever ViewModel manages the prof
 7. On view appear, call `loadCustomerPhotos()` to restore previously saved photos
 
 ### Step 4: Wire Up AI Style Generation
+
 Update the existing `StyleGeneratorVM`:
 
 8. Replace any placeholder/mock logic with the real implementation from FEATURES_DELTA.md §4:
@@ -70,6 +75,7 @@ Update the existing `StyleGeneratorVM`:
 10. Display generated styles as horizontal scrollable thumbnails with selection ring
 
 ### Step 5: Wire Up Booking Completion
+
 Update the existing booking flow:
 
 11. After inserting a new appointment into the `appointments` table, call `sendBookingNotifications()` from FEATURES_DELTA.md §7
@@ -77,6 +83,7 @@ Update the existing booking flow:
 13. SMS failure should NOT block the booking — catch errors and log them
 
 ### Step 6: Wire Up Appointment Cancellation + Waitlist
+
 Update the existing appointment management:
 
 14. When cancelling an appointment, use `cancelAppointmentAndNotifyWaitlist()` from FEATURES_DELTA.md §8
@@ -84,6 +91,7 @@ Update the existing appointment management:
 16. Add waitlist join flow from FEATURES_DELTA.md §11 — show "Join Waitlist" when no time slots are available
 
 ### Step 7: Wire Up Realtime Messaging
+
 Create or update the messaging feature:
 
 17. Create `ViewModels/MessagingVM.swift` from FEATURES_DELTA.md §6
@@ -93,6 +101,7 @@ Create or update the messaging feature:
 21. Call `subscribeToMessages()` on appear, `unsubscribe()` on disappear
 
 ### Step 8: Wire Up Stylist Instructions
+
 Update the stylist appointment detail view:
 
 22. Add `generateInstructions()` from FEATURES_DELTA.md §9
@@ -103,12 +112,14 @@ Update the stylist appointment detail view:
 27. Add copy-to-clipboard button
 
 ### Step 9: Wire Up Stylist Photo Uploads
+
 Update the stylist profile/onboarding:
 
 28. Add profile photo upload from FEATURES_DELTA.md §10 — uploads to `stylist-photos` category, updates `stylists.photo_url`
 29. Add portfolio photo upload — uploads to `portfolio-photos`, inserts into `stylist_portfolio` table with optional tags
 
 ### Step 10: Wire Up Google Places (Stylist Onboarding)
+
 Update the stylist onboarding flow:
 
 30. Add Google Places search from FEATURES_DELTA.md §12 — search for salon name, display results
