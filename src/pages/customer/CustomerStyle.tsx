@@ -86,7 +86,8 @@ const CustomerStyle = () => {
       const { data: styles } = await supabase
         .from("hair_styles")
         .select("*")
-        .or(`gender.eq.${customerData.gender},gender.eq.unisex`);
+        .order("gender", { ascending: true })
+        .order("name", { ascending: true });
       
       if (styles) setHairStyles(styles);
     }
