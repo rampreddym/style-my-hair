@@ -11,11 +11,31 @@ const corsHeaders = {
 // Input validation schema
 const GenerateStyleSchema = z.object({
   stylePrompt: z.string().min(1, "Style prompt is required").max(500, "Style prompt too long"),
-  userPhotoUrl: z.string().url("Invalid URL format").refine(
-    (url) => url.startsWith('https://'),
-    { message: 'URL must use HTTPS' }
-  ),
+  userPhotoUrls: z.array(
+    z.string().url("Invalid URL format").refine(
+      (url) => url.startsWith('https://'),
+      { message: 'URL must use HTTPS' }
+    )
+  ).min(1, "At least one photo URL is required").max(5, "A maximum of 5 photo URLs is allowed"),
 });
+
+const photoPriority = ["front", "left", "right", "back", "top"];
+
+const selectBestPhotoUrl = (urls: string[]) => {
+  const scored = urls
+    .map((url) => {
+      const lowerUrl = url.toLowerCase();
+      const priorityIndex = photoPriority.findIndex((type) => lowerUrl.includes(`/${type}/`) || lowerUrl.includes(`-${type}.`) || lowerUrl.includes(type));
+
+      return {
+        url,
+        priority: priorityIndex === -1 ? Number.MAX_SAFE_INTEGER : priorityIndex,
+      };
+    })
+    .sort((a, b) => a.priority - b.priority);
+
+  return scored[0]?.url ?? urls[0];
+};
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -63,14 +83,17 @@ serve(async (req) => {
       });
     }
 
-    const { stylePrompt, userPhotoUrl } = validationResult.data;
+    const { stylePrompt, userPhotoUrls } = validationResult.data;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
+    const userPhotoUrl = selectBestPhotoUrl(userPhotoUrls);
+
     console.log('Generating hairstyle with prompt:', stylePrompt);
+    console.log('Selected source photo:', userPhotoUrl);
 
     // Generate multiple hairstyle variations using the user's photo
     const variations = [];
