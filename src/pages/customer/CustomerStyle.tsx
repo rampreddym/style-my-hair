@@ -135,6 +135,16 @@ const CustomerStyle = () => {
       return;
     }
 
+    const selectedProfilePhoto = photos.find((photo) => photo.photo_type === selectedPhotoType) ?? photos[0];
+
+    if (!selectedProfilePhoto?.photo_url) {
+      toast({
+        title: t("customerStyle.selectPhotoFirst", { defaultValue: "Please select a photo first" }),
+        variant: "destructive",
+      });
+      return;
+    }
+
     setGenerating(true);
     setGenerationProgress(0);
     
@@ -150,6 +160,7 @@ const CustomerStyle = () => {
         body: {
           stylePrompt: fullPrompt,
           userPhotoUrls: photos.map((photo) => photo.photo_url),
+          selectedPhotoUrl: selectedProfilePhoto.photo_url,
         },
       });
 
