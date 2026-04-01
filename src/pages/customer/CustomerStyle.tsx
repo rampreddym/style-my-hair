@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { RefreshCw, ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2 } from "lucide-react";
 import { AIPreviewGenerator } from "@/components/ai/AIPreviewGenerator";
+import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
 import { SkeletonLoader } from "@/components/ui/skeleton-loader";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 
@@ -360,21 +361,17 @@ const CustomerStyle = () => {
             <CardContent className="p-4 space-y-4">
               <div className="space-y-2">
                 <Label className="font-medium">{t("customerStyle.styleCategory")}</Label>
-                <div className="flex flex-wrap gap-2">
-                  {hairStyles.map((style) => (
-                    <button
-                      key={style.id}
-                      onClick={() => setSelectedStyle(style.name)}
-                      className={`px-4 py-2 min-h-[44px] rounded-full text-sm font-medium transition-all active:scale-95 ${
-                        selectedStyle === style.name
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground hover:bg-muted/80"
-                      }`}
-                    >
-                      {style.name}
-                    </button>
-                  ))}
-                </div>
+                {hairStyles.length > 0 ? (
+                  <HairStyleSelector
+                    styles={hairStyles}
+                    selectedStyle={selectedStyle}
+                    onSelect={setSelectedStyle}
+                  />
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+                    {t("customerStyle.noStylesAvailable", { defaultValue: "No hairstyle options are available right now." })}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
