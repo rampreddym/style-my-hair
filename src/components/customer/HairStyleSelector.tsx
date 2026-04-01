@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { fallbackHairstyleImage, getHairstyleImage } from "./hairstyleImageMap";
 
 interface HairStyle {
   id: string;
@@ -43,32 +44,6 @@ const styleTags: Record<string, string[]> = {
   "Shag": ["retro", "textured", "rock-n-roll"],
 };
 
-const defaultImages: Record<string, string> = {
-  // Male styles - men's reference images
-  "Fade": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&h=300&fit=crop",
-  "Undercut": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=300&h=300&fit=crop",
-  "Buzz Cut": "https://images.unsplash.com/photo-1520341280432-4749d4d7bcf9?w=300&h=300&fit=crop",
-  "Crew Cut": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=300&h=300&fit=crop",
-  "Pompadour": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop",
-  "Quiff": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop",
-  "Slick Back": "https://images.unsplash.com/photo-1480455624313-e29b44bbfde1?w=300&h=300&fit=crop",
-  "Man Bun": "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=300&h=300&fit=crop",
-  // Female styles - women's reference images
-  "Pixie Cut": "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=300&h=300&fit=crop",
-  "Bob Cut": "https://images.unsplash.com/photo-1554519515-242161756769?w=300&h=300&fit=crop",
-  "Lob": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=300&h=300&fit=crop",
-  "Layers": "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=300&h=300&fit=crop",
-  "Bangs/Fringe": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=300&h=300&fit=crop",
-  "Beach Waves": "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=300&h=300&fit=crop",
-  "Updo": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=300&h=300&fit=crop",
-  // Unisex styles - varied reference images
-  "Braids": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=300&h=300&fit=crop",
-  "Afro": "https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=300&h=300&fit=crop",
-  "Dreadlocks": "https://images.unsplash.com/photo-1507152927528-56b99d4a4fe5?w=300&h=300&fit=crop",
-  "Mohawk": "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?w=300&h=300&fit=crop",
-  "Shag": "https://images.unsplash.com/photo-1605980776566-0486c3ac7617?w=300&h=300&fit=crop",
-};
-
 export const HairStyleSelector = ({ styles, selectedStyle, onSelect }: HairStyleSelectorProps) => {
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState(false);
@@ -106,8 +81,7 @@ export const HairStyleSelector = ({ styles, selectedStyle, onSelect }: HairStyle
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {displayStyles.map((style) => {
           const isSelected = selectedStyle === style.name;
-          const imageUrl = style.image_url || defaultImages[style.name] || 
-            `https://images.unsplash.com/photo-1560066984-138dadb4c035?w=300&h=300&fit=crop`;
+          const imageUrl = getHairstyleImage(style.name) || style.image_url || fallbackHairstyleImage;
           const tags = styleTags[style.name] || ["stylish"];
 
           return (
@@ -126,9 +100,14 @@ export const HairStyleSelector = ({ styles, selectedStyle, onSelect }: HairStyle
               <div className="aspect-square relative">
                 <img 
                   src={imageUrl} 
-                  alt={style.name}
+                  alt={`${style.name} hairstyle reference`}
                   className="w-full h-full object-cover"
                   loading="lazy"
+                  width={1024}
+                  height={1024}
+                  onError={(event) => {
+                    event.currentTarget.src = fallbackHairstyleImage;
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 
