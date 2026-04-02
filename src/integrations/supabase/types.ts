@@ -363,6 +363,36 @@ export type Database = {
         }
         Relationships: []
       }
+      launch_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          referral_code: string
+          referral_count: number
+          referred_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          referral_code?: string
+          referral_count?: number
+          referred_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          referral_code?: string
+          referral_count?: number
+          referred_by?: string | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           appointment_id: string | null
