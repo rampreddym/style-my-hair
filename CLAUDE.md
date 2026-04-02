@@ -2,6 +2,7 @@
 
 > Lean config file. See `FEATURES_IOS.md` for schemas, models, edge functions, RLS, and i18n.
 > See `MARKETING_SYSTEM.md` for the full automated social media marketing engine, content generation prompts, campaign templates, and brand guidelines.
+> See `MARKETING_AUTOMATION_APP.md` for the complete spec to build a standalone marketing automation dashboard with AI content generation, auto-publishing, approval queues, analytics, and cron-based 24/7 operation across all major social media platforms.
 
 ## Project Identity
 
