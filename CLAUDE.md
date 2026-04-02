@@ -1,6 +1,7 @@
 # CLAUDE.md — HairHalo iOS (SwiftUI)
 
 > Lean config file. See `FEATURES_IOS.md` for schemas, models, edge functions, RLS, and i18n.
+> See `MARKETING_SYSTEM.md` for the full automated social media marketing engine, content generation prompts, campaign templates, and brand guidelines.
 
 ## Project Identity
 
