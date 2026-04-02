@@ -367,4 +367,33 @@ A dual-sided marketplace connecting customers with local hair stylists, powered 
 
 ---
 
-*This documentation provides a complete reference for all platform capabilities across customer, stylist, and technical domains.*
+## 📣 Marketing & Growth
+
+### Pre-Launch Landing Page
+- **Waitlist Signup** — Email capture at `/launch` with automatic referral code generation
+- **Referral Tracking** — Unique referral codes per signup, `?ref=CODE` URL parameter
+- **Referral Incentives** — "Refer 3 friends → skip the line + free first booking"
+- **Database Table** — `launch_waitlist` with email, name, referral_code, referred_by, referral_count
+- **Auto-Increment Trigger** — `increment_referral_count()` fires on signup to update referrer's count
+
+### Social Media Marketing Automation
+- **Full System Prompt** — See `MARKETING_SYSTEM.md` for the complete AI-driven content generation engine
+- **Content Pillars** — 7-day rotation: Motivation, Transformation, Education, Community, Fun, Lifestyle, Storytelling
+- **Platform Templates** — Ready-to-use prompts for Instagram (carousel, reel, story), TikTok, Twitter/X, LinkedIn, Reddit
+- **Ad Copy Generator** — 4-angle variations (pain point, social proof, FOMO, empowerment) per campaign
+- **Multilingual Strategy** — EN/ES/PT content generation with cultural adaptation
+- **Campaign Playbooks** — Product launch, viral challenge (#HairHaloChallenge), stylist recruitment
+- **Analytics Framework** — KPI targets, UTM conventions, weekly metrics tracking
+- **Brand Voice Rules** — Approved vocabulary, banned words, tone guidelines, hashtag strategy
+- **Downloadable Kit** — `HairHalo_Social_Media_Kit.pdf` with 15 post templates, 4 ad campaigns, 30-day calendar
+
+### Automated Content Commands
+Feed `MARKETING_SYSTEM.md` to any AI assistant and use these commands:
+- "Generate a week of content" → 7 Instagram + 5 TikTok + 3 Twitter + 1 LinkedIn
+- "Generate a campaign" → Full timeline, ad copy, influencer brief, KPIs
+- "Generate ad variations" → 10 variants across pain-point, social-proof, FOMO angles
+- "Generate monthly calendar" → 30-day table with daily posts, timing, ad spend
+
+---
+
+*This documentation provides a complete reference for all platform capabilities across customer, stylist, marketing, and technical domains.*
