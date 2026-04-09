@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { z } from "zod";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 const ResetPassword = () => {
   const { toast } = useToast();
@@ -34,7 +35,7 @@ const ResetPassword = () => {
     setIsSubmitting(false);
 
     if (error) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: getUserFriendlyError(error), variant: "destructive" });
     } else {
       setIsEmailSent(true);
     }

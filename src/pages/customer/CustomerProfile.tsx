@@ -16,6 +16,7 @@ import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
 import { NotificationToggle } from "@/components/notifications/NotificationToggle";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 const CustomerProfile = () => {
   const navigate = useNavigate();
@@ -318,7 +319,7 @@ const CustomerProfile = () => {
       toast({ title: t("customer.profile.profileSaved", "Profile saved!"), description: t("customer.profile.letsGenerate", "Let's generate your new look") });
       navigate("/customer/style");
     } catch (error: any) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       setLoading(false);
     }

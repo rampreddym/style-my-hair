@@ -13,6 +13,7 @@ import { AIPreviewGenerator } from "@/components/ai/AIPreviewGenerator";
 import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
 import { SkeletonLoader } from "@/components/ui/skeleton-loader";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 const PHOTO_TYPE_ORDER = ["front", "left", "right", "back", "top"] as const;
 
@@ -205,7 +206,7 @@ const CustomerStyle = () => {
         });
       }
     } catch (error: any) {
-      toast({ title: t("customerStyle.generationFailed"), description: error.message, variant: "destructive" });
+      toast({ title: t("customerStyle.generationFailed"), description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       clearInterval(progressInterval);
       setGenerationProgress(100);

@@ -19,6 +19,7 @@ import { CancelAppointmentDialog } from "@/components/booking/CancelAppointmentD
 import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 import { ServiceCart } from "@/components/booking/ServiceCart";
 import { TipSelector } from "@/components/booking/TipSelector";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface Service {
   id: string;
@@ -249,7 +250,7 @@ const CustomerBookingDetails = () => {
       setBooked(true);
       toast({ title: t('booking.bookingConfirmed'), description: t('customer.bookingDetails.appointmentScheduled') });
     } catch (error: any) {
-      toast({ title: t('customer.bookingDetails.bookingFailed'), description: error.message, variant: "destructive" });
+      toast({ title: t('customer.bookingDetails.bookingFailed'), description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       setBooking(false);
     }

@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, CheckCircle } from "lucide-react";
 import { z } from "zod";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 const passwordSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -93,7 +94,7 @@ const UpdatePassword = () => {
     setIsSubmitting(false);
 
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: getUserFriendlyError(error), variant: "destructive" });
     } else {
       setIsSuccess(true);
       // Sign out and redirect after a short delay

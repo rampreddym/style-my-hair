@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus, Trash2, DollarSign, Clock } from "lucide-react";
 import { StylistLayout } from "@/components/layout/StylistLayout";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface Service {
   id?: string;
@@ -118,7 +119,7 @@ const StylistServices = () => {
       setNewService({ name: "", description: "", duration_minutes: 30, price: 0 });
       toast({ title: t("stylistServices.serviceAdded") });
     } catch (error: any) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -130,7 +131,7 @@ const StylistServices = () => {
       setServices(services.filter((s) => s.id !== serviceId));
       toast({ title: t("stylistServices.serviceDeleted") });
     } catch (error: any) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: getUserFriendlyError(error), variant: "destructive" });
     }
   };
 

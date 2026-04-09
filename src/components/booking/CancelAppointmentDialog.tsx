@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface CancelAppointmentDialogProps {
   open: boolean;
@@ -65,7 +66,7 @@ export const CancelAppointmentDialog = ({
     } catch (error: any) {
       toast({
         title: "Failed to cancel",
-        description: error.message,
+        description: getUserFriendlyError(error),
         variant: "destructive",
       });
     } finally {
