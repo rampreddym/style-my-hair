@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
 import { StylistLayout } from "@/components/layout/StylistLayout";
 import { StylistInstructionsCard } from "@/components/stylist/StylistInstructionsCard";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 const StylistAppointments = () => {
   const navigate = useNavigate();
@@ -109,7 +110,7 @@ const StylistAppointments = () => {
 
       toast({ title: `Appointment ${status}` });
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: getUserFriendlyError(error), variant: "destructive" });
     }
   };
 
@@ -132,7 +133,7 @@ const StylistAppointments = () => {
       toast({ title: "Notes saved!" });
       setSelectedAppointment(null);
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       setSavingNotes(false);
     }

@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Camera, Plus, X, Image } from "lucide-react";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface PortfolioPhoto {
   id?: string;
@@ -42,7 +43,7 @@ export const PortfolioStep = ({ portfolio, setPortfolio, stylistId }: PortfolioS
     const { error } = await supabase.storage.from("user-photos").upload(filePath, file);
 
     if (error) {
-      toast({ title: t("onboardingSteps.uploadFailed"), description: error.message, variant: "destructive" });
+      toast({ title: t("onboardingSteps.uploadFailed"), description: getUserFriendlyError(error), variant: "destructive" });
       setUploading(false);
       return;
     }

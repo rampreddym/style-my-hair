@@ -7,6 +7,7 @@ import { CheckCircle, Clock, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { StylistLocationLink } from "@/components/map/StylistLocationLink";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface AppointmentConfirmationProps {
   appointmentId: string;
@@ -49,7 +50,7 @@ export const AppointmentConfirmation = ({
       toast({ title: t("appointmentConfirmation.attendanceConfirmed") });
       onConfirm();
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       setConfirming(false);
     }

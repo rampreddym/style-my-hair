@@ -11,6 +11,7 @@ import { ExperienceStep } from "@/components/onboarding/ExperienceStep";
 import { PortfolioStep } from "@/components/onboarding/PortfolioStep";
 import { AvailabilityStep } from "@/components/onboarding/AvailabilityStep";
 import { PayoutStep } from "@/components/onboarding/PayoutStep";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface PortfolioPhoto {
   id?: string;
@@ -161,7 +162,7 @@ const StylistOnboarding = () => {
     const { error } = await supabase.storage.from("user-photos").upload(filePath, file);
 
     if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      toast({ title: "Upload failed", description: getUserFriendlyError(error), variant: "destructive" });
       setUploadingPhoto(false);
       return;
     }
@@ -263,7 +264,7 @@ const StylistOnboarding = () => {
       sessionStorage.setItem("stylistId", stylistId!);
       return true;
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: getUserFriendlyError(error), variant: "destructive" });
       return false;
     } finally {
       setLoading(false);

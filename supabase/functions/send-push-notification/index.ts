@@ -7,7 +7,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Input validation schema
 const PushNotificationSchema = z.object({
   action: z.enum(['send-reminder', 'check-reminders'], {
     errorMap: () => ({ message: "Action must be 'send-reminder' or 'check-reminders'" })
@@ -33,59 +32,49 @@ interface PushSubscription {
   user_id: string;
 }
 
-// Base64URL encoding for VAPID
+// Rate limiter
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 60 * 1000;
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(userId, { count: 1, resetTime: now + RATE_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 function base64UrlEncode(data: Uint8Array): string {
   const base64 = btoa(String.fromCharCode(...data));
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-// Create JWT for VAPID authentication
 async function createVapidJwt(audience: string, subject: string, privateKeyBase64: string): Promise<string> {
   const header = { alg: 'ES256', typ: 'JWT' };
   const now = Math.floor(Date.now() / 1000);
-  const payload = {
-    aud: audience,
-    exp: now + 12 * 60 * 60, // 12 hours
-    sub: subject,
-  };
-
+  const payload = { aud: audience, exp: now + 12 * 60 * 60, sub: subject };
   const headerB64 = base64UrlEncode(new TextEncoder().encode(JSON.stringify(header)));
   const payloadB64 = base64UrlEncode(new TextEncoder().encode(JSON.stringify(payload)));
   const unsignedToken = `${headerB64}.${payloadB64}`;
-
-  // Import private key
   const privateKeyBytes = Uint8Array.from(atob(privateKeyBase64), c => c.charCodeAt(0));
-  const privateKey = await crypto.subtle.importKey(
-    'pkcs8',
-    privateKeyBytes,
-    { name: 'ECDSA', namedCurve: 'P-256' },
-    false,
-    ['sign']
-  );
-
-  // Sign
-  const signature = await crypto.subtle.sign(
-    { name: 'ECDSA', hash: 'SHA-256' },
-    privateKey,
-    new TextEncoder().encode(unsignedToken)
-  );
-
-  const signatureB64 = base64UrlEncode(new Uint8Array(signature));
-  return `${unsignedToken}.${signatureB64}`;
+  const privateKey = await crypto.subtle.importKey('pkcs8', privateKeyBytes, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+  const signature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, privateKey, new TextEncoder().encode(unsignedToken));
+  return `${unsignedToken}.${base64UrlEncode(new Uint8Array(signature))}`;
 }
 
 async function sendPushNotification(
-  subscription: PushSubscription,
-  payload: PushPayload,
-  vapidPublicKey: string,
-  vapidPrivateKey: string
+  subscription: PushSubscription, payload: PushPayload,
+  vapidPublicKey: string, vapidPrivateKey: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const url = new URL(subscription.endpoint);
     const audience = `${url.protocol}//${url.host}`;
-    
     const jwt = await createVapidJwt(audience, 'mailto:notifications@hairsalon.app', vapidPrivateKey);
-    
     const response = await fetch(subscription.endpoint, {
       method: 'POST',
       headers: {
@@ -96,66 +85,90 @@ async function sendPushNotification(
       },
       body: JSON.stringify(payload),
     });
-
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Push failed for ${subscription.endpoint}: ${response.status} - ${errorText}`);
-      return { success: false, error: `${response.status}: ${errorText}` };
+      console.error(`Push failed: ${response.status}`);
+      return { success: false, error: `${response.status}` };
     }
-
-    console.log(`Push sent successfully to ${subscription.endpoint}`);
     return { success: true };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Push error for ${subscription.endpoint}:`, error);
-    return { success: false, error: errorMessage };
+    console.error(`Push error:`, error);
+    return { success: false, error: 'Send failed' };
   }
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const vapidPublicKey = Deno.env.get('VAPID_PUBLIC_KEY')!;
     const vapidPrivateKey = Deno.env.get('VAPID_PRIVATE_KEY')!;
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
     // Validate input
     const body = await req.json();
     const validationResult = PushNotificationSchema.safeParse(body);
-    
     if (!validationResult.success) {
-      console.error('Validation failed:', validationResult.error.issues);
       return new Response(
-        JSON.stringify({ error: 'Invalid input', details: validationResult.error.issues }),
+        JSON.stringify({ error: 'Invalid input' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const { action, userId, title, body: notificationBody, data } = validationResult.data;
 
+    // Authenticate for send-reminder (user-facing action)
     if (action === 'send-reminder') {
-      // Send to specific user
-      if (!userId) {
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader?.startsWith('Bearer ')) {
         return new Response(
-          JSON.stringify({ error: 'userId is required for send-reminder action' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: 'Unauthorized' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
+      const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } }
+      });
+
+      const token = authHeader.replace('Bearer ', '');
+      const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+      if (claimsError || !claimsData?.claims) {
+        return new Response(
+          JSON.stringify({ error: 'Unauthorized' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const authenticatedUserId = claimsData.claims.sub;
+
+      // Users can only send notifications to themselves
+      if (!userId || userId !== authenticatedUserId) {
+        return new Response(
+          JSON.stringify({ error: 'Forbidden' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Rate limit
+      if (!checkRateLimit(authenticatedUserId)) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
       const { data: subscriptions, error: subError } = await supabase
         .from('push_subscriptions')
         .select('*')
         .eq('user_id', userId);
 
       if (subError) {
-        console.error('Error fetching subscriptions:', subError);
         return new Response(
           JSON.stringify({ error: 'Failed to fetch subscriptions' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -174,31 +187,33 @@ serve(async (req) => {
       );
 
       const successCount = results.filter(r => r.success).length;
-      console.log(`Sent ${successCount}/${subscriptions.length} notifications to user ${userId}`);
-
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          sent: successCount, 
-          total: subscriptions.length 
-        }),
+        JSON.stringify({ success: true, sent: successCount, total: subscriptions.length }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     if (action === 'check-reminders') {
-      // Check for appointments in the next hour and send reminders
+      // This action is for cron/service-role only - verify service role key
+      const authHeader = req.headers.get('Authorization');
+      const isServiceRole = authHeader?.includes(supabaseServiceKey);
+      
+      if (!isServiceRole) {
+        return new Response(
+          JSON.stringify({ error: 'This action is restricted to automated jobs' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
       const now = new Date();
       const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
       const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
 
-      // Get appointments in the next 1-2 hours that haven't been reminded
       const { data: appointments, error: aptError } = await supabase
         .from('appointments')
         .select(`
-          id,
-          appointment_date,
-          customer_id,
+          id, appointment_date, customer_id,
           customers!appointments_customer_id_fkey(user_id, name),
           stylists!appointments_stylist_id_fkey(name, business_name),
           stylist_services!appointments_service_id_fkey(name)
@@ -208,29 +223,21 @@ serve(async (req) => {
         .eq('status', 'confirmed');
 
       if (aptError) {
-        console.error('Error fetching appointments:', aptError);
         return new Response(
           JSON.stringify({ error: 'Failed to fetch appointments' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      console.log(`Found ${appointments?.length || 0} appointments to remind`);
-
       const notifications = [];
       for (const apt of appointments || []) {
         const customer = apt.customers as any;
         const stylist = apt.stylists as any;
         const service = apt.stylist_services as any;
-
         if (!customer?.user_id) continue;
 
         const aptDate = new Date(apt.appointment_date);
-        const timeStr = aptDate.toLocaleTimeString('en-US', { 
-          hour: 'numeric', 
-          minute: '2-digit',
-          hour12: true 
-        });
+        const timeStr = aptDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
         const { data: subs } = await supabase
           .from('push_subscriptions')
@@ -253,11 +260,7 @@ serve(async (req) => {
       }
 
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          checked: appointments?.length || 0,
-          notificationsSent: notifications.filter(n => n.success).length 
-        }),
+        JSON.stringify({ success: true, checked: appointments?.length || 0, notificationsSent: notifications.filter(n => n.success).length }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -266,12 +269,10 @@ serve(async (req) => {
       JSON.stringify({ error: 'Invalid action' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error in send-push-notification:', error);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

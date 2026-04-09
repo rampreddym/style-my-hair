@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, FileText, RefreshCw, ChevronDown, ChevronUp, Clipboard, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface StylistInstructionsCardProps {
   appointmentId: string;
@@ -79,7 +80,7 @@ export const StylistInstructionsCard = ({
       console.error("Error generating instructions:", error);
       toast({
         title: t("common.error"),
-        description: error.message || t("stylist.instructions.generationFailed"),
+        description: getUserFriendlyError(error) || t("stylist.instructions.generationFailed"),
         variant: "destructive",
       });
     } finally {

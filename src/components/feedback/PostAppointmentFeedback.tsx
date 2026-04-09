@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Heart, Smile, Meh, Frown, Angry, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface FeedbackOption {
   emoji: string;
@@ -98,7 +99,7 @@ export const PostAppointmentFeedback = ({
 
       onComplete();
     } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       setSubmitting(false);
     }

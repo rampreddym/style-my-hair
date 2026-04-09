@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface RescheduleDialogProps {
   open: boolean;
@@ -70,7 +71,7 @@ export const RescheduleDialog = ({
     } catch (error: any) {
       toast({
         title: "Failed to reschedule",
-        description: error.message,
+        description: getUserFriendlyError(error),
         variant: "destructive",
       });
     } finally {

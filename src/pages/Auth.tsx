@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Scissors, User, Mail, Lock, Chrome, Sparkles } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { z } from "zod";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ const Auth = () => {
       if (error.message.includes("already registered")) {
         toast({ title: "Account exists", description: "This email is already registered. Please sign in instead.", variant: "destructive" });
       } else {
-        toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
+        toast({ title: "Sign up failed", description: getUserFriendlyError(error), variant: "destructive" });
       }
     } else {
       toast({ title: "Account created!", description: "Welcome to StyleMatch" });
@@ -72,7 +73,7 @@ const Auth = () => {
       if (error.message.includes("Invalid login")) {
         toast({ title: "Login failed", description: "Invalid email or password", variant: "destructive" });
       } else {
-        toast({ title: "Login failed", description: error.message, variant: "destructive" });
+        toast({ title: "Login failed", description: getUserFriendlyError(error), variant: "destructive" });
       }
     } else {
       toast({ title: "Welcome back!", description: "Redirecting..." });
@@ -82,7 +83,7 @@ const Auth = () => {
   const handleGoogleLogin = async () => {
     const { error } = await signInWithGoogle(role);
     if (error) {
-      toast({ title: "Google login failed", description: error.message, variant: "destructive" });
+      toast({ title: "Google login failed", description: getUserFriendlyError(error), variant: "destructive" });
     }
   };
 

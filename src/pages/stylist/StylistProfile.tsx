@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Camera, ArrowRight, MapPin, Sparkles, X, LogOut, Image, Plus } from "lucide-react";
 import { StylistLayout } from "@/components/layout/StylistLayout";
 import { GoogleReviewImport } from "@/components/reviews/GoogleReviewImport";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface PortfolioPhoto {
   id?: string;
@@ -130,7 +131,7 @@ const StylistProfile = () => {
       .upload(filePath, file);
 
     if (error) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: getUserFriendlyError(error), variant: "destructive" });
       setUploadingPhoto(false);
       return;
     }
@@ -166,7 +167,7 @@ const StylistProfile = () => {
     const { error } = await supabase.storage.from("user-photos").upload(filePath, file);
 
     if (error) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: getUserFriendlyError(error), variant: "destructive" });
       setUploadingPortfolio(false);
       return;
     }
@@ -234,7 +235,7 @@ const StylistProfile = () => {
       
       toast({ title: t("stylistProfile.specialtiesGenerated") });
     } catch (error: any) {
-      toast({ title: t("stylistProfile.generationFailed"), description: error.message, variant: "destructive" });
+      toast({ title: t("stylistProfile.generationFailed"), description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       setGenerating(false);
     }
@@ -302,7 +303,7 @@ const StylistProfile = () => {
         navigate("/stylist/services");
       }
     } catch (error: any) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      toast({ title: t("common.error"), description: getUserFriendlyError(error), variant: "destructive" });
     } finally {
       setLoading(false);
     }

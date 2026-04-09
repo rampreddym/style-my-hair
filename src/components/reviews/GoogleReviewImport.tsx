@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, Star, MapPin, Loader2, Check, ExternalLink } from "lucide-react";
+import { getUserFriendlyError } from '@/lib/errorHandler';
 
 interface GooglePlace {
   place_id: string;
@@ -64,7 +65,7 @@ export const GoogleReviewImport = ({
       console.error("Search error:", error);
       toast({
         title: "Search failed",
-        description: error.message || "Unable to search Google Places. Please try again.",
+        description: getUserFriendlyError(error) || "Unable to search Google Places. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -108,7 +109,7 @@ export const GoogleReviewImport = ({
       console.error("Connect error:", error);
       toast({
         title: "Connection failed",
-        description: error.message || "Unable to connect Google Business. Please try again.",
+        description: getUserFriendlyError(error) || "Unable to connect Google Business. Please try again.",
         variant: "destructive",
       });
     } finally {
