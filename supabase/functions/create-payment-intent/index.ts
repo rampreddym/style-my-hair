@@ -49,11 +49,12 @@ serve(async (req) => {
       customerId = newCustomer.id;
     }
 
-    // Create PaymentIntent
+    // Create PaymentIntent — save card for future use
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalCents,
       currency: "usd",
       customer: customerId,
+      setup_future_usage: "off_session",
       metadata: {
         appointment_id: appointmentId,
         user_id: user.id,
