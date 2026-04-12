@@ -20,6 +20,7 @@ import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 import { ServiceCart } from "@/components/booking/ServiceCart";
 import { TipSelector } from "@/components/booking/TipSelector";
 import { getUserFriendlyError } from '@/lib/errorHandler';
+import StripePaymentForm from '@/components/stripe/StripePaymentForm';
 
 interface Service {
   id: string;
@@ -53,6 +54,8 @@ const CustomerBookingDetails = () => {
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [customerLocation, setCustomerLocation] = useState<{ latitude: number | null; longitude: number | null }>({ latitude: null, longitude: null });
   const [tip, setTip] = useState(0);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [pendingAppointment, setPendingAppointment] = useState<any>(null);
 
   // Fetch customer ID and location from auth
   useEffect(() => {
@@ -231,33 +234,21 @@ const CustomerBookingDetails = () => {
         },
       }).catch((err) => console.error("SMS notification error:", err));
 
-      // If Pay Now, redirect to Stripe Checkout
+      // If Pay Now, show inline payment form
       if (paymentTiming === "pay_now") {
-        const { data: paymentData, error: paymentError } = await supabase.functions.invoke("create-payment", {
-          body: {
-            appointmentId: appointment.id,
-            amount: totalPrice,
-            tip: tip,
-            serviceName: serviceNames,
-            stylistName: stylist.name,
-          },
+        setPendingAppointment({
+          ...appointment,
+          stylist: stylist,
+          service: primaryService,
+          services: selectedServices,
+          tip_amount: tip,
         });
-
-        if (paymentError || !paymentData?.url) {
-          // Payment creation failed, but appointment is created — show confirmation
-          toast({
-            title: "Payment setup failed",
-            description: "Your appointment is booked. You can pay at the salon instead.",
-            variant: "destructive",
-          });
-        } else {
-          // Redirect to Stripe Checkout
-          window.location.href = paymentData.url;
-          return;
-        }
+        setShowPaymentForm(true);
+        setBooking(false);
+        return;
       }
 
-      // For pay_later or failed payment setup, show confirmation
+      // For pay_later, show confirmation directly
       setBookingDetails({
         ...appointment,
         stylist: stylist,
@@ -288,6 +279,52 @@ const CustomerBookingDetails = () => {
               {t('common.back')}
             </Button>
             <CardSkeleton count={3} />
+          </div>
+        </div>
+      </CustomerLayout>
+    );
+  }
+
+  // Show inline Stripe payment form
+  if (showPaymentForm && pendingAppointment) {
+    const serviceNames = pendingAppointment.services.map((s: Service) => s.name).join(", ");
+    const totalPrice = pendingAppointment.services.reduce((sum: number, s: Service) => sum + s.price, 0);
+
+    return (
+      <CustomerLayout>
+        <div className="page-radial min-h-screen p-4 pb-24">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowPaymentForm(false);
+                setPendingAppointment(null);
+              }}
+              className="mb-2"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Booking
+            </Button>
+
+            <StripePaymentForm
+              appointmentId={pendingAppointment.id}
+              amount={totalPrice}
+              tip={pendingAppointment.tip_amount || 0}
+              serviceName={serviceNames}
+              stylistName={stylist?.name || ""}
+              onSuccess={() => {
+                // Update appointment payment status and show confirmation
+                supabase.from("appointments").update({ payment_status: "paid" }).eq("id", pendingAppointment.id);
+                setBookingDetails(pendingAppointment);
+                setShowPaymentForm(false);
+                setPendingAppointment(null);
+                setBooked(true);
+              }}
+              onCancel={() => {
+                setShowPaymentForm(false);
+                setPendingAppointment(null);
+              }}
+            />
           </div>
         </div>
       </CustomerLayout>
