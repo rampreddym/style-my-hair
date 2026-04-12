@@ -285,6 +285,52 @@ const CustomerBookingDetails = () => {
     );
   }
 
+  // Show inline Stripe payment form
+  if (showPaymentForm && pendingAppointment) {
+    const serviceNames = pendingAppointment.services.map((s: Service) => s.name).join(", ");
+    const totalPrice = pendingAppointment.services.reduce((sum: number, s: Service) => sum + s.price, 0);
+
+    return (
+      <CustomerLayout>
+        <div className="page-radial min-h-screen p-4 pb-24">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowPaymentForm(false);
+                setPendingAppointment(null);
+              }}
+              className="mb-2"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Booking
+            </Button>
+
+            <StripePaymentForm
+              appointmentId={pendingAppointment.id}
+              amount={totalPrice}
+              tip={pendingAppointment.tip_amount || 0}
+              serviceName={serviceNames}
+              stylistName={stylist?.name || ""}
+              onSuccess={() => {
+                // Update appointment payment status and show confirmation
+                supabase.from("appointments").update({ payment_status: "paid" }).eq("id", pendingAppointment.id);
+                setBookingDetails(pendingAppointment);
+                setShowPaymentForm(false);
+                setPendingAppointment(null);
+                setBooked(true);
+              }}
+              onCancel={() => {
+                setShowPaymentForm(false);
+                setPendingAppointment(null);
+              }}
+            />
+          </div>
+        </div>
+      </CustomerLayout>
+    );
+  }
+
   if (booked && bookingDetails) {
     return (
       <CustomerLayout>
