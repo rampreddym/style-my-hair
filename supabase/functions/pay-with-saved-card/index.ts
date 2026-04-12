@@ -19,7 +19,6 @@ serve(async (req) => {
   );
 
   try {
-    // Authenticate user
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header");
     const token = authHeader.replace("Bearer ", "");
@@ -27,10 +26,10 @@ serve(async (req) => {
     const user = data.user;
     if (!user?.email) throw new Error("User not authenticated");
 
-    const { appointmentId, amount, tip, serviceName, stylistName } = await req.json();
+    const { appointmentId, amount, tip, serviceName, stylistName, paymentMethodId } = await req.json();
 
-    if (!appointmentId || !amount || !serviceName) {
-      throw new Error("Missing required fields: appointmentId, amount, serviceName");
+    if (!appointmentId || !amount || !paymentMethodId) {
+      throw new Error("Missing required fields");
     }
 
     const totalCents = Math.round((amount + (tip || 0)) * 100);
@@ -39,32 +38,30 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Find or create Stripe customer
+    // Find Stripe customer
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId: string;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-    } else {
-      const newCustomer = await stripe.customers.create({ email: user.email });
-      customerId = newCustomer.id;
+    if (customers.data.length === 0) {
+      throw new Error("No saved payment methods found");
     }
+    const customerId = customers.data[0].id;
 
-    // Create PaymentIntent — save card for future use
+    // Create and confirm PaymentIntent with saved card
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalCents,
       currency: "usd",
       customer: customerId,
-      setup_future_usage: "off_session",
+      payment_method: paymentMethodId,
+      off_session: true,
+      confirm: true,
       metadata: {
         appointment_id: appointmentId,
         user_id: user.id,
         service_name: serviceName,
         stylist_name: stylistName || "",
       },
-      automatic_payment_methods: { enabled: true },
     });
 
-    // Update appointment with payment intent ID
+    // Update appointment
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
@@ -72,19 +69,19 @@ serve(async (req) => {
 
     await supabaseAdmin.from("appointments").update({
       stripe_payment_intent_id: paymentIntent.id,
-      payment_status: "processing",
+      payment_status: paymentIntent.status === "succeeded" ? "paid" : "processing",
     }).eq("id", appointmentId);
 
     return new Response(JSON.stringify({
-      clientSecret: paymentIntent.client_secret,
-      paymentIntentId: paymentIntent.id,
+      success: paymentIntent.status === "succeeded",
+      status: paymentIntent.status,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("[CREATE-PAYMENT-INTENT] Error:", message);
+    console.error("[PAY-WITH-SAVED-CARD] Error:", message);
     return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
