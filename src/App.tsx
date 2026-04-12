@@ -22,6 +22,7 @@ import StylistAppointments from "./pages/stylist/StylistAppointments";
 import StylistPayments from "./pages/stylist/StylistPayments";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/customer/booking/:stylistId" element={<CustomerBookingDetails />} />
             <Route path="/customer/appointments" element={<CustomerAppointments />} />
             <Route path="/customer/stylist/:stylistId" element={<CustomerStylistProfile />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             
             {/* Stylist Routes */}
             <Route path="/stylist" element={<StylistHome />} />

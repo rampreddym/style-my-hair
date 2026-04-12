@@ -188,7 +188,7 @@ const CustomerBookingDetails = () => {
       const primaryService = selectedServices[0];
       const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
       
-      // Create appointment with primary service (multi-service support can be extended)
+      // Create appointment
       const { data: appointment, error } = await supabase
         .from("appointments")
         .insert({
@@ -211,14 +211,13 @@ const CustomerBookingDetails = () => {
 
       if (error) throw error;
 
-      // Fetch customer and stylist phone numbers for SMS
+      // Send SMS notifications (fire and forget)
+      const serviceNames = selectedServices.map(s => s.name).join(", ");
       const [customerResult, stylistResult] = await Promise.all([
         supabase.from("customers").select("name, phone").eq("id", customerId).single(),
         supabase.from("stylists").select("name, phone").eq("id", stylist.id).single(),
       ]);
 
-      // Send SMS notifications (fire and forget - don't block booking confirmation)
-      const serviceNames = selectedServices.map(s => s.name).join(", ");
       supabase.functions.invoke("send-booking-sms", {
         body: {
           appointmentId: appointment.id,
@@ -230,16 +229,35 @@ const CustomerBookingDetails = () => {
           appointmentDate: appointmentDateTime,
           price: totalPrice + tip,
         },
-      }).then((result) => {
-        if (result.data?.success) {
-          console.log("SMS notifications sent:", result.data);
-        } else {
-          console.log("SMS notification result:", result.data);
-        }
-      }).catch((err) => {
-        console.error("SMS notification error:", err);
-      });
+      }).catch((err) => console.error("SMS notification error:", err));
 
+      // If Pay Now, redirect to Stripe Checkout
+      if (paymentTiming === "pay_now") {
+        const { data: paymentData, error: paymentError } = await supabase.functions.invoke("create-payment", {
+          body: {
+            appointmentId: appointment.id,
+            amount: totalPrice,
+            tip: tip,
+            serviceName: serviceNames,
+            stylistName: stylist.name,
+          },
+        });
+
+        if (paymentError || !paymentData?.url) {
+          // Payment creation failed, but appointment is created — show confirmation
+          toast({
+            title: "Payment setup failed",
+            description: "Your appointment is booked. You can pay at the salon instead.",
+            variant: "destructive",
+          });
+        } else {
+          // Redirect to Stripe Checkout
+          window.location.href = paymentData.url;
+          return;
+        }
+      }
+
+      // For pay_later or failed payment setup, show confirmation
       setBookingDetails({
         ...appointment,
         stylist: stylist,
