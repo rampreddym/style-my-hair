@@ -20,6 +20,7 @@ import { RescheduleDialog } from "@/components/booking/RescheduleDialog";
 import { ServiceCart } from "@/components/booking/ServiceCart";
 import { TipSelector } from "@/components/booking/TipSelector";
 import { getUserFriendlyError } from '@/lib/errorHandler';
+import StripePaymentForm from '@/components/stripe/StripePaymentForm';
 
 interface Service {
   id: string;
@@ -53,6 +54,8 @@ const CustomerBookingDetails = () => {
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [customerLocation, setCustomerLocation] = useState<{ latitude: number | null; longitude: number | null }>({ latitude: null, longitude: null });
   const [tip, setTip] = useState(0);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [pendingAppointment, setPendingAppointment] = useState<any>(null);
 
   // Fetch customer ID and location from auth
   useEffect(() => {
