@@ -234,33 +234,21 @@ const CustomerBookingDetails = () => {
         },
       }).catch((err) => console.error("SMS notification error:", err));
 
-      // If Pay Now, redirect to Stripe Checkout
+      // If Pay Now, show inline payment form
       if (paymentTiming === "pay_now") {
-        const { data: paymentData, error: paymentError } = await supabase.functions.invoke("create-payment", {
-          body: {
-            appointmentId: appointment.id,
-            amount: totalPrice,
-            tip: tip,
-            serviceName: serviceNames,
-            stylistName: stylist.name,
-          },
+        setPendingAppointment({
+          ...appointment,
+          stylist: stylist,
+          service: primaryService,
+          services: selectedServices,
+          tip_amount: tip,
         });
-
-        if (paymentError || !paymentData?.url) {
-          // Payment creation failed, but appointment is created — show confirmation
-          toast({
-            title: "Payment setup failed",
-            description: "Your appointment is booked. You can pay at the salon instead.",
-            variant: "destructive",
-          });
-        } else {
-          // Redirect to Stripe Checkout
-          window.location.href = paymentData.url;
-          return;
-        }
+        setShowPaymentForm(true);
+        setBooking(false);
+        return;
       }
 
-      // For pay_later or failed payment setup, show confirmation
+      // For pay_later, show confirmation directly
       setBookingDetails({
         ...appointment,
         stylist: stylist,
