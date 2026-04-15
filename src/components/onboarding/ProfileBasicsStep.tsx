@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Camera, MapPin } from "lucide-react";
+import { AddressAutocomplete } from "@/components/booking/AddressAutocomplete";
 
 interface ProfileBasicsStepProps {
   formData: {
@@ -16,6 +17,7 @@ interface ProfileBasicsStepProps {
   uploadingPhoto: boolean;
   onPhotoUpload: (file: File) => void;
   location: { lat: number; lng: number } | null;
+  onLocationChange?: (location: { lat: number; lng: number }) => void;
 }
 
 export const ProfileBasicsStep = ({
@@ -25,6 +27,7 @@ export const ProfileBasicsStep = ({
   uploadingPhoto,
   onPhotoUpload,
   location,
+  onLocationChange,
 }: ProfileBasicsStepProps) => {
   const { t } = useTranslation();
   return (
@@ -107,10 +110,14 @@ export const ProfileBasicsStep = ({
 
           <div className="space-y-2">
             <Label htmlFor="address">{t("common.address")}</Label>
-            <Input
+            <AddressAutocomplete
               id="address"
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={(address) => setFormData({ ...formData, address })}
+              onPlaceSelect={(place) => {
+                setFormData({ ...formData, address: place.address });
+                onLocationChange?.({ lat: place.lat, lng: place.lng });
+              }}
               placeholder={t("onboardingSteps.addressPlaceholder")}
             />
           </div>

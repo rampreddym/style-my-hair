@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Camera, ArrowRight, MapPin, Sparkles, X, LogOut, Image, Plus } from "lucide-react";
+import { AddressAutocomplete } from "@/components/booking/AddressAutocomplete";
 import { StylistLayout } from "@/components/layout/StylistLayout";
 import { GoogleReviewImport } from "@/components/reviews/GoogleReviewImport";
 import { getUserFriendlyError } from '@/lib/errorHandler';
@@ -416,10 +417,14 @@ const StylistProfile = () => {
 
             <div className="space-y-2">
               <Label htmlFor="address">{t("stylistProfile.addressLabel")}</Label>
-              <Input
+              <AddressAutocomplete
                 id="address"
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(address) => setFormData({ ...formData, address })}
+                onPlaceSelect={(place) => {
+                  setFormData({ ...formData, address: place.address });
+                  setLocation({ lat: place.lat, lng: place.lng });
+                }}
                 placeholder={t("stylistProfile.addressPlaceholder")}
               />
             </div>
