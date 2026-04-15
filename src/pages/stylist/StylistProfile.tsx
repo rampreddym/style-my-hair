@@ -62,7 +62,45 @@ const StylistProfile = () => {
     }
   }, [user, userRole, authLoading, navigate]);
 
-  // Load existing stylist profile
+  // Handle Google Business OAuth callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const storedStylistId = sessionStorage.getItem("google_business_stylist_id");
+
+    if (code && storedStylistId) {
+      sessionStorage.removeItem("google_business_stylist_id");
+      // Clean URL
+      window.history.replaceState({}, "", window.location.pathname);
+
+      const importReviews = async () => {
+        toast({ title: "Importing reviews...", description: "Connecting to your Google Business account" });
+        try {
+          const { data, error } = await supabase.functions.invoke("google-business-import-reviews", {
+            body: {
+              code,
+              redirectUri: `${window.location.origin}/stylist/profile`,
+              stylistId: storedStylistId,
+            },
+          });
+          if (error) throw error;
+          toast({
+            title: "Reviews imported!",
+            description: `Successfully imported ${data?.reviewsImported || 0} reviews from Google Business`,
+          });
+        } catch (err: any) {
+          console.error("Google Business import error:", err);
+          toast({
+            title: "Import failed",
+            description: getUserFriendlyError(err) || "Could not import reviews. Please try again.",
+            variant: "destructive",
+          });
+        }
+      };
+      importReviews();
+    }
+  }, []);
+
   useEffect(() => {
     const loadExistingProfile = async () => {
       if (!user) return;
