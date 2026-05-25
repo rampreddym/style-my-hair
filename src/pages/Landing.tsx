@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Sparkles, Users, Calendar, Star, CheckCircle, Share2, Copy, ArrowRight } from "lucide-react";
 import heroImage from "@/assets/landing-hero.jpg";
+import logo from "@/assets/hair-bnb-logo.png";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -95,11 +96,13 @@ const Landing = () => {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">
-          <img src={heroImage} alt="HairHalo hero" className="w-full h-full object-cover opacity-30" />
+          <img src={heroImage} alt="Hair BnB hero" className="w-full h-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center">
+          <img src={logo} alt="Hair BnB logo" width={160} height={160} className="mx-auto mb-6 w-32 h-32 sm:w-40 sm:h-40 drop-shadow-2xl" />
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-sm font-medium mb-8">
             <Sparkles className="w-4 h-4" />
@@ -114,7 +117,7 @@ const Landing = () => {
           </h1>
 
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            HairHalo uses AI to show you exactly how any hairstyle looks on you. Find the perfect stylist. Book with confidence. No more bad haircuts.
+            Hair BnB uses AI to show you exactly how any hairstyle looks on you. Find the perfect stylist. Book with confidence. No more bad haircuts.
           </p>
 
           {/* Signup Form */}
@@ -149,7 +152,7 @@ const Landing = () => {
               <p className="text-xs text-muted-foreground">
                 {waitlistCount > 0
                   ? `Join ${waitlistCount.toLocaleString()}+ people already on the waitlist`
-                  : "Be among the first to try HairHalo"}
+                  : "Be among the first to try Hair BnB"}
               </p>
             </form>
           ) : (
@@ -259,7 +262,7 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="border-t border-border/30 py-8 px-6 text-center text-sm text-muted-foreground">
-        © 2025 HairHalo. All rights reserved.
+        © 2025 Hair BnB. All rights reserved.
       </footer>
     </div>
   );
