@@ -101,6 +101,8 @@ const Landing = () => {
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center">
+          <img src={logo} alt="Hair BnB logo" width={160} height={160} className="mx-auto mb-6 w-32 h-32 sm:w-40 sm:h-40 drop-shadow-2xl" />
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-sm font-medium mb-8">
             <Sparkles className="w-4 h-4" />
