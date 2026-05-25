@@ -12,6 +12,7 @@ import { Scissors, User, Mail, Lock, Chrome, Sparkles } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { z } from "zod";
 import { getUserFriendlyError } from '@/lib/errorHandler';
+import hairBnbLogo from "@/assets/hair-bnb-logo.png";
 
 const Auth = () => {
   const navigate = useNavigate();
