@@ -114,17 +114,20 @@ const Auth = () => {
       
       {/* Brand Header */}
       <div className="text-center mb-8 animate-slide-up">
-        <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow-primary">
-          <Scissors className="w-10 h-10 text-primary-foreground" />
-        </div>
+        <img
+          src={hairBnbLogo}
+          alt="Hair BnB logo"
+          className="w-24 h-24 mx-auto mb-4 rounded-2xl shadow-glow-primary object-cover"
+        />
         <h1 className="text-3xl font-extrabold tracking-tight">
-          <span className="text-gradient-primary">Style</span>
-          <span className="text-foreground">Match</span>
+          <span className="text-gradient-primary">Hair</span>
+          <span className="text-foreground"> BnB</span>
         </h1>
         <p className="text-muted-foreground mt-2 text-sm max-w-xs mx-auto">
           {t("auth.signInOrCreate")}
         </p>
       </div>
+
 
       <Card variant="glow" className="w-full max-w-md shadow-elevated border border-primary/20 animate-fade-in">
         <CardContent className="p-6 space-y-5">
