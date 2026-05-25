@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Sparkles, Users, Calendar, Star, CheckCircle, Share2, Copy, ArrowRight } from "lucide-react";
 import heroImage from "@/assets/landing-hero.jpg";
+import logo from "@/assets/hair-bnb-logo.png";
 
 const Landing = () => {
   const navigate = useNavigate();
