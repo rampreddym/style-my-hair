@@ -24,7 +24,7 @@ const StylistAppointments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
@@ -37,6 +37,9 @@ const StylistAppointments = () => {
 
   // Fetch stylist ID from database using authenticated user
   useEffect(() => {
+    // Wait for auth to finish hydrating before deciding to redirect
+    if (authLoading) return;
+
     const fetchStylistId = async () => {
       if (!user) {
         navigate("/auth");
@@ -57,7 +60,7 @@ const StylistAppointments = () => {
     };
 
     fetchStylistId();
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     if (stylistId) {
