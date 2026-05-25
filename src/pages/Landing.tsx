@@ -95,7 +95,7 @@ const Landing = () => {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">
-          <img src={heroImage} alt="HairHalo hero" className="w-full h-full object-cover opacity-30" />
+          <img src={heroImage} alt="Hair BnB hero" className="w-full h-full object-cover opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
         </div>
 
@@ -114,7 +114,7 @@ const Landing = () => {
           </h1>
 
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            HairHalo uses AI to show you exactly how any hairstyle looks on you. Find the perfect stylist. Book with confidence. No more bad haircuts.
+            Hair BnB uses AI to show you exactly how any hairstyle looks on you. Find the perfect stylist. Book with confidence. No more bad haircuts.
           </p>
 
           {/* Signup Form */}
@@ -149,7 +149,7 @@ const Landing = () => {
               <p className="text-xs text-muted-foreground">
                 {waitlistCount > 0
                   ? `Join ${waitlistCount.toLocaleString()}+ people already on the waitlist`
-                  : "Be among the first to try HairHalo"}
+                  : "Be among the first to try Hair BnB"}
               </p>
             </form>
           ) : (
@@ -259,7 +259,7 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="border-t border-border/30 py-8 px-6 text-center text-sm text-muted-foreground">
-        © 2025 HairHalo. All rights reserved.
+        © 2025 Hair BnB. All rights reserved.
       </footer>
     </div>
   );

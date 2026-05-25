@@ -59,7 +59,7 @@ const Auth = () => {
         toast({ title: "Sign up failed", description: getUserFriendlyError(error), variant: "destructive" });
       }
     } else {
-      toast({ title: "Account created!", description: "Welcome to StyleMatch" });
+      toast({ title: "Account created!", description: "Welcome to Hair BnB" });
       navigate(role === 'stylist' ? '/stylist' : '/customer');
     }
   };
