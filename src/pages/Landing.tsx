@@ -22,10 +22,8 @@ const Landing = () => {
 
   useEffect(() => {
     const fetchCount = async () => {
-      const { count } = await supabase
-        .from("launch_waitlist")
-        .select("*", { count: "exact", head: true });
-      setWaitlistCount(count || 0);
+      const { data } = await supabase.rpc("get_waitlist_count");
+      setWaitlistCount(data || 0);
     };
     fetchCount();
   }, []);
@@ -47,15 +45,14 @@ const Landing = () => {
 
       if (error) {
         if (error.code === "23505") {
-          // Already exists — fetch their code
-          const { data: existing } = await supabase
-            .from("launch_waitlist")
-            .select("referral_code, referral_count")
-            .eq("email", email.trim().toLowerCase())
-            .single();
-          if (existing) {
-            setReferralCode(existing.referral_code);
-            setReferralCount(existing.referral_count);
+          // Already exists — fetch their code via secure RPC
+          const { data: existing } = await supabase.rpc("get_waitlist_referral", {
+            _email: email.trim().toLowerCase(),
+          });
+          const row = Array.isArray(existing) ? existing[0] : (existing as any);
+          if (row) {
+            setReferralCode(row.referral_code);
+            setReferralCount(row.referral_count);
             setSignedUp(true);
             toast.info("You're already on the waitlist! Here's your referral link.");
           }
