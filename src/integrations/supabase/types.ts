@@ -901,9 +901,26 @@ export type Database = {
       }
     }
     Functions: {
+      get_my_stylist_stripe_status: {
+        Args: never
+        Returns: {
+          onboarding_completed: boolean
+          onboarding_step: number
+          stripe_account_id: string
+          stripe_onboarded: boolean
+        }[]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      get_waitlist_count: { Args: never; Returns: number }
+      get_waitlist_referral: {
+        Args: { _email: string }
+        Returns: {
+          referral_code: string
+          referral_count: number
+        }[]
       }
       has_role: {
         Args: {
