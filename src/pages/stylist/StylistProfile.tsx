@@ -107,7 +107,7 @@ const StylistProfile = () => {
       
       const { data: existingStylist } = await supabase
         .from("stylists")
-        .select("*")
+        .select("id, email, phone, name, business_name, bio, specialties, photo_url, latitude, longitude, address, google_place_id, rating, total_reviews, created_at, updated_at, user_id, onboarding_completed, years_experience, certifications, availability_status, language_preference")
         .eq("user_id", user.id)
         .maybeSingle();
       
