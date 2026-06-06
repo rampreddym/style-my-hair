@@ -82,9 +82,13 @@ const StylistOnboarding = () => {
 
       const { data: stylist } = await supabase
         .from("stylists")
-        .select("*")
+        .select("id, name, phone, business_name, address, photo_url, bio, years_experience, specialties, certifications")
         .eq("user_id", user.id)
         .maybeSingle();
+
+      // Fetch stripe/onboarding status via secure RPC (column-restricted on table)
+      const { data: stripeStatusRows } = await supabase.rpc("get_my_stylist_stripe_status");
+      const stripeStatus = Array.isArray(stripeStatusRows) ? stripeStatusRows[0] : (stripeStatusRows as any);
 
       if (stylist) {
         setExistingStylistId(stylist.id);
@@ -99,8 +103,8 @@ const StylistOnboarding = () => {
         setYearsExperience(stylist.years_experience || 0);
         setSpecialties(stylist.specialties || []);
         setCertifications(stylist.certifications || []);
-        setStripeOnboarded(stylist.stripe_onboarded || false);
-        setCurrentStep(stylist.onboarding_step || 1);
+        setStripeOnboarded(stripeStatus?.stripe_onboarded || false);
+        setCurrentStep(stripeStatus?.onboarding_step || 1);
 
         // Load portfolio
         const { data: portfolioData } = await supabase

@@ -25,13 +25,16 @@ const StylistPayments = () => {
       
       const { data: stylistData } = await supabase
         .from("stylists")
-        .select("*")
+        .select("id, name, business_name")
         .eq("user_id", user.id)
         .maybeSingle();
-      
+
       if (stylistData) {
         setStylistId(stylistData.id);
-        setStylist(stylistData);
+        // Fetch stripe status via secure RPC
+        const { data: stripeRows } = await supabase.rpc("get_my_stylist_stripe_status");
+        const stripeStatus = Array.isArray(stripeRows) ? stripeRows[0] : (stripeRows as any);
+        setStylist({ ...stylistData, stripe_onboarded: stripeStatus?.stripe_onboarded || false });
         setLoading(false);
       } else {
         navigate("/stylist");
