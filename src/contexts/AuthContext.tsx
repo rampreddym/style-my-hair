@@ -111,18 +111,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithGoogle = async (role: UserRole) => {
-    // Store role in localStorage to use after OAuth callback
+    // Store role to apply after the OAuth round-trip
     if (role) {
       localStorage.setItem('pending_role', role);
     }
-    
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`
-      }
+
+    const result = await lovable.auth.signInWithOAuth('google', {
+      redirect_uri: `${window.location.origin}/auth/callback`,
     });
-    return { error };
+
+    if (result.error) {
+      return { error: result.error as Error };
+    }
+
+    // result.redirected -> browser navigates to Google; otherwise session is already set
+    return { error: null };
   };
 
   const signOut = async () => {
