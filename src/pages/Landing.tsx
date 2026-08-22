@@ -154,7 +154,7 @@ const Landing = () => {
             </form>
           ) : (
             <div className="max-w-md mx-auto space-y-4">
-              <div className="flex items-center justify-center gap-2 text-green-400 mb-4">
+              <div className="flex items-center justify-center gap-2 text-success mb-4">
                 <CheckCircle className="w-6 h-6" />
                 <span className="text-lg font-semibold">You're on the list!</span>
               </div>

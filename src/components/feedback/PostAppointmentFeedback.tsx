@@ -19,8 +19,8 @@ interface FeedbackOption {
 
 const FEEDBACK_OPTIONS: FeedbackOption[] = [
   { emoji: "😍", icon: <Heart className="w-8 h-8" />, labelKey: "postFeedback.sentiments.love", sentiment: "love", color: "text-pink-500" },
-  { emoji: "😊", icon: <Smile className="w-8 h-8" />, labelKey: "postFeedback.sentiments.happy", sentiment: "happy", color: "text-green-500" },
-  { emoji: "😐", icon: <Meh className="w-8 h-8" />, labelKey: "postFeedback.sentiments.okay", sentiment: "okay", color: "text-yellow-500" },
+  { emoji: "😊", icon: <Smile className="w-8 h-8" />, labelKey: "postFeedback.sentiments.happy", sentiment: "happy", color: "text-success" },
+  { emoji: "😐", icon: <Meh className="w-8 h-8" />, labelKey: "postFeedback.sentiments.okay", sentiment: "okay", color: "text-warning" },
   { emoji: "😕", icon: <Frown className="w-8 h-8" />, labelKey: "postFeedback.sentiments.notGreat", sentiment: "not_great", color: "text-orange-500" },
   { emoji: "😠", icon: <Angry className="w-8 h-8" />, labelKey: "postFeedback.sentiments.upset", sentiment: "upset", color: "text-red-500" },
 ];
@@ -185,8 +185,8 @@ export const PostAppointmentFeedback = ({
         {/* Positive feedback encouragement */}
         {selectedSentiment && (selectedSentiment.sentiment === "love" || selectedSentiment.sentiment === "happy") && (
           <div className="space-y-4 animate-in slide-in-from-top-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-              <p className="text-sm font-medium text-green-700">
+            <div className="bg-success/12 border border-success/25 rounded-lg p-4 text-center">
+              <p className="text-sm font-medium text-success">
                 {t("postFeedback.happyYouLovedIt")}
               </p>
               <p className="text-xs text-muted-foreground mt-1">

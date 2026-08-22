@@ -410,7 +410,7 @@ const CustomerBookingDetails = () => {
                   <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
                     {stylist.rating > 0 && (
                       <span className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        <Star className="w-4 h-4 text-warning fill-warning" />
                         {stylist.rating.toFixed(1)}
                       </span>
                     )}

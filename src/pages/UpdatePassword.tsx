@@ -118,8 +118,8 @@ const UpdatePassword = () => {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="mx-auto w-16 h-16 bg-success/12 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-8 h-8 text-success" />
             </div>
             <CardTitle className="text-2xl">Password Updated!</CardTitle>
             <CardDescription>

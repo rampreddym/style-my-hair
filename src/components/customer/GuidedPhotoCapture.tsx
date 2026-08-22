@@ -410,7 +410,7 @@ export const GuidedPhotoCapture = ({
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-foreground">{t("photoCapture.yourPhotos")}</p>
             {completedPhotos < 2 && (
-              <div className="flex items-center gap-1 text-amber-600 text-xs">
+              <div className="flex items-center gap-1 text-warning text-xs">
                 <AlertCircle className="w-3 h-3" />
                 <span>{t("photoCapture.minimum2Required")}</span>
               </div>

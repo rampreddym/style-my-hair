@@ -99,8 +99,8 @@ const SavedCardSelector = ({
   if (succeeded) {
     return (
       <div className="text-center py-6 space-y-3">
-        <div className="w-16 h-16 mx-auto bg-green-500/10 rounded-full flex items-center justify-center">
-          <CheckCircle className="w-8 h-8 text-green-500" />
+        <div className="w-16 h-16 mx-auto bg-success/10 rounded-full flex items-center justify-center">
+          <CheckCircle className="w-8 h-8 text-success" />
         </div>
         <p className="font-semibold text-foreground">Payment successful!</p>
         <p className="text-sm text-muted-foreground">Redirecting to your appointments...</p>
@@ -226,8 +226,8 @@ const CheckoutForm = ({
   if (succeeded) {
     return (
       <div className="text-center py-6 space-y-3">
-        <div className="w-16 h-16 mx-auto bg-green-500/10 rounded-full flex items-center justify-center">
-          <CheckCircle className="w-8 h-8 text-green-500" />
+        <div className="w-16 h-16 mx-auto bg-success/10 rounded-full flex items-center justify-center">
+          <CheckCircle className="w-8 h-8 text-success" />
         </div>
         <p className="font-semibold text-foreground">Payment successful!</p>
         <p className="text-sm text-muted-foreground">Redirecting to your appointments...</p>

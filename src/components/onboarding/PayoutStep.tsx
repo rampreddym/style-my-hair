@@ -24,8 +24,8 @@ export const PayoutStep = ({ stripeOnboarded, onConnectStripe }: PayoutStepProps
           <div className="text-center py-4">
             {stripeOnboarded ? (
               <div className="space-y-4">
-                <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
+                <div className="w-16 h-16 mx-auto bg-success/12 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-success" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-foreground">{t("payoutStep.paymentsConnected")}</h3>
@@ -33,7 +33,7 @@ export const PayoutStep = ({ stripeOnboarded, onConnectStripe }: PayoutStepProps
                     {t("payoutStep.allSetToReceive")}
                   </p>
                 </div>
-                <Badge variant="secondary" className="text-green-600 bg-green-100">
+                <Badge variant="secondary" className="text-success bg-success/12">
                   <CheckCircle className="w-3 h-3 mr-1" />
                   {t("payoutStep.verified")}
                 </Badge>

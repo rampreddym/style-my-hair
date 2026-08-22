@@ -53,12 +53,12 @@ const PaymentMethodUI = ({ onClose, onSuccess }: PaymentMethodUIProps) => {
 
   if (saved) {
     return (
-      <Card className="mt-4 border-green-500/20 bg-green-500/5">
+      <Card className="mt-4 border-success/20 bg-success/5">
         <CardContent className="pt-6 text-center">
-          <div className="w-12 h-12 mx-auto bg-green-500/10 rounded-full flex items-center justify-center mb-4">
-            <Check className="w-6 h-6 text-green-500" />
+          <div className="w-12 h-12 mx-auto bg-success/10 rounded-full flex items-center justify-center mb-4">
+            <Check className="w-6 h-6 text-success" />
           </div>
-          <p className="font-medium text-green-600">Payment method saved!</p>
+          <p className="font-medium text-success">Payment method saved!</p>
         </CardContent>
       </Card>
     );
@@ -76,7 +76,7 @@ const PaymentMethodUI = ({ onClose, onSuccess }: PaymentMethodUIProps) => {
             <X className="w-4 h-4" />
           </Button>
         </div>
-        <p className="text-sm text-yellow-600 bg-yellow-500/10 p-2 rounded-md mt-2">
+        <p className="text-sm text-warning bg-warning/10 p-2 rounded-md mt-2">
           🔒 Payment collection requires Stripe integration for PCI compliance
         </p>
       </CardHeader>

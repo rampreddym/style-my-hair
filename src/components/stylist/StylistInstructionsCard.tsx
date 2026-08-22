@@ -225,7 +225,7 @@ export const StylistInstructionsCard = ({
               >
                 {copied ? (
                   <>
-                    <Check className="w-4 h-4 mr-1 text-green-500" />
+                    <Check className="w-4 h-4 mr-1 text-success" />
                     {t("stylist.instructions.copied")}
                   </>
                 ) : (
@@ -264,7 +264,7 @@ export const StylistInstructionsCard = ({
                     >
                       {copied ? (
                         <>
-                          <Check className="w-4 h-4 mr-1 text-green-500" />
+                          <Check className="w-4 h-4 mr-1 text-success" />
                           {t("stylist.instructions.copied")}
                         </>
                       ) : (

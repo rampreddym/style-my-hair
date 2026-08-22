@@ -145,13 +145,13 @@ const StylistAppointments = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-green-500/10 text-green-600 border-green-200";
+        return "bg-success/10 text-success border-success/25";
       case "completed":
-        return "bg-blue-500/10 text-blue-600 border-blue-200";
+        return "bg-accent/10 text-accent border-accent/25";
       case "cancelled":
         return "bg-red-500/10 text-red-600 border-red-200";
       default:
-        return "bg-amber-500/10 text-amber-600 border-amber-200";
+        return "bg-warning/10 text-warning border-amber-200";
     }
   };
 
@@ -386,7 +386,7 @@ const StylistAppointments = () => {
 
                       {/* Check-in status indicator */}
                       {appointment.check_in_status === 'confirmed' && (
-                        <Badge variant="secondary" className="bg-green-100 text-green-700">
+                        <Badge variant="secondary" className="bg-success/12 text-success">
                           <Check className="w-3 h-3 mr-1" />
                           Confirmed
                         </Badge>
