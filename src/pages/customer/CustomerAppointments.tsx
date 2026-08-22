@@ -23,7 +23,7 @@ const CustomerAppointments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [searchParams] = useSearchParams();
   const feedbackAppointmentId = searchParams.get("feedback");
   
