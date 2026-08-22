@@ -6,16 +6,26 @@ const AuthCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const waitForSession = async () => {
+      // Tokens may still be exchanged from the URL right after the OAuth redirect
+      for (let i = 0; i < 20; i++) {
+        const { data } = await supabase.auth.getSession();
+        if (data.session?.user) return data.session;
+        await new Promise((r) => setTimeout(r, 250));
+      }
+      return null;
+    };
+
     const handleCallback = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const session = await waitForSession();
+
       if (session?.user) {
         // Check if user already has a role
         const { data: existingRole } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
         if (existingRole) {
           // User has a role, navigate to their dashboard
@@ -35,7 +45,7 @@ const AuthCallback = () => {
           navigate(role === 'stylist' ? '/stylist' : '/customer');
         }
       } else {
-        navigate('/');
+        navigate('/auth');
       }
     };
 
