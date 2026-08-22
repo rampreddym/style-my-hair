@@ -185,8 +185,8 @@ export const PostAppointmentFeedback = ({
         {/* Positive feedback encouragement */}
         {selectedSentiment && (selectedSentiment.sentiment === "love" || selectedSentiment.sentiment === "happy") && (
           <div className="space-y-4 animate-in slide-in-from-top-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-              <p className="text-sm font-medium text-green-700">
+            <div className="bg-success/12 border border-success/25 rounded-lg p-4 text-center">
+              <p className="text-sm font-medium text-success">
                 {t("postFeedback.happyYouLovedIt")}
               </p>
               <p className="text-xs text-muted-foreground mt-1">

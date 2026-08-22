@@ -63,16 +63,16 @@ export const AppointmentConfirmation = ({
   return (
     <Card className={cn(
       "border-2",
-      confirmed ? "border-success bg-green-50" : "border-primary"
+      confirmed ? "border-success bg-success/12" : "border-primary"
     )}>
       <CardContent className="p-6 text-center space-y-4">
         {confirmed ? (
           <>
-            <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto bg-success/12 rounded-full flex items-center justify-center">
               <CheckCircle className="w-8 h-8 text-success" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-green-700">{t("appointmentConfirmation.seeYouSoon")}</h3>
+              <h3 className="text-lg font-semibold text-success">{t("appointmentConfirmation.seeYouSoon")}</h3>
               <p className="text-muted-foreground text-sm">
                 {t("appointmentConfirmation.stylistReady", { stylist: stylistName })}
               </p>

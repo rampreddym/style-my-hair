@@ -212,7 +212,7 @@ export const GoogleReviewImport = ({
                       {place.rating && (
                         <div className="text-right flex-shrink-0">
                           <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-warning fill-yellow-500" />
+                            <Star className="w-4 h-4 text-warning fill-warning" />
                             <span className="font-medium">{place.rating}</span>
                           </div>
                           <p className="text-xs text-muted-foreground">{place.user_ratings_total} reviews</p>

@@ -110,7 +110,7 @@ export const SmartBookingSuggestionDialog = ({
                         <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Star className="w-3 h-3 text-warning fill-yellow-500" />
+                        <Star className="w-3 h-3 text-warning fill-warning" />
                         {lastBooking.stylist_rating.toFixed(1)}
                       </div>
                       <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
@@ -231,14 +231,14 @@ export const SmartBookingSuggestionDialog = ({
                             <div className="flex items-center gap-2">
                               <h4 className="font-medium text-sm truncate">{stylist.name}</h4>
                               {index === 0 && (
-                                <Badge variant="outline" className="text-xs bg-warning/10 text-yellow-700 border-warning/30">
+                                <Badge variant="outline" className="text-xs bg-warning/10 text-warning border-warning/30">
                                   {t("booking.smartSuggestion.bestMatch", "Best")}
                                 </Badge>
                               )}
                             </div>
                             <div className="flex items-center gap-3 text-xs text-muted-foreground">
                               <span className="flex items-center gap-1">
-                                <Star className="w-3 h-3 text-warning fill-yellow-500" />
+                                <Star className="w-3 h-3 text-warning fill-warning" />
                                 {stylist.rating.toFixed(1)}
                               </span>
                               {stylist.distance !== null && (
