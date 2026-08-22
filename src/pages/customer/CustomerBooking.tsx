@@ -354,6 +354,7 @@ const CustomerBooking = () => {
                     isSelected={false}
                     onSelect={() => handleStylistSelect(stylist)}
                     services={stylistServices[stylist.id] || []}
+                    recentWork={stylistPortfolio[stylist.id] || []}
                   />
                 </div>
               ))}
