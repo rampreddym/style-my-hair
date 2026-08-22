@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
 import UpdatePassword from "./pages/UpdatePassword";
+import CustomerHome from "./pages/customer/CustomerHome";
 import CustomerProfile from "./pages/customer/CustomerProfile";
 import CustomerStyle from "./pages/customer/CustomerStyle";
 import CustomerBooking from "./pages/customer/CustomerBooking";
@@ -42,7 +43,8 @@ const App = () => (
             <Route path="/update-password" element={<UpdatePassword />} />
             
             {/* Customer Routes */}
-            <Route path="/customer" element={<CustomerProfile />} />
+            <Route path="/customer" element={<CustomerHome />} />
+            <Route path="/customer/profile" element={<CustomerProfile />} />
             <Route path="/customer/style" element={<CustomerStyle />} />
             <Route path="/customer/booking" element={<CustomerBooking />} />
             <Route path="/customer/booking/:stylistId" element={<CustomerBookingDetails />} />

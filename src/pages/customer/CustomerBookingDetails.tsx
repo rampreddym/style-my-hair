@@ -75,7 +75,7 @@ const CustomerBookingDetails = () => {
           longitude: customerData.longitude,
         });
       } else {
-        navigate("/customer");
+        navigate("/customer/profile");
       }
     };
     

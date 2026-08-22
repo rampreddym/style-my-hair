@@ -68,7 +68,7 @@ const CustomerBooking = () => {
         setCustomerId(customerData.id);
         setCustomerLocation({ latitude: customerData.latitude, longitude: customerData.longitude });
       } else {
-        navigate("/customer");
+        navigate("/customer/profile");
       }
     };
     if (!authLoading) {

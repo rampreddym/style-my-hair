@@ -54,7 +54,7 @@ const CustomerAppointments = () => {
       .maybeSingle();
 
     if (!customer) {
-      navigate("/customer");
+      navigate("/customer/profile");
       return;
     }
 

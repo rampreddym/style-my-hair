@@ -50,7 +50,7 @@ const CustomerStyle = () => {
       if (customerData) {
         setCustomerId(customerData.id);
       } else {
-        navigate("/customer");
+        navigate("/customer/profile");
       }
     };
     
@@ -260,7 +260,7 @@ const CustomerStyle = () => {
           {/* Header */}
           <div className="flex items-center">
             <button 
-              onClick={() => navigate("/customer")}
+              onClick={() => navigate("/customer/profile")}
               className="min-w-[44px] min-h-[44px] flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors"
               aria-label={t("common.back")}
             >
@@ -412,7 +412,7 @@ const CustomerStyle = () => {
               <div className="flex gap-3">
                 <Button
                   variant="outline"
-                  onClick={() => navigate("/customer")}
+                  onClick={() => navigate("/customer/profile")}
                   className="flex-1 h-12"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
