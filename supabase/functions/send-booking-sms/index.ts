@@ -131,7 +131,7 @@ Your appointment has been scheduled:
 
 We look forward to seeing you!
 
-- Hair BnB Team`;
+- Mirra Team`;
 
     // Message for Stylist
     const stylistMessage = `📅 New Booking Alert!
@@ -147,7 +147,7 @@ You have a new appointment:
 
 Please check your app for details.
 
-- Hair BnB`;
+- Mirra`;
 
     // Send SMS to Customer
     if (customerPhone) {

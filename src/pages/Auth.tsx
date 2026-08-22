@@ -12,7 +12,7 @@ import { Scissors, User, Mail, Lock, Chrome, Sparkles } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { z } from "zod";
 import { getUserFriendlyError } from '@/lib/errorHandler';
-import hairBnbLogo from "@/assets/hair-bnb-mark.png";
+import hairBnbLogo from "@/assets/mirra-mark.png";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ const Auth = () => {
         toast({ title: "Sign up failed", description: getUserFriendlyError(error), variant: "destructive" });
       }
     } else {
-      toast({ title: "Account created!", description: "Welcome to Hair BnB" });
+      toast({ title: "Account created!", description: "Welcome to Mirra" });
       navigate(role === 'stylist' ? '/stylist' : '/customer');
     }
   };
@@ -112,12 +112,12 @@ const Auth = () => {
       <div className="w-full max-w-md mb-10 animate-fade-in">
         <img
           src={hairBnbLogo}
-          alt="Hair BnB logo"
+          alt="Mirra logo"
           className="w-16 h-16 mb-6 object-contain"
         />
         <p className="eyebrow text-muted-foreground mb-3">{t("auth.customer")} &middot; {t("auth.stylist")}</p>
         <h1 className="font-display text-5xl leading-[1.05] text-foreground">
-          Hair BnB
+          Mirra
         </h1>
         <p className="text-muted-foreground mt-4 text-base max-w-sm leading-relaxed">
           {t("auth.signInOrCreate")}
