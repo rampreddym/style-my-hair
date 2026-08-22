@@ -42,27 +42,27 @@ export function BottomNavigation() {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                "relative flex flex-col items-center justify-center min-w-[64px] min-h-[48px] px-3 py-2 transition-colors no-tap-highlight no-select",
+                "relative flex flex-1 flex-col items-center justify-center min-w-0 min-h-[48px] px-1 py-2 transition-colors no-tap-highlight no-select",
                 "active:opacity-70",
                 active ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )}
-              aria-label={t(item.labelKey)}
+              aria-label={t(item.labelKey, item.fallback)}
               aria-current={active ? "page" : undefined}
             >
               {/* Active indicator rule */}
               {active && (
-                <span className="absolute -top-px w-10 h-px bg-primary" />
+                <span className="absolute -top-px w-8 h-px bg-primary" />
               )}
 
               <Icon className="w-5 h-5 relative z-10" />
 
               <span
                 className={cn(
-                  "eyebrow mt-1.5 relative z-10",
+                  "eyebrow mt-1.5 relative z-10 text-[9px] max-w-full truncate",
                   active ? "text-primary" : "text-muted-foreground"
                 )}
               >
-                {t(item.labelKey)}
+                {t(item.labelKey, item.fallback)}
               </span>
             </button>
           );
