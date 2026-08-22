@@ -12,7 +12,7 @@ import { Scissors, User, Mail, Lock, Chrome, Sparkles } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { z } from "zod";
 import { getUserFriendlyError } from '@/lib/errorHandler';
-import hairBnbLogo from "@/assets/hair-bnb-logo.png";
+import hairBnbLogo from "@/assets/hair-bnb-mark.png";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -113,7 +113,7 @@ const Auth = () => {
         <img
           src={hairBnbLogo}
           alt="Hair BnB logo"
-          className="w-14 h-14 mb-6 rounded-md object-cover"
+          className="w-16 h-16 mb-6 object-contain"
         />
         <p className="eyebrow text-muted-foreground mb-3">{t("auth.customer")} &middot; {t("auth.stylist")}</p>
         <h1 className="font-display text-5xl leading-[1.05] text-foreground">
