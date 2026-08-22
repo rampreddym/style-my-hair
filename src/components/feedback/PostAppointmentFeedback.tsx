@@ -19,8 +19,8 @@ interface FeedbackOption {
 
 const FEEDBACK_OPTIONS: FeedbackOption[] = [
   { emoji: "😍", icon: <Heart className="w-8 h-8" />, labelKey: "postFeedback.sentiments.love", sentiment: "love", color: "text-pink-500" },
-  { emoji: "😊", icon: <Smile className="w-8 h-8" />, labelKey: "postFeedback.sentiments.happy", sentiment: "happy", color: "text-green-500" },
-  { emoji: "😐", icon: <Meh className="w-8 h-8" />, labelKey: "postFeedback.sentiments.okay", sentiment: "okay", color: "text-yellow-500" },
+  { emoji: "😊", icon: <Smile className="w-8 h-8" />, labelKey: "postFeedback.sentiments.happy", sentiment: "happy", color: "text-success" },
+  { emoji: "😐", icon: <Meh className="w-8 h-8" />, labelKey: "postFeedback.sentiments.okay", sentiment: "okay", color: "text-warning" },
   { emoji: "😕", icon: <Frown className="w-8 h-8" />, labelKey: "postFeedback.sentiments.notGreat", sentiment: "not_great", color: "text-orange-500" },
   { emoji: "😠", icon: <Angry className="w-8 h-8" />, labelKey: "postFeedback.sentiments.upset", sentiment: "upset", color: "text-red-500" },
 ];

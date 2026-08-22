@@ -110,7 +110,7 @@ export const SmartBookingSuggestionDialog = ({
                         <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                        <Star className="w-3 h-3 text-warning fill-yellow-500" />
                         {lastBooking.stylist_rating.toFixed(1)}
                       </div>
                       <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
@@ -209,7 +209,7 @@ export const SmartBookingSuggestionDialog = ({
                         <div className="flex gap-3 items-center">
                           <div className="relative">
                             {index === 0 && (
-                              <Badge className="absolute -top-1 -left-1 h-5 w-5 p-0 flex items-center justify-center bg-yellow-500">
+                              <Badge className="absolute -top-1 -left-1 h-5 w-5 p-0 flex items-center justify-center bg-warning">
                                 1
                               </Badge>
                             )}
@@ -231,14 +231,14 @@ export const SmartBookingSuggestionDialog = ({
                             <div className="flex items-center gap-2">
                               <h4 className="font-medium text-sm truncate">{stylist.name}</h4>
                               {index === 0 && (
-                                <Badge variant="outline" className="text-xs bg-yellow-500/10 text-yellow-700 border-yellow-500/30">
+                                <Badge variant="outline" className="text-xs bg-warning/10 text-yellow-700 border-warning/30">
                                   {t("booking.smartSuggestion.bestMatch", "Best")}
                                 </Badge>
                               )}
                             </div>
                             <div className="flex items-center gap-3 text-xs text-muted-foreground">
                               <span className="flex items-center gap-1">
-                                <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                <Star className="w-3 h-3 text-warning fill-yellow-500" />
                                 {stylist.rating.toFixed(1)}
                               </span>
                               {stylist.distance !== null && (

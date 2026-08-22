@@ -145,13 +145,13 @@ const StylistAppointments = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-green-500/10 text-green-600 border-green-200";
+        return "bg-success/10 text-success border-green-200";
       case "completed":
-        return "bg-blue-500/10 text-blue-600 border-blue-200";
+        return "bg-accent/10 text-accent border-blue-200";
       case "cancelled":
         return "bg-red-500/10 text-red-600 border-red-200";
       default:
-        return "bg-amber-500/10 text-amber-600 border-amber-200";
+        return "bg-warning/10 text-warning border-amber-200";
     }
   };
 

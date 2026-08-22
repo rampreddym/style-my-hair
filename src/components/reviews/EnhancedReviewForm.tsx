@@ -128,7 +128,7 @@ export const EnhancedReviewForm = ({
                 sizeClasses[size],
                 "transition-colors",
                 star <= rating
-                  ? "fill-amber-400 text-amber-400"
+                  ? "fill-amber-400 text-warning"
                   : "text-muted-foreground"
               )}
             />

@@ -92,10 +92,10 @@ const StylistPayments = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {stylist?.stripe_onboarded ? (
-                <div className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <Check className="w-6 h-6 text-green-500" />
+                <div className="flex items-center gap-3 p-4 bg-success/10 border border-success/20 rounded-lg">
+                  <Check className="w-6 h-6 text-success" />
                   <div>
-                    <p className="font-medium text-green-500">Connected to Stripe</p>
+                    <p className="font-medium text-success">Connected to Stripe</p>
                     <p className="text-sm text-muted-foreground">
                       You're all set to receive payments from clients
                     </p>
@@ -103,10 +103,10 @@ const StylistPayments = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="flex items-start gap-3 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                    <AlertCircle className="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-3 p-4 bg-warning/10 border border-warning/20 rounded-lg">
+                    <AlertCircle className="w-6 h-6 text-warning flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-yellow-600">Payment Setup Coming Soon</p>
+                      <p className="font-medium text-warning">Payment Setup Coming Soon</p>
                       <p className="text-sm text-muted-foreground">
                         Stripe Connect integration is required for real payment processing. This feature is under development.
                       </p>

@@ -27,8 +27,8 @@ const PaymentSuccess = () => {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="max-w-md w-full">
         <CardContent className="pt-8 pb-6 text-center space-y-6">
-          <div className="w-20 h-20 mx-auto bg-green-500/10 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-10 h-10 text-green-500" />
+          <div className="w-20 h-20 mx-auto bg-success/10 rounded-full flex items-center justify-center">
+            <CheckCircle className="w-10 h-10 text-success" />
           </div>
           <div>
             <h1 className="font-display text-3xl text-foreground">Payment Successful!</h1>

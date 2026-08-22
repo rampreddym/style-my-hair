@@ -131,10 +131,10 @@ export const GoogleReviewImport = ({
       </CardHeader>
       <CardContent className="space-y-4">
         {currentPlaceId ? (
-          <div className="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-            <Check className="w-5 h-5 text-green-500" />
+          <div className="flex items-center gap-3 p-4 bg-success/10 border border-success/20 rounded-lg">
+            <Check className="w-5 h-5 text-success" />
             <div className="flex-1">
-              <p className="font-medium text-green-600">Google Business Connected</p>
+              <p className="font-medium text-success">Google Business Connected</p>
               <p className="text-sm text-muted-foreground">Reviews are synced from your Google Business profile</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => { setImportMethod(null); onPlaceConnected(""); }}>
@@ -212,7 +212,7 @@ export const GoogleReviewImport = ({
                       {place.rating && (
                         <div className="text-right flex-shrink-0">
                           <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                            <Star className="w-4 h-4 text-warning fill-yellow-500" />
                             <span className="font-medium">{place.rating}</span>
                           </div>
                           <p className="text-xs text-muted-foreground">{place.user_ratings_total} reviews</p>
