@@ -1,14 +1,6 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { 
-  Star, MapPin, Clock, CheckCircle, MessageSquare, 
-  ChevronRight, Award, Camera, Navigation, DollarSign, Scissors
-} from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Star, MapPin, CheckCircle, Scissors, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { openInMaps } from "@/components/map/StylistLocationLink";
-import { MapPreview } from "@/components/map/MapPreview";
 
 interface StylistService {
   id: string;
@@ -39,239 +31,159 @@ interface EnhancedStylistCardProps {
   recentWork?: string[];
   matchScore?: number;
   services?: StylistService[];
+  /** e.g. ["Today 2:30 PM", "Tomorrow 10:00 AM"] */
+  nextSlots?: string[];
+  onSlotSelect?: (slot: string) => void;
+  isFavourite?: boolean;
 }
 
-const proficiencyLevels: Record<string, { label: string; color: string }> = {
-  expert: { label: "Expert", color: "text-primary bg-primary/20 border border-primary/30" },
-  advanced: { label: "Advanced", color: "text-accent bg-accent/20 border border-accent/30" },
-  skilled: { label: "Skilled", color: "text-info bg-info/20 border border-info/30" },
-};
-
-export const EnhancedStylistCard = ({ 
-  stylist, 
-  isSelected, 
+export const EnhancedStylistCard = ({
+  stylist,
+  isSelected,
   onSelect,
   recentWork = [],
-  matchScore,
   services = [],
+  nextSlots = [],
+  onSlotSelect,
+  isFavourite = false,
 }: EnhancedStylistCardProps) => {
-  const [showFullBio, setShowFullBio] = useState(false);
-
-  // Estimate travel time (rough: 3 min per km)
   const travelTime = stylist.distance ? Math.round(stylist.distance * 3) : null;
+  const isNew = !stylist.total_reviews || stylist.total_reviews === 0;
 
-  // Derive starting price and most popular service
-  const startingPrice = services.length > 0 ? Math.min(...services.map(s => s.price)) : null;
-  const topService = services.length > 0 ? services[0] : null;
+  const sortedServices = [...services].sort((a, b) => a.price - b.price);
+  const startingPrice = sortedServices.length > 0 ? sortedServices[0].price : null;
+  const topServices = sortedServices.slice(0, 3);
+
+  // Portfolio strip: real work first, fall back to the profile photo
+  const strip = recentWork.length > 0
+    ? recentWork.slice(0, 4)
+    : stylist.photo_url
+      ? [stylist.photo_url]
+      : [];
 
   return (
     <Card
       onClick={onSelect}
-      variant={isSelected ? "accent" : "default"}
       className={cn(
-        "cursor-pointer transition-all overflow-hidden no-tap-highlight active:scale-[0.98]",
-        isSelected 
-          ? "ring-2 ring-primary border-primary shadow-elevated" 
-          : "hover:border-primary/30 hover:shadow-elevated"
+        "cursor-pointer overflow-hidden no-tap-highlight transition-all active:scale-[0.99]",
+        isSelected ? "border-primary" : "hover:border-primary/40"
       )}
     >
-      <CardContent className="p-4 relative z-10">
-        {/* Header with photo and basic info */}
-        <div className="flex gap-4">
-          {/* Profile photo with verified badge */}
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center overflow-hidden ring-2 ring-primary/30">
-              {stylist.photo_url ? (
-                <img 
-                  src={stylist.photo_url} 
-                  alt={stylist.name} 
-                  className="w-full h-full object-cover" 
-                />
-              ) : (
-                <span className="text-2xl font-bold text-primary">
-                  {stylist.name.charAt(0)}
-                </span>
+      {/* Work-first hero strip */}
+      {strip.length > 0 && (
+        <div className={cn("grid gap-px bg-border", strip.length === 1 ? "grid-cols-1" : "grid-cols-4")}>
+          {strip.map((src, i) => (
+            <div
+              key={i}
+              className={cn(
+                "bg-secondary overflow-hidden",
+                strip.length === 1 ? "h-40" : "h-24"
               )}
+            >
+              <img
+                src={src}
+                alt={`${stylist.name} work sample ${i + 1}`}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
             </div>
-            {/* Verified badge with glow */}
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-accent rounded-full flex items-center justify-center border-2 border-background shadow-[0_0_10px_hsl(174_80%_50%/0.5)]">
-              <CheckCircle className="w-3 h-3 text-accent-foreground" />
-            </div>
-          </div>
-
-          {/* Info */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="font-semibold text-foreground truncate">{stylist.name}</h3>
-                {stylist.business_name && (
-                  <p className="text-sm text-muted-foreground truncate">{stylist.business_name}</p>
-                )}
-              </div>
-              
-              {/* Starting price badge */}
-              {startingPrice !== null && (
-                <Badge variant="secondary" className="bg-accent/10 text-accent border border-accent/20 text-xs font-semibold shrink-0">
-                  <DollarSign className="w-3 h-3 mr-0.5" />
-                  From ${startingPrice.toFixed(0)}
-                </Badge>
-              )}
-            </div>
-
-            {/* Rating and distance */}
-            <div className="flex items-center gap-4 mt-1 text-sm">
-              <span className="flex items-center gap-1 text-warning">
-                <Star className="w-4 h-4 fill-current" />
-                {stylist.rating?.toFixed(1) || "New"}
-                {stylist.total_reviews && (
-                  <span className="text-muted-foreground">
-                    ({stylist.total_reviews})
-                  </span>
-                )}
-              </span>
-              {stylist.distance !== undefined && stylist.distance !== null && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openInMaps(stylist.address, stylist.latitude, stylist.longitude, stylist.name);
-                  }}
-                  className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <MapPin className="w-4 h-4" />
-                  {stylist.distance.toFixed(1)} km
-                  {travelTime && (
-                    <span className="text-xs">· ~{travelTime} min</span>
-                  )}
-                  <Navigation className="w-3 h-3 ml-1" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          <ChevronRight className={cn(
-            "w-5 h-5 text-muted-foreground transition-transform shrink-0 mt-1",
-            isSelected && "rotate-90"
-          )} />
+          ))}
         </div>
+      )}
 
-        {/* Top service highlight */}
-        {topService && (
-          <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50 border border-border/30">
-            <Scissors className="w-3.5 h-3.5 text-primary shrink-0" />
-            <span className="text-xs text-foreground font-medium truncate">{topService.name}</span>
-            <span className="text-xs text-muted-foreground ml-auto shrink-0">
-              ${topService.price.toFixed(0)}
-              {topService.duration_minutes && ` · ${topService.duration_minutes}min`}
+      <div className="p-4 space-y-3">
+        {/* Identity row */}
+        <div className="flex items-start gap-3">
+          <div className="relative shrink-0">
+            <div className="w-11 h-11 rounded-full bg-secondary overflow-hidden flex items-center justify-center border border-border">
+              {stylist.photo_url ? (
+                <img src={stylist.photo_url} alt={stylist.name} loading="lazy" className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-display text-lg text-primary">{stylist.name.charAt(0)}</span>
+              )}
+            </div>
+            <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-accent flex items-center justify-center border-2 border-card">
+              <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />
             </span>
           </div>
-        )}
 
-        {/* Portfolio preview */}
-        {recentWork.length > 0 && (
-          <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
-            {recentWork.slice(0, 3).map((work, i) => (
-              <div 
-                key={i} 
-                className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border"
-              >
-                <img src={work} alt="Recent work" className="w-full h-full object-cover" />
-              </div>
-            ))}
-            {recentWork.length > 3 && (
-              <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 text-xs text-muted-foreground">
-                +{recentWork.length - 3} more
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Specialties with proficiency */}
-        {stylist.specialties && stylist.specialties.length > 0 && (
-          <div className="flex gap-1.5 mt-3 flex-wrap">
-            {stylist.specialties.slice(0, 4).map((specialty, i) => {
-              const level = i === 0 ? "expert" : i === 1 ? "advanced" : "skilled";
-              const { label, color } = proficiencyLevels[level];
-              return (
-                <span 
-                  key={specialty} 
-                  className={cn("text-xs px-2 py-1 rounded-full", color)}
-                >
-                  {specialty}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="font-display text-lg text-foreground truncate leading-tight">{stylist.name}</h3>
+              {isFavourite && (
+                <span className="eyebrow text-primary shrink-0">Booked before</span>
+              )}
+            </div>
+            <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
+              {isNew ? (
+                <span className="inline-flex items-center gap-1 text-accent">
+                  <Sparkles className="w-3 h-3" /> New stylist
                 </span>
-              );
-            })}
+              ) : (
+                <span className="inline-flex items-center gap-1 text-foreground">
+                  <Star className="w-3 h-3 fill-current text-primary" />
+                  {stylist.rating?.toFixed(1)}
+                  <span className="text-muted-foreground">({stylist.total_reviews})</span>
+                </span>
+              )}
+              {stylist.distance !== undefined && stylist.distance !== null && (
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {stylist.distance.toFixed(1)} km{travelTime ? ` · ~${travelTime} min` : ""}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {startingPrice !== null && (
+            <div className="text-right shrink-0">
+              <p className="eyebrow text-muted-foreground">From</p>
+              <p className="font-display text-lg text-foreground leading-tight">${startingPrice.toFixed(0)}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Price list — what customers scan next */}
+        {topServices.length > 0 && (
+          <ul className="divide-y divide-border/60 border-y border-border/60">
+            {topServices.map((s) => (
+              <li key={s.id} className="flex items-center gap-2 py-1.5 text-sm">
+                <Scissors className="w-3 h-3 text-muted-foreground shrink-0" />
+                <span className="text-foreground truncate">{s.name}</span>
+                <span className="ml-auto text-muted-foreground shrink-0 tabular-nums">
+                  ${s.price.toFixed(0)}
+                  {s.duration_minutes ? ` · ${s.duration_minutes}m` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Availability — the conversion element */}
+        {nextSlots.length > 0 && (
+          <div className="flex gap-2 overflow-x-auto scrollbar-none">
+            {nextSlots.slice(0, 3).map((slot) => (
+              <button
+                key={slot}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSlotSelect ? onSlotSelect(slot) : onSelect();
+                }}
+                className="shrink-0 px-3 py-1.5 rounded-full border border-primary/40 text-primary text-xs whitespace-nowrap hover:bg-primary/10 transition-colors"
+              >
+                {slot}
+              </button>
+            ))}
           </div>
         )}
 
-        {/* Bio preview */}
-        {stylist.bio && (
-          <p 
-            className={cn(
-              "text-sm text-muted-foreground mt-3",
-              !showFullBio && "line-clamp-2"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowFullBio(!showFullBio);
-            }}
-          >
-            {stylist.bio}
+        {/* Specialties, quiet */}
+        {stylist.specialties && stylist.specialties.length > 0 && (
+          <p className="text-xs text-muted-foreground truncate">
+            {stylist.specialties.slice(0, 4).join(" · ")}
           </p>
         )}
-
-        {/* Map preview and quick actions on selected */}
-        {isSelected && (
-          <>
-            {/* Map Preview */}
-            {stylist.latitude && stylist.longitude && (
-              <div 
-                className="mt-3"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openInMaps(stylist.address, stylist.latitude, stylist.longitude, stylist.name);
-                }}
-              >
-                <MapPreview
-                  latitude={stylist.latitude}
-                  longitude={stylist.longitude}
-                  label={stylist.business_name || stylist.name}
-                  avatarUrl={stylist.photo_url}
-                  avatarFallback={stylist.name}
-                  className="h-[160px] cursor-pointer hover:opacity-90 transition-opacity"
-                />
-                <p className="text-xs text-muted-foreground text-center mt-1">
-                  Tap map to get directions
-                </p>
-              </div>
-            )}
-
-            <div className="flex gap-2 mt-4 pt-3 border-t">
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="flex-1 min-h-[44px]"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <MessageSquare className="w-4 h-4 mr-1" />
-                Message
-              </Button>
-              <Button 
-                size="sm" 
-                variant="outline"
-                className="min-h-[44px]"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Camera className="w-4 h-4 mr-1" />
-                Portfolio
-              </Button>
-            </div>
-          </>
-        )}
-      </CardContent>
+      </div>
     </Card>
   );
 };
