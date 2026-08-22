@@ -175,7 +175,7 @@ const StylistAppointments = () => {
         <div className="min-h-screen bg-background p-4">
           <div className="max-w-4xl mx-auto space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Your Appointments</h1>
+              <h1 className="font-display text-3xl text-foreground">Your Appointments</h1>
               <p className="text-sm text-muted-foreground">Loading your schedule...</p>
             </div>
             <CardSkeleton count={3} />
@@ -199,7 +199,7 @@ const StylistAppointments = () => {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">{t("stylist.appointments.title", "Your Appointments")}</h1>
+              <h1 className="font-display text-3xl text-foreground">{t("stylist.appointments.title", "Your Appointments")}</h1>
               <p className="text-sm text-muted-foreground">{t("stylist.appointments.subtitle", "Manage your bookings")}</p>
             </div>
           </div>

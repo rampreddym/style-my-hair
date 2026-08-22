@@ -323,7 +323,7 @@ const StylistOnboarding = () => {
         {/* Header */}
         <div className="flex justify-between items-start">
           <div className="flex-1 space-y-2">
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className="font-display text-4xl text-foreground">
               {existingStylistId ? "Complete Your Profile" : "Create Your Stylist Profile"}
             </h1>
             <p className="text-muted-foreground">Step {currentStep} of 5</p>

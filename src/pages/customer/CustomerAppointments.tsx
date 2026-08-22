@@ -104,7 +104,7 @@ const CustomerAppointments = () => {
       <CustomerLayout>
         <div className="page-radial p-4">
           <div className="max-w-2xl mx-auto space-y-6 pt-2">
-            <h1 className="text-2xl font-bold text-foreground">{t("customer.appointments.title", "My Appointments")}</h1>
+            <h1 className="font-display text-3xl text-foreground">{t("customer.appointments.title", "My Appointments")}</h1>
             <CardSkeleton count={3} />
           </div>
         </div>
@@ -160,7 +160,7 @@ const CustomerAppointments = () => {
         <div className="max-w-2xl mx-auto space-y-6 pt-2">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">{t("customer.appointments.title", "My Appointments")}</h1>
+              <h1 className="font-display text-3xl text-foreground">{t("customer.appointments.title", "My Appointments")}</h1>
               <p className="text-sm text-muted-foreground">{t("customer.appointments.subtitle", "Manage your bookings")}</p>
             </div>
             <Button 

@@ -155,7 +155,7 @@ const StylistProfile = () => {
                   />
                 ) : (
                   <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center border-4 border-background shadow-lg flex-shrink-0">
-                    <span className="text-2xl font-bold text-white">
+                    <span className="font-display text-2xl text-primary-foreground">
                       {stylist.name?.charAt(0)}
                     </span>
                   </div>

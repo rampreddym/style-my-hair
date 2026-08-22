@@ -92,7 +92,7 @@ const StylistHome = () => {
             <Scissors className="w-10 h-10 text-accent-foreground" />
           </div>
           <div>
-            <h1 className="text-3xl font-extrabold text-foreground">{t("stylist.home.welcome")}</h1>
+            <h1 className="font-display text-4xl text-foreground">{t("stylist.home.welcome")}</h1>
             <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
               {t("stylist.home.setupMessage")}
             </p>
