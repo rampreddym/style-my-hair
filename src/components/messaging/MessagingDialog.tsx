@@ -269,7 +269,7 @@ export const MessagingDialog = ({
           <Button 
             onClick={sendMessage} 
             disabled={sending || !newMessage.trim() || !stylistUserId}
-            className="shadow-glow-primary"
+            className=""
           >
             <Send className="w-4 h-4" />
           </Button>

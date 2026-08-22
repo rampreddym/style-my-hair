@@ -364,7 +364,7 @@ const StylistProfile = () => {
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="flex justify-between items-start">
             <div className="text-center flex-1 space-y-2">
-              <h1 className="text-2xl font-bold text-foreground">{existingStylistId ? t("stylistProfile.editTitle") : t("stylistProfile.title")}</h1>
+              <h1 className="font-display text-3xl text-foreground">{existingStylistId ? t("stylistProfile.editTitle") : t("stylistProfile.title")}</h1>
               <p className="text-sm text-muted-foreground">{t("stylistProfile.subtitle")}</p>
             </div>
             <Button variant="ghost" size="icon" onClick={signOut} className="min-w-[44px] min-h-[44px]">

@@ -155,7 +155,7 @@ const StylistProfile = () => {
                   />
                 ) : (
                   <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center border-4 border-background shadow-lg flex-shrink-0">
-                    <span className="text-2xl font-bold text-white">
+                    <span className="font-display text-2xl text-primary-foreground">
                       {stylist.name?.charAt(0)}
                     </span>
                   </div>
@@ -360,7 +360,7 @@ const StylistProfile = () => {
           {/* Book Now Button */}
           <Button
             onClick={() => navigate(`/customer/booking/${stylistId}`)}
-            className="w-full h-14 rounded-xl text-base font-medium shadow-glow-primary"
+            className="w-full h-14 rounded-xl text-base font-medium"
           >
             <Calendar className="w-5 h-5 mr-2" />
             {t('customer.booking.bookNow')}

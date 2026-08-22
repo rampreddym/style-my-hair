@@ -255,7 +255,7 @@ const CustomerBooking = () => {
         <div className="page-radial p-4">
           <div className="max-w-2xl mx-auto space-y-6 pt-2">
             <div className="text-center space-y-2">
-              <h1 className="text-2xl font-bold text-foreground">{t('customer.booking.title')}</h1>
+              <h1 className="font-display text-3xl text-foreground">{t('customer.booking.title')}</h1>
               <p className="text-muted-foreground">{t('customer.booking.findingStylists')}</p>
             </div>
             <CardSkeleton count={3} />
@@ -271,18 +271,18 @@ const CustomerBooking = () => {
         <div className="max-w-2xl mx-auto space-y-5 pt-2">
           {/* Hero Header */}
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">{t('customer.booking.title')}</h1>
+            <h1 className="font-display text-3xl text-foreground">{t('customer.booking.title')}</h1>
             <p className="text-muted-foreground text-sm">{t('customer.booking.selectStylistSubtitle')}</p>
           </div>
 
           {/* Selected Style Preview */}
           {selectedStyle && (
-            <Card className="border border-primary/20 bg-gradient-hero card-shine overflow-hidden">
+            <Card className="border border-primary/20 bg-gradient-hero overflow-hidden">
               <CardContent className="p-4 flex gap-4 items-center relative z-10">
                 <img
                   src={selectedStyle.generated_image_url}
                   alt={t('customer.booking.selectedStyle')}
-                  className="w-16 h-16 rounded-xl object-cover shadow-glow-primary ring-2 ring-primary/30"
+                  className="w-16 h-16 rounded-xl object-cover ring-2 ring-primary/30"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-foreground flex items-center gap-1">

@@ -31,7 +31,7 @@ const PaymentSuccess = () => {
             <CheckCircle className="w-10 h-10 text-green-500" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Payment Successful!</h1>
+            <h1 className="font-display text-3xl text-foreground">Payment Successful!</h1>
             <p className="text-muted-foreground mt-2">
               Your appointment has been confirmed and payment processed.
             </p>

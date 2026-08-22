@@ -68,7 +68,7 @@ export const BookingConfirmation = ({
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Booking Confirmed!</h2>
+              <h2 className="font-display text-2xl text-foreground">Booking Confirmed!</h2>
               <p className="text-muted-foreground mt-2">Your appointment has been scheduled</p>
             </div>
 

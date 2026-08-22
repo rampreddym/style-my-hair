@@ -168,7 +168,7 @@ const StylistServices = () => {
       <div className="page-radial min-h-screen p-4">
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">{t("stylistServices.title")}</h1>
+            <h1 className="font-display text-3xl text-foreground">{t("stylistServices.title")}</h1>
             <p className="text-sm text-muted-foreground">{t("stylistServices.subtitle")}</p>
           </div>
 
