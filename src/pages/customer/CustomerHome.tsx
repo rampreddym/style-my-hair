@@ -59,7 +59,7 @@ const CustomerHome = () => {
       supabase.from("customer_photos").select("id").eq("customer_id", customerRow.id),
       supabase
         .from("appointments")
-        .select("id, appointment_date, appointment_time, status, stylist:stylists(id, name, photo_url), service:stylist_services(name, duration_minutes)")
+        .select("id, appointment_date, status, stylist:stylists(id, name, photo_url), service:stylist_services(name, duration_minutes)")
         .eq("customer_id", customerRow.id)
         .order("appointment_date", { ascending: true }),
       supabase.from("stylists_public").select("*"),
@@ -73,7 +73,7 @@ const CustomerHome = () => {
     const upcoming = appts.find(
       (a: any) =>
         ["pending", "confirmed"].includes(a.status) &&
-        new Date(`${a.appointment_date}T${a.appointment_time ?? "00:00"}`) >= new Date(Date.now() - 3600_000)
+        new Date(a.appointment_date) >= new Date(Date.now() - 3600_000)
     );
     setNextAppointment(upcoming ?? null);
 
@@ -127,7 +127,7 @@ const CustomerHome = () => {
   const firstName = (customer?.name ?? "").split(" ")[0];
 
   const apptWhen = (a: any) => {
-    const d = new Date(`${a.appointment_date}T${a.appointment_time ?? "00:00"}`);
+    const d = new Date(a.appointment_date);
     const day = isToday(d) ? "Today" : isTomorrow(d) ? "Tomorrow" : format(d, "EEE d MMM");
     return `${day} · ${format(d, "h:mm a")}`;
   };
