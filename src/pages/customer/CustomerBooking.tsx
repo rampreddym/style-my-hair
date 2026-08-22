@@ -33,6 +33,7 @@ const CustomerBooking = () => {
   const [filters, setFilters] = useState<StylistFilters>(defaultFilters);
   const [allServices, setAllServices] = useState<any[]>([]);
   const [stylistServices, setStylistServices] = useState<Record<string, any[]>>({});
+  const [stylistPortfolio, setStylistPortfolio] = useState<Record<string, string[]>>({});
 
   const {
     lastBooking,
@@ -68,7 +69,7 @@ const CustomerBooking = () => {
         setCustomerId(customerData.id);
         setCustomerLocation({ latitude: customerData.latitude, longitude: customerData.longitude });
       } else {
-        navigate("/customer");
+        navigate("/customer/profile");
       }
     };
     if (!authLoading) {
@@ -85,11 +86,12 @@ const CustomerBooking = () => {
     if (!customerId) return;
     setLoading(true);
 
-    const [styleRes, customerRes, stylistsRes, servicesRes] = await Promise.all([
+    const [styleRes, customerRes, stylistsRes, servicesRes, portfolioRes] = await Promise.all([
       supabase.from("customer_generated_styles").select("*").eq("customer_id", customerId).eq("selected", true).maybeSingle(),
       supabase.from("customers").select("latitude, longitude").eq("id", customerId).single(),
       supabase.from("stylists_public").select("*").order("rating", { ascending: false }),
       supabase.from("stylist_services").select("*"),
+      supabase.from("stylist_portfolio").select("stylist_id, image_url"),
     ]);
 
     if (styleRes.data) setSelectedStyle(styleRes.data);
@@ -104,6 +106,15 @@ const CustomerBooking = () => {
     }
     setStylistServices(svcMap);
     setAllServices(servicesRes.data || []);
+
+    // Build stylist→portfolio map
+    const pfMap: Record<string, string[]> = {};
+    for (const p of portfolioRes.data ?? []) {
+      if (!pfMap[p.stylist_id]) pfMap[p.stylist_id] = [];
+      pfMap[p.stylist_id].push(p.image_url);
+    }
+    setStylistPortfolio(pfMap);
+
 
     if (stylistsRes.data) {
       const customer = customerRes.data;
@@ -343,6 +354,7 @@ const CustomerBooking = () => {
                     isSelected={false}
                     onSelect={() => handleStylistSelect(stylist)}
                     services={stylistServices[stylist.id] || []}
+                    recentWork={stylistPortfolio[stylist.id] || []}
                   />
                 </div>
               ))}
