@@ -136,7 +136,7 @@ export const StylistSearchFilters = ({
             className={cn(
               "shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
               filters.sortBy === key
-                ? "bg-primary text-primary-foreground shadow-glow-primary"
+                ? "bg-primary text-primary-foreground"
                 : "bg-secondary/60 text-muted-foreground hover:bg-secondary"
             )}
           >

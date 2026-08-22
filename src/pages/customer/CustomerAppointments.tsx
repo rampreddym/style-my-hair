@@ -165,7 +165,7 @@ const CustomerAppointments = () => {
             </div>
             <Button 
               onClick={() => navigate("/customer/booking")} 
-              className="min-h-[44px] bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow-primary font-semibold gap-2"
+              className="min-h-[44px] bg-primary hover:bg-primary/90 text-primary-foreground font-semibold gap-2"
             >
               <CalendarPlus className="w-4 h-4" />
               {t("customer.appointments.bookNew", "Book New")}
@@ -177,7 +177,7 @@ const CustomerAppointments = () => {
             <Card className="border-dashed border-2 border-primary/20">
               <CardContent className="py-12 text-center space-y-4">
                 <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-primary icon-glow-primary" />
+                  <Sparkles className="w-8 h-8 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground text-lg">{t("customer.appointments.noAppointments", "No appointments yet")}</h3>
@@ -185,7 +185,7 @@ const CustomerAppointments = () => {
                 </div>
                 <Button 
                   onClick={() => navigate("/customer/booking")}
-                  className="bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow-primary"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   {t("customer.appointments.findStylists", "Find Stylists")}
                 </Button>
@@ -198,7 +198,7 @@ const CustomerAppointments = () => {
             <Card variant="glow" className="border border-primary/20 shadow-card">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Calendar className="w-5 h-5 text-primary icon-glow-primary" />
+                  <Calendar className="w-5 h-5 text-primary" />
                   <span className="text-foreground">{t("customer.appointments.upcoming", "Upcoming")} ({upcomingAppointments.length})</span>
                 </CardTitle>
               </CardHeader>
@@ -255,7 +255,7 @@ const CustomerAppointments = () => {
                                 />
                               )}
                             </div>
-                            <span className="font-bold text-lg text-gradient-primary flex-shrink-0">${appointment.price}</span>
+                            <span className="font-bold text-lg text-primary flex-shrink-0">${appointment.price}</span>
                           </div>
 
                           <div className="flex flex-wrap gap-2 mt-3">

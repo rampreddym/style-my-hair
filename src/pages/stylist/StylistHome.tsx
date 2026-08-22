@@ -65,7 +65,7 @@ const StylistHome = () => {
     return (
       <div className="page-radial flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-accent flex items-center justify-center animate-pulse-glow">
+          <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center">
             <Scissors className="w-8 h-8 text-accent-foreground" />
           </div>
           <div className="text-muted-foreground animate-pulse">{t("common.loading")}</div>
@@ -88,7 +88,7 @@ const StylistHome = () => {
       <div className="max-w-lg mx-auto pt-8 space-y-8 relative z-10">
         {/* Brand Hero */}
         <div className="text-center space-y-4 animate-slide-up">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-accent flex items-center justify-center shadow-glow-accent">
+          <div className="w-20 h-20 mx-auto rounded-2xl bg-accent flex items-center justify-center">
             <Scissors className="w-10 h-10 text-accent-foreground" />
           </div>
           <div>
@@ -101,7 +101,7 @@ const StylistHome = () => {
 
         <div className="space-y-4">
           {/* Step 1: Onboarding */}
-          <Card className={`transition-all animate-fade-in ${onboardingComplete ? "border-success/30 bg-success/5" : "border-primary/30 shadow-glow-primary"}`}>
+          <Card className={`transition-all animate-fade-in ${onboardingComplete ? "border-success/30 bg-success/5" : "border-primary/30"}`}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                 {onboardingComplete ? (
@@ -109,7 +109,7 @@ const StylistHome = () => {
                     <CheckCircle className="w-5 h-5 text-success" />
                   </div>
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center text-sm font-bold text-primary-foreground">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground">
                     1
                   </div>
                 )}
@@ -125,7 +125,7 @@ const StylistHome = () => {
               <CardContent className="pt-0">
                 <Button 
                   onClick={() => navigate("/stylist/onboarding")} 
-                  className="w-full h-12 bg-gradient-primary hover:opacity-90 text-primary-foreground font-semibold shadow-glow-primary"
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
                 >
                   {t("stylist.home.getStarted")}
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -159,7 +159,7 @@ const StylistHome = () => {
               <CardContent className="pt-0">
                 <Button 
                   onClick={() => navigate("/stylist/services")} 
-                  className="w-full h-12 bg-gradient-accent hover:opacity-90 text-accent-foreground font-semibold"
+                  className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
                 >
                   {t("stylist.services.addService")}
                   <ArrowRight className="w-4 h-4 ml-2" />

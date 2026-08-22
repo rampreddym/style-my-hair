@@ -360,7 +360,7 @@ const StylistProfile = () => {
           {/* Book Now Button */}
           <Button
             onClick={() => navigate(`/customer/booking/${stylistId}`)}
-            className="w-full h-14 rounded-xl text-base font-medium shadow-glow-primary"
+            className="w-full h-14 rounded-xl text-base font-medium"
           >
             <Calendar className="w-5 h-5 mr-2" />
             {t('customer.booking.bookNow')}

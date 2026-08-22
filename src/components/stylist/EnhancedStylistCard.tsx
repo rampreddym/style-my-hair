@@ -69,7 +69,7 @@ export const EnhancedStylistCard = ({
       onClick={onSelect}
       variant={isSelected ? "accent" : "default"}
       className={cn(
-        "cursor-pointer transition-all overflow-hidden no-tap-highlight active:scale-[0.98] card-shine",
+        "cursor-pointer transition-all overflow-hidden no-tap-highlight active:scale-[0.98]",
         isSelected 
           ? "ring-2 ring-primary border-primary shadow-elevated" 
           : "hover:border-primary/30 hover:shadow-elevated"
@@ -121,7 +121,7 @@ export const EnhancedStylistCard = ({
             {/* Rating and distance */}
             <div className="flex items-center gap-4 mt-1 text-sm">
               <span className="flex items-center gap-1 text-warning">
-                <Star className="w-4 h-4 fill-current icon-glow-warning" />
+                <Star className="w-4 h-4 fill-current" />
                 {stylist.rating?.toFixed(1) || "New"}
                 {stylist.total_reviews && (
                   <span className="text-muted-foreground">

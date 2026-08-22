@@ -208,7 +208,7 @@ const StylistAppointments = () => {
         <Card className="border border-accent/20 shadow-card">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Calendar className="w-5 h-5 text-accent icon-glow-accent" />
+              <Calendar className="w-5 h-5 text-accent" />
               {t("stylist.appointments.upcoming", "Upcoming")} ({upcomingAppointments.length})
             </CardTitle>
           </CardHeader>
