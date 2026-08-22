@@ -1,19 +1,21 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { User, Sparkles, CalendarDays, Scissors } from "lucide-react";
+import { User, Sparkles, CalendarDays, Scissors, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
   path: string;
   labelKey: string;
+  fallback: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
 const customerNavItems: NavItem[] = [
-  { path: "/customer", labelKey: "navigation.profile", icon: User },
-  { path: "/customer/style", labelKey: "navigation.style", icon: Sparkles },
-  { path: "/customer/booking", labelKey: "navigation.booking", icon: Scissors },
-  { path: "/customer/appointments", labelKey: "navigation.appointments", icon: CalendarDays },
+  { path: "/customer", labelKey: "navigation.home", fallback: "Home", icon: Home },
+  { path: "/customer/style", labelKey: "navigation.style", fallback: "Style", icon: Sparkles },
+  { path: "/customer/booking", labelKey: "navigation.booking", fallback: "Book", icon: Scissors },
+  { path: "/customer/appointments", labelKey: "navigation.appointments", fallback: "Appointments", icon: CalendarDays },
+  { path: "/customer/profile", labelKey: "navigation.profile", fallback: "Profile", icon: User },
 ];
 
 export function BottomNavigation() {
