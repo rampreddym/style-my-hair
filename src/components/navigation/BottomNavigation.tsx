@@ -52,7 +52,7 @@ export function BottomNavigation() {
                 <span className="absolute -top-px w-10 h-px bg-primary" />
               )}
 
-              <Icon className="w-5 h-5 relative z-10" strokeWidth={active ? 2 : 1.5} />
+              <Icon className="w-5 h-5 relative z-10" />
 
               <span
                 className={cn(
