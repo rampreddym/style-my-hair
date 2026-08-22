@@ -12,7 +12,7 @@ import { Scissors, User, Mail, Lock, Chrome, Sparkles } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { z } from "zod";
 import { getUserFriendlyError } from '@/lib/errorHandler';
-import hairBnbLogo from "@/assets/mirra-mark.png";
+import mirraLogo from "@/assets/mirra-mark.png";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -111,7 +111,7 @@ const Auth = () => {
       {/* Brand Header */}
       <div className="w-full max-w-md mb-10 animate-fade-in">
         <img
-          src={hairBnbLogo}
+          src={mirraLogo}
           alt="Mirra logo"
           className="w-16 h-16 mb-6 object-contain"
         />
