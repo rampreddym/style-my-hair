@@ -23,7 +23,7 @@ const CustomerAppointments = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [searchParams] = useSearchParams();
   const feedbackAppointmentId = searchParams.get("feedback");
   
@@ -36,12 +36,13 @@ const CustomerAppointments = () => {
   const [rescheduleAppointment, setRescheduleAppointment] = useState<any>(null);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/auth");
       return;
     }
     fetchCustomerAndAppointments();
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchCustomerAndAppointments = useCallback(async () => {
     if (!user) return;
