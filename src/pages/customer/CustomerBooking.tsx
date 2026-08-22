@@ -33,6 +33,7 @@ const CustomerBooking = () => {
   const [filters, setFilters] = useState<StylistFilters>(defaultFilters);
   const [allServices, setAllServices] = useState<any[]>([]);
   const [stylistServices, setStylistServices] = useState<Record<string, any[]>>({});
+  const [stylistPortfolio, setStylistPortfolio] = useState<Record<string, string[]>>({});
 
   const {
     lastBooking,
