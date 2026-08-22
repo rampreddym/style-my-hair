@@ -25,7 +25,7 @@ const AuthCallback = () => {
           .from('user_roles')
           .select('role')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
         if (existingRole) {
           // User has a role, navigate to their dashboard
@@ -45,7 +45,7 @@ const AuthCallback = () => {
           navigate(role === 'stylist' ? '/stylist' : '/customer');
         }
       } else {
-        navigate('/');
+        navigate('/auth');
       }
     };
 
