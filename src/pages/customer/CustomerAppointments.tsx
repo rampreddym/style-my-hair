@@ -36,12 +36,13 @@ const CustomerAppointments = () => {
   const [rescheduleAppointment, setRescheduleAppointment] = useState<any>(null);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/auth");
       return;
     }
     fetchCustomerAndAppointments();
-  }, [user]);
+  }, [user, authLoading]);
 
   const fetchCustomerAndAppointments = useCallback(async () => {
     if (!user) return;
