@@ -131,7 +131,7 @@ const Auth = () => {
             onClick={() => setIsStylist(false)}
             className={`flex items-center justify-center gap-2 flex-1 px-4 py-3 min-h-[52px] text-sm transition-colors no-tap-highlight ${
               !isStylist
-                ? 'text-foreground border-b-2 border-primary -mb-px font-medium'
+                 ? 'text-brand border-b-2 border-brand -mb-px font-medium'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -142,7 +142,7 @@ const Auth = () => {
             onClick={() => setIsStylist(true)}
             className={`flex items-center justify-center gap-2 flex-1 px-4 py-3 min-h-[52px] text-sm transition-colors no-tap-highlight ${
               isStylist
-                ? 'text-foreground border-b-2 border-accent -mb-px font-medium'
+                 ? 'text-brand border-b-2 border-brand -mb-px font-medium'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -175,13 +175,13 @@ const Auth = () => {
           <TabsList className="grid w-full grid-cols-2 bg-transparent h-11 p-0 gap-6 justify-start rounded-none border-b border-border">
             <TabsTrigger
               value="signin"
-              className="h-11 rounded-none bg-transparent px-0 eyebrow text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary"
+               className="h-11 rounded-none bg-transparent px-0 eyebrow text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-brand data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-brand"
             >
               {t("auth.signIn")}
             </TabsTrigger>
             <TabsTrigger
               value="signup"
-              className="h-11 rounded-none bg-transparent px-0 eyebrow text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary"
+               className="h-11 rounded-none bg-transparent px-0 eyebrow text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-brand data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-brand"
             >
               {t("auth.signUp")}
             </TabsTrigger>
@@ -199,7 +199,7 @@ const Auth = () => {
                   autoComplete="email"
                   autoCapitalize="none"
                   placeholder={t("auth.emailPlaceholder")}
-                  className="pl-10 h-13 min-h-[52px] border border-border bg-card focus:border-primary text-base text-foreground rounded-md"
+                   className="pl-10 h-13 min-h-[52px] border border-hairline-strong bg-card focus:border-brand text-base text-foreground rounded-control"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -214,7 +214,7 @@ const Auth = () => {
                   type="password"
                   autoComplete="current-password"
                   placeholder={t("auth.passwordPlaceholder")}
-                  className="pl-10 h-13 min-h-[52px] border border-border bg-card focus:border-primary text-base text-foreground rounded-md"
+                   className="pl-10 h-13 min-h-[52px] border border-hairline-strong bg-card focus:border-brand text-base text-foreground rounded-control"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -249,7 +249,7 @@ const Auth = () => {
                   autoComplete="email"
                   autoCapitalize="none"
                   placeholder={t("auth.emailPlaceholder")}
-                  className="pl-10 h-13 min-h-[52px] border border-border bg-card focus:border-primary text-base rounded-md"
+                   className="pl-10 h-13 min-h-[52px] border border-hairline-strong bg-card focus:border-brand text-base rounded-control"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -264,7 +264,7 @@ const Auth = () => {
                   type="password"
                   autoComplete="new-password"
                   placeholder={t("auth.passwordPlaceholder")}
-                  className="pl-10 h-13 min-h-[52px] border border-border bg-card focus:border-primary text-base rounded-md"
+                   className="pl-10 h-13 min-h-[52px] border border-hairline-strong bg-card focus:border-brand text-base rounded-control"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -272,9 +272,7 @@ const Auth = () => {
             </div>
             <Button
               className={`w-full h-13 min-h-[52px] font-medium text-base active:scale-[0.99] transition-all rounded-md ${
-                isStylist
-                  ? "bg-accent hover:bg-accent/90 text-accent-foreground"
-                  : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                 "bg-primary hover:bg-primary/90 text-primary-foreground"
               }`}
               onClick={handleSignUp}
               disabled={isSubmitting}

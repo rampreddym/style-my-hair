@@ -24,8 +24,8 @@ export function StylistBottomNavigation() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border safe-area-bottom safe-area-left safe-area-right">
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
+    <nav className="glass fixed bottom-0 left-0 right-0 z-50 border-t border-hairline safe-area-bottom safe-area-left safe-area-right">
+      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
         {stylistNavItems.map((item) => {
           const active = isActive(item.path);
           const Icon = item.icon;
@@ -37,19 +37,19 @@ export function StylistBottomNavigation() {
               className={cn(
                 "relative flex flex-col items-center justify-center min-w-[64px] min-h-[48px] px-3 py-2 transition-colors no-tap-highlight no-select",
                 "active:opacity-70",
-                active ? "text-accent" : "text-muted-foreground hover:text-foreground"
+                active ? "text-brand" : "text-dim hover:text-foreground"
               )}
               aria-label={t(item.labelKey)}
               aria-current={active ? "page" : undefined}
             >
-              {active && <span className="absolute -top-px w-10 h-px bg-accent" />}
+              {active && <span className="absolute top-1 h-1 w-1 rounded-full bg-brand" />}
 
               <Icon className="w-5 h-5 relative z-10" />
 
               <span
                 className={cn(
                   "eyebrow mt-1.5 relative z-10",
-                  active ? "text-accent" : "text-muted-foreground"
+                  active ? "text-brand" : "text-dim"
                 )}
               >
                 {t(item.labelKey)}
