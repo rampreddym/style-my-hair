@@ -392,7 +392,7 @@ const StylistAppointments = () => {
                         </Badge>
                       )}
                       {appointment.check_in_status === 'no_show' && (
-                        <Badge variant="secondary" className="bg-red-100 text-red-700">
+                        <Badge variant="secondary" className="bg-destructive/10 text-destructive">
                           <AlertTriangle className="w-3 h-3 mr-1" />
                           No Show
                         </Badge>
