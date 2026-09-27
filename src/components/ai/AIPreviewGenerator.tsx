@@ -67,7 +67,7 @@ export const AIPreviewGenerator = ({
 
   if (isGenerating) {
     return (
-      <div className="relative aspect-square bg-muted/30 rounded-2xl overflow-hidden border-2 border-border">
+      <div className="relative aspect-square bg-muted/30 rounded-card overflow-hidden border border-hairline img-ring">
         {/* Background image (faded) */}
         {beforeImage && (
           <img 
@@ -78,15 +78,15 @@ export const AIPreviewGenerator = ({
         )}
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-background/60 backdrop-blur-sm flex flex-col items-center justify-center p-6">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 p-6">
           {/* Animated spinner */}
           <div className="relative mb-6">
             <div className="w-20 h-20 rounded-full border-4 border-muted" />
             <div 
-              className="absolute inset-0 w-20 h-20 rounded-full border-4 border-primary border-t-transparent animate-spin"
+              className="absolute inset-0 w-20 h-20 rounded-full border-4 border-vapor border-t-transparent animate-spin"
               style={{ animationDuration: '1.5s' }}
             />
-            <Loader2 className="absolute inset-0 m-auto w-8 h-8 text-primary animate-pulse" />
+            <Loader2 className="absolute inset-0 m-auto w-8 h-8 text-vapor animate-pulse" aria-label="AI generation in progress" />
           </div>
 
           {/* Progress */}
@@ -101,7 +101,7 @@ export const AIPreviewGenerator = ({
             {/* Progress bar */}
             <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div 
-                className="h-full bg-gradient-to-r from-primary to-primary/70 transition-all duration-500 rounded-full"
+                 className="h-full bg-vapor transition-all duration-smooth ease-out rounded-full"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -109,8 +109,8 @@ export const AIPreviewGenerator = ({
 
           {/* Rotating tips */}
           <div className="mt-8 max-w-xs text-center animate-fade-in">
-            <div className="flex items-start gap-2 bg-primary/5 rounded-xl p-4">
-              <Lightbulb className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2 rounded-control border border-vapor/30 bg-surface2 p-4">
+              <Lightbulb className="w-5 h-5 text-vapor flex-shrink-0 mt-0.5" />
               <p className="text-sm text-foreground">{generationTips[currentTip]}</p>
             </div>
           </div>
@@ -125,7 +125,7 @@ export const AIPreviewGenerator = ({
       <div className="space-y-3">
         <div 
           ref={sliderRef}
-          className="relative aspect-square rounded-2xl overflow-hidden border-2 border-border cursor-ew-resize select-none"
+           className="relative aspect-square rounded-card overflow-hidden border border-vapor/40 cursor-ew-resize select-none img-ring"
           onMouseMove={(e) => e.buttons === 1 && handleSliderMove(e.clientX)}
           onTouchMove={(e) => handleSliderMove(e.touches[0].clientX)}
         >
@@ -133,7 +133,7 @@ export const AIPreviewGenerator = ({
           <img 
             src={afterImage} 
             alt="After" 
-            className="absolute inset-0 w-full h-full object-cover"
+             className="absolute inset-0 w-full h-full object-cover img-ring"
           />
 
           {/* Before image (clipped) */}
@@ -163,17 +163,17 @@ export const AIPreviewGenerator = ({
           </div>
 
           {/* Labels */}
-          <div className="absolute top-3 left-3 px-2 py-1 bg-black/50 rounded text-white text-xs">
+          <div className="media-label absolute top-3 left-3 rounded px-2 py-1 text-xs">
             Before
           </div>
-          <div className="absolute top-3 right-3 px-2 py-1 bg-black/50 rounded text-white text-xs">
+          <div className="media-label absolute top-3 right-3 rounded px-2 py-1 text-xs">
             After
           </div>
         </div>
 
         <button
           onClick={() => setShowComparison(false)}
-          className="w-full py-2 text-sm text-primary hover:underline"
+            className="w-full py-2 text-sm font-semibold text-brand hover:underline"
         >
           Hide comparison
         </button>
@@ -184,12 +184,12 @@ export const AIPreviewGenerator = ({
   // Default: show after image with comparison toggle
   return (
     <div className="space-y-3">
-      <div className="relative aspect-square bg-muted/30 rounded-2xl overflow-hidden border-2 border-border">
+      <div className="relative aspect-square bg-muted/30 rounded-card overflow-hidden border border-hairline img-ring">
         {afterImage ? (
           <img 
             src={afterImage} 
             alt="Generated style" 
-            className="w-full h-full object-cover"
+             className="w-full h-full object-cover img-ring"
           />
         ) : beforeImage ? (
           <img 
@@ -207,7 +207,7 @@ export const AIPreviewGenerator = ({
       {beforeImage && afterImage && (
         <button
           onClick={() => setShowComparison(true)}
-          className="w-full py-2 text-sm text-primary hover:underline flex items-center justify-center gap-2"
+            className="w-full py-2 text-sm font-semibold text-brand hover:underline flex items-center justify-center gap-2"
         >
           <ArrowLeftRight className="w-4 h-4" />
           Compare before/after

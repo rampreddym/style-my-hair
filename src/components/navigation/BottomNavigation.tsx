@@ -31,8 +31,8 @@ export function BottomNavigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border safe-area-bottom safe-area-left safe-area-right">
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
+    <nav className="glass fixed bottom-0 left-0 right-0 z-50 border-t border-hairline safe-area-bottom safe-area-left safe-area-right">
+      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
         {customerNavItems.map((item) => {
           const active = isActive(item.path);
           const Icon = item.icon;
@@ -44,14 +44,14 @@ export function BottomNavigation() {
               className={cn(
                 "relative flex flex-1 flex-col items-center justify-center min-w-0 min-h-[48px] px-1 py-2 transition-colors no-tap-highlight no-select",
                 "active:opacity-70",
-                active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                 active ? "text-brand" : "text-dim hover:text-foreground"
               )}
               aria-label={t(item.labelKey, item.fallback)}
               aria-current={active ? "page" : undefined}
             >
               {/* Active indicator rule */}
               {active && (
-                <span className="absolute -top-px w-8 h-px bg-primary" />
+                <span className="absolute top-1 h-1 w-1 rounded-full bg-brand" />
               )}
 
               <Icon className="w-5 h-5 relative z-10" />
@@ -59,7 +59,7 @@ export function BottomNavigation() {
               <span
                 className={cn(
                   "eyebrow mt-1.5 relative z-10 text-[9px] max-w-full truncate",
-                  active ? "text-primary" : "text-muted-foreground"
+                  active ? "text-brand" : "text-dim"
                 )}
               >
                 {t(item.labelKey, item.fallback)}

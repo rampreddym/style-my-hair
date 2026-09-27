@@ -145,13 +145,13 @@ const StylistAppointments = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-success/10 text-success border-success/25";
+        return "bg-ok/10 text-ok border-ok/25";
       case "completed":
-        return "bg-accent/10 text-accent border-accent/25";
+        return "bg-brand/10 text-brand border-brand/25";
       case "cancelled":
-        return "bg-red-500/10 text-red-600 border-red-200";
+        return "bg-destructive/10 text-destructive border-destructive/25";
       default:
-        return "bg-warning/10 text-warning border-amber-200";
+        return "bg-warn/10 text-warn border-warn/25";
     }
   };
 
@@ -205,18 +205,18 @@ const StylistAppointments = () => {
           </div>
 
           {/* Upcoming Appointments */}
-        <Card className="border border-accent/20 shadow-card">
+        <Card className="border border-hairline shadow-e1">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Calendar className="w-5 h-5 text-accent" />
+              <Calendar className="w-5 h-5 text-brand" />
               {t("stylist.appointments.upcoming", "Upcoming")} ({upcomingAppointments.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
             {upcomingAppointments.length === 0 ? (
               <div className="text-center py-10 space-y-3">
-                <div className="w-14 h-14 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center">
-                  <Calendar className="w-7 h-7 text-accent" />
+                 <div className="w-14 h-14 mx-auto rounded-card bg-surface2 flex items-center justify-center">
+                   <Calendar className="w-7 h-7 text-brand" />
                 </div>
                 <p className="text-muted-foreground">{t("stylist.appointments.noUpcoming", "No upcoming appointments")}</p>
               </div>
@@ -225,14 +225,14 @@ const StylistAppointments = () => {
                 {upcomingAppointments.map((appointment) => (
                   <div
                     key={appointment.id}
-                    className="p-4 border-2 rounded-xl space-y-4 hover:border-primary/50 transition-colors"
+                    className="p-4 border border-hairline rounded-control space-y-4 hover:border-hairline-strong transition-colors"
                   >
                     {/* Header row */}
                     <div className="flex items-start justify-between gap-4">
                       {/* Customer info with photo */}
                       <div className="flex gap-3">
                         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-lg font-bold text-primary">
+                           <span className="text-lg font-semibold text-brand">
                             {appointment.customer?.name?.charAt(0) || "?"}
                           </span>
                         </div>
@@ -268,14 +268,14 @@ const StylistAppointments = () => {
                       {appointment.generated_style?.generated_image_url && (
                         <Dialog>
                           <DialogTrigger asChild>
-                            <button className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-primary/20 hover:border-primary transition-colors flex-shrink-0">
+                            <button className="relative w-20 h-20 rounded-control overflow-hidden border border-vapor/40 hover:border-vapor transition-colors flex-shrink-0">
                               <img
                                 src={appointment.generated_style.generated_image_url}
                                 alt="Requested style"
-                                className="w-full h-full object-cover"
+                                className="img-ring w-full h-full object-cover"
                               />
-                              <div className="absolute bottom-1 right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                                <Sparkles className="w-3 h-3 text-primary-foreground" />
+                              <div className="absolute bottom-1 right-1 flex items-center gap-1 rounded-pill bg-background/80 px-1.5 py-1 text-[9px] text-vapor">
+                                <Sparkles className="w-3 h-3" /> AI
                               </div>
                             </button>
                           </DialogTrigger>
@@ -392,7 +392,7 @@ const StylistAppointments = () => {
                         </Badge>
                       )}
                       {appointment.check_in_status === 'no_show' && (
-                        <Badge variant="secondary" className="bg-red-100 text-red-700">
+                        <Badge variant="secondary" className="bg-destructive/10 text-destructive">
                           <AlertTriangle className="w-3 h-3 mr-1" />
                           No Show
                         </Badge>

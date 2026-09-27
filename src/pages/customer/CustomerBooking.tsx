@@ -288,17 +288,17 @@ const CustomerBooking = () => {
 
           {/* Selected Style Preview */}
           {selectedStyle && (
-            <Card className="border border-primary/20 bg-gradient-hero overflow-hidden">
+            <Card className="border border-vapor/35 overflow-hidden">
               <CardContent className="p-4 flex gap-4 items-center relative z-10">
                 <img
                   src={selectedStyle.generated_image_url}
                   alt={t('customer.booking.selectedStyle')}
-                  className="w-16 h-16 rounded-xl object-cover ring-2 ring-primary/30"
+                   className="img-ring w-16 h-16 rounded-control object-cover ring-1 ring-vapor/40"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-primary" />
-                    {t('customer.booking.yourSelectedStyle')}
+                     <Sparkles className="w-3.5 h-3.5 text-vapor" aria-label="AI-generated" />
+                     AI preview · {t('customer.booking.yourSelectedStyle')}
                   </p>
                   <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{selectedStyle.style_prompt}</p>
                 </div>
@@ -318,7 +318,7 @@ const CustomerBooking = () => {
           {/* Distance Filter */}
           <Card className="p-4 shadow-card border border-border/30">
             <div className="flex items-center gap-2 mb-3">
-              <MapPin className="w-4 h-4 text-accent" />
+               <MapPin className="w-4 h-4 text-brand" />
               <span className="text-sm font-medium text-foreground">{t('customer.booking.searchRadius', 'Search Radius')}</span>
             </div>
             <DistanceSlider value={maxDistance} onChange={setMaxDistance} maxDistance={50} />
@@ -327,17 +327,17 @@ const CustomerBooking = () => {
           {/* Stylists Count */}
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-foreground">{t('customer.booking.availableStylists')}</h2>
-            <span className="text-sm text-muted-foreground px-3 py-1 rounded-full bg-secondary/50">
+            <span className="tnum text-sm text-muted-foreground px-3 py-1 rounded-pill bg-secondary/50">
               {t('customer.booking.stylistsFound', { count: filteredStylists.length })}
             </span>
           </div>
 
           {/* Empty State */}
           {filteredStylists.length === 0 ? (
-            <Card className="border-dashed border-2 border-accent/20">
+            <Card className="border-dashed border-hairline-strong">
               <CardContent className="py-10 text-center space-y-3">
-                <div className="w-14 h-14 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center">
-                  <Search className="w-7 h-7 text-accent" />
+                 <div className="w-14 h-14 mx-auto rounded-card bg-surface2 flex items-center justify-center">
+                   <Search className="w-7 h-7 text-brand" />
                 </div>
                 <div>
                   <p className="font-semibold text-foreground">{t('customer.booking.noStylistsInRange', { distance: maxDistance })}</p>

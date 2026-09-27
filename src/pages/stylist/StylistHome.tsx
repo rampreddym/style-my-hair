@@ -65,8 +65,8 @@ const StylistHome = () => {
     return (
       <div className="page-radial flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center">
-            <Scissors className="w-8 h-8 text-accent-foreground" />
+          <div className="w-16 h-16 rounded-card bg-surface2 flex items-center justify-center">
+            <Scissors className="w-8 h-8 text-brand" />
           </div>
           <div className="text-muted-foreground animate-pulse">{t("common.loading")}</div>
         </div>
@@ -77,8 +77,6 @@ const StylistHome = () => {
   return (
     <div className="page-radial min-h-screen p-4 safe-area-top relative overflow-hidden">
       {/* Decorative elements */}
-      <div className="absolute top-20 right-10 w-40 h-40 rounded-full bg-accent/5 blur-3xl animate-float" />
-      <div className="absolute bottom-40 left-10 w-32 h-32 rounded-full bg-primary/5 blur-3xl animate-float" style={{ animationDelay: '1s' }} />
       
       {/* Language Switcher */}
       <div className="absolute top-4 right-4 z-10">
@@ -88,8 +86,8 @@ const StylistHome = () => {
       <div className="max-w-lg mx-auto pt-8 space-y-8 relative z-10">
         {/* Brand Hero */}
         <div className="text-center space-y-4 animate-slide-up">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-accent flex items-center justify-center">
-            <Scissors className="w-10 h-10 text-accent-foreground" />
+           <div className="w-20 h-20 mx-auto rounded-card bg-surface2 border border-hairline flex items-center justify-center">
+             <Scissors className="w-10 h-10 text-brand" />
           </div>
           <div>
             <h1 className="font-display text-4xl text-foreground">{t("stylist.home.welcome")}</h1>
@@ -101,7 +99,7 @@ const StylistHome = () => {
 
         <div className="space-y-4">
           {/* Step 1: Onboarding */}
-          <Card className={`transition-all animate-fade-in ${onboardingComplete ? "border-success/30 bg-success/5" : "border-primary/30"}`}>
+          <Card className={`transition-all animate-fade-in ${onboardingComplete ? "border-ok/30" : "border-brand/30"}`}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                 {onboardingComplete ? (
@@ -135,7 +133,7 @@ const StylistHome = () => {
           </Card>
 
           {/* Step 2: Services */}
-          <Card className={`transition-all animate-fade-in ${hasServices ? "border-success/30 bg-success/5" : onboardingComplete ? "border-accent/30" : "opacity-40"}`} style={{ animationDelay: '100ms' }}>
+          <Card className={`transition-all animate-fade-in ${hasServices ? "border-ok/30" : onboardingComplete ? "border-brand/30" : "opacity-40"}`} style={{ animationDelay: '100ms' }}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                 {hasServices ? (
@@ -159,7 +157,7 @@ const StylistHome = () => {
               <CardContent className="pt-0">
                 <Button 
                   onClick={() => navigate("/stylist/services")} 
-                  className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
                 >
                   {t("stylist.services.addService")}
                   <ArrowRight className="w-4 h-4 ml-2" />

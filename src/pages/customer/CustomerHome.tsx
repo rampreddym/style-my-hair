@@ -192,7 +192,7 @@ const CustomerHome = () => {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="eyebrow text-primary">Next appointment</p>
+                 <p className="eyebrow text-brand">Next appointment</p>
                   <p className="text-foreground truncate">
                     {nextAppointment.service?.name ?? "Appointment"} with {nextAppointment.stylist?.name}
                   </p>
@@ -218,17 +218,17 @@ const CustomerHome = () => {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => navigate("/customer/style")}
-              className="text-left p-4 rounded-lg border border-border bg-card hover:border-primary/40 transition-colors no-tap-highlight"
+              className="text-left p-4 rounded-card border border-hairline bg-card shadow-e1 hover:border-brand/50 transition-colors no-tap-highlight"
             >
-              <Sparkles className="w-5 h-5 text-primary" />
+               <Sparkles className="w-5 h-5 text-vapor" aria-label="AI preview" />
               <p className="font-display text-lg text-foreground mt-2 leading-tight">Preview a look</p>
               <p className="text-xs text-muted-foreground mt-0.5">See it on you before you sit</p>
             </button>
             <button
               onClick={() => navigate("/customer/booking")}
-              className="text-left p-4 rounded-lg border border-border bg-card hover:border-primary/40 transition-colors no-tap-highlight"
+              className="text-left p-4 rounded-card border border-hairline bg-card shadow-e1 hover:border-brand/50 transition-colors no-tap-highlight"
             >
-              <Scissors className="w-5 h-5 text-accent" />
+               <Scissors className="w-5 h-5 text-brand" />
               <p className="font-display text-lg text-foreground mt-2 leading-tight">Find a stylist</p>
               <p className="text-xs text-muted-foreground mt-0.5">Browse work, prices, availability</p>
             </button>
@@ -237,7 +237,7 @@ const CustomerHome = () => {
           {/* Setup nudges */}
           {photoCount < 5 && (
             <Card className="p-4 flex items-center gap-3 border-dashed">
-              <Camera className="w-5 h-5 text-primary shrink-0" />
+               <Camera className="w-5 h-5 text-brand shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-foreground">Add your hair photos ({photoCount}/5)</p>
                 <p className="text-xs text-muted-foreground">Required for accurate AI previews.</p>
@@ -250,7 +250,7 @@ const CustomerHome = () => {
 
           {!customer?.latitude && (
             <Card className="p-4 flex items-center gap-3 border-dashed">
-              <MapPin className="w-5 h-5 text-accent shrink-0" />
+               <MapPin className="w-5 h-5 text-brand shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-foreground">Set your location</p>
                 <p className="text-xs text-muted-foreground">So we can show stylists near you and travel times.</p>
@@ -276,9 +276,9 @@ const CustomerHome = () => {
                   >
                     <div className="w-16 h-16 mx-auto rounded-full overflow-hidden bg-secondary border border-border flex items-center justify-center">
                       {s.photo_url ? (
-                        <img src={s.photo_url} alt={s.name} loading="lazy" className="w-full h-full object-cover" />
+                        <img src={s.photo_url} alt={s.name} loading="lazy" className="img-ring w-full h-full object-cover" />
                       ) : (
-                        <span className="font-display text-xl text-primary">{s.name?.charAt(0)}</span>
+                        <span className="font-display text-xl text-brand">{s.name?.charAt(0)}</span>
                       )}
                     </div>
                     <p className="text-xs text-foreground mt-1.5 truncate">{s.name}</p>
@@ -296,7 +296,7 @@ const CustomerHome = () => {
               </h2>
               <button
                 onClick={() => navigate("/customer/booking")}
-                className="text-xs text-primary hover:underline"
+                 className="text-xs font-semibold text-brand hover:underline"
               >
                 See all
               </button>

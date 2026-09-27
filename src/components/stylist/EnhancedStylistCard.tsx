@@ -65,8 +65,8 @@ export const EnhancedStylistCard = ({
     <Card
       onClick={onSelect}
       className={cn(
-        "cursor-pointer overflow-hidden no-tap-highlight transition-all active:scale-[0.99]",
-        isSelected ? "border-primary" : "hover:border-primary/40"
+        "cursor-pointer overflow-hidden no-tap-highlight transition-all duration-snappy ease-out active:scale-[0.99]",
+        isSelected ? "border-brand ring-1 ring-brand" : "hover:border-hairline-strong"
       )}
     >
       {/* Work-first hero strip */}
@@ -84,7 +84,7 @@ export const EnhancedStylistCard = ({
                 src={src}
                 alt={`${stylist.name} work sample ${i + 1}`}
                 loading="lazy"
-                className="w-full h-full object-cover"
+                className="img-ring w-full h-full object-cover"
               />
             </div>
           ))}
@@ -97,13 +97,13 @@ export const EnhancedStylistCard = ({
           <div className="relative shrink-0">
             <div className="w-11 h-11 rounded-full bg-secondary overflow-hidden flex items-center justify-center border border-border">
               {stylist.photo_url ? (
-                <img src={stylist.photo_url} alt={stylist.name} loading="lazy" className="w-full h-full object-cover" />
+                <img src={stylist.photo_url} alt={stylist.name} loading="lazy" className="img-ring w-full h-full object-cover" />
               ) : (
-                <span className="font-display text-lg text-primary">{stylist.name.charAt(0)}</span>
+                <span className="font-display text-lg text-brand">{stylist.name.charAt(0)}</span>
               )}
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-accent flex items-center justify-center border-2 border-card">
-              <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />
+            <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-brand-fill flex items-center justify-center border-2 border-card">
+              <CheckCircle className="w-2.5 h-2.5 text-brand-foreground" />
             </span>
           </div>
 
@@ -111,17 +111,17 @@ export const EnhancedStylistCard = ({
             <div className="flex items-center gap-2">
               <h3 className="font-display text-lg text-foreground truncate leading-tight">{stylist.name}</h3>
               {isFavourite && (
-                <span className="eyebrow text-primary shrink-0">Booked before</span>
+                <span className="eyebrow text-brand shrink-0">Booked before</span>
               )}
             </div>
             <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
               {isNew ? (
-                <span className="inline-flex items-center gap-1 text-accent">
-                  <Sparkles className="w-3 h-3" /> New stylist
+                <span className="inline-flex items-center gap-1 text-brand">
+                  <CheckCircle className="w-3 h-3" /> New stylist
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1 text-foreground">
-                  <Star className="w-3 h-3 fill-current text-primary" />
+                  <Star className="w-3 h-3 fill-current text-warn" />
                   {stylist.rating?.toFixed(1)}
                   <span className="text-muted-foreground">({stylist.total_reviews})</span>
                 </span>
@@ -169,7 +169,7 @@ export const EnhancedStylistCard = ({
                   e.stopPropagation();
                   onSlotSelect ? onSlotSelect(slot) : onSelect();
                 }}
-                className="shrink-0 px-3 py-1.5 rounded-full border border-primary/40 text-primary text-xs whitespace-nowrap hover:bg-primary/10 transition-colors"
+                className="shrink-0 px-3 py-1.5 rounded-pill border border-brand/40 text-brand text-xs whitespace-nowrap hover:bg-brand/10 transition-colors"
               >
                 {slot}
               </button>
