@@ -2,6 +2,19 @@ export function getUserFriendlyError(error: any): string {
   const message = error?.message?.toLowerCase() || '';
   const code = error?.code;
 
+  if (code === 'same_password' || message.includes('should be different from the old password')) {
+    return 'Your new password must be different from your current password.';
+  }
+  if (code === 'weak_password' || message.includes('pwned') || message.includes('weak') || message.includes('password should')) {
+    return 'That password is too weak or has appeared in a data leak. Please choose a stronger one.';
+  }
+  if (code === 'over_email_send_rate_limit' || message.includes('rate limit') || message.includes('security purposes')) {
+    return 'Too many attempts. Please wait a minute and try again.';
+  }
+  if (message.includes('session') && message.includes('missing')) {
+    return 'Your reset link has expired. Please request a new one.';
+  }
+
   if (code === '23505') return 'This record already exists. Please try different information.';
   if (code === '23503') return 'Invalid selection. Please verify your choices.';
   if (code === '42501') return 'You do not have permission to perform this action.';
