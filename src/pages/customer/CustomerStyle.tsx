@@ -261,12 +261,12 @@ const CustomerStyle = () => {
           <div className="flex items-center">
             <button 
               onClick={() => navigate("/customer/profile")}
-              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-primary hover:bg-primary/10 rounded-full transition-colors"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-brand hover:bg-accent rounded-full transition-colors"
               aria-label={t("common.back")}
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
-            <h1 className="flex-1 text-center text-xl font-bold text-foreground pr-8">
+            <h1 className="font-display flex-1 pr-8 text-center text-3xl text-foreground">
               {t("customerStyle.title")}
             </h1>
           </div>
@@ -304,15 +304,15 @@ const CustomerStyle = () => {
                         key={photo.id}
                         type="button"
                         onClick={() => setSelectedPhotoType(photo.photo_type)}
-                        className={`relative flex-shrink-0 w-20 h-24 rounded-2xl overflow-hidden border-2 transition-all active:scale-95 ${
-                          isSelected ? "border-primary ring-2 ring-primary/20" : "border-border"
+                        className={`relative flex-shrink-0 w-20 h-24 rounded-control overflow-hidden border transition-all active:scale-95 ${
+                          isSelected ? "border-brand ring-2 ring-brand/20" : "border-hairline"
                         }`}
                         aria-pressed={isSelected}
                       >
                         <img
                           src={photo.photo_url}
                           alt={`${photo.photo_type} hair reference`}
-                          className="w-full h-full object-cover"
+                           className="img-ring w-full h-full object-cover"
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-background/80 backdrop-blur-sm px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-foreground">
                           {photo.photo_type}
@@ -322,7 +322,7 @@ const CustomerStyle = () => {
                   })}
                 </div>
               ) : (
-                <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+                 <div className="rounded-control border border-dashed border-hairline-strong bg-muted/30 p-4 text-sm text-muted-foreground">
                   {t("customerStyle.uploadPhotosFirstMessage", { defaultValue: "Please upload your hair photos in Profile before generating previews." })}
                 </div>
               )}
@@ -336,20 +336,20 @@ const CustomerStyle = () => {
                 <button
                   key={img.id}
                   onClick={() => selectImage(img.id)}
-                  className={`relative flex-shrink-0 w-20 h-20 min-w-[44px] min-h-[44px] rounded-xl overflow-hidden transition-all active:scale-95 ${
+                   className={`relative flex-shrink-0 w-20 h-20 min-w-[44px] min-h-[44px] rounded-control overflow-hidden transition-all active:scale-95 ${
                     selectedImage === img.id 
-                      ? "ring-2 ring-primary ring-offset-2" 
+                       ? "ring-2 ring-vapor ring-offset-2 ring-offset-background" 
                       : "opacity-70 hover:opacity-100"
                   }`}
                 >
                   <img
                     src={img.generated_image_url}
                     alt={t("customer.style.selectStyle")}
-                    className="w-full h-full object-cover"
+                     className="img-ring w-full h-full object-cover"
                   />
                   {selectedImage === img.id && (
-                    <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                      <Check className="w-6 h-6 text-primary-foreground drop-shadow-lg" />
+                     <div className="absolute inset-0 bg-vapor/20 flex items-center justify-center">
+                       <Check className="w-6 h-6 text-vapor" />
                     </div>
                   )}
                 </button>

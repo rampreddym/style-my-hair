@@ -151,15 +151,15 @@ export const StylistInstructionsCard = ({
     : null;
 
   return (
-    <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
+    <Card className="border border-vapor/35 bg-card">
       <CardHeader className="pb-2">
         <CardTitle className="text-base flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-primary" />
+          <div className="w-8 h-8 rounded-full bg-vapor/10 flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-vapor" aria-label="AI-generated" />
           </div>
           {t("stylist.instructions.title")}
-          <Badge variant="secondary" className="ml-auto text-xs">
-            AI
+          <Badge variant="outline" className="ml-auto border-vapor/40 text-vapor text-xs">
+            AI generated
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -172,7 +172,7 @@ export const StylistInstructionsCard = ({
             <Button
               onClick={generateInstructions}
               disabled={loading}
-              className="bg-gradient-to-r from-primary to-accent"
+              className="bg-primary text-primary-foreground"
             >
               {loading ? (
                 <>
@@ -190,7 +190,7 @@ export const StylistInstructionsCard = ({
         ) : (
           <div className="space-y-3">
             {/* Preview */}
-            <div className="bg-background/50 rounded-lg p-3 border">
+            <div className="rounded-control border border-vapor/25 bg-surface2 p-3">
               <div className="text-sm text-muted-foreground">
                 {expanded ? formatInstructions(instructions) : previewText}
               </div>
@@ -246,7 +246,7 @@ export const StylistInstructionsCard = ({
                 <DialogContent className="max-w-2xl max-h-[80vh]">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-primary" />
+                      <Sparkles className="w-5 h-5 text-vapor" aria-label="AI-generated" />
                       {t("stylist.instructions.title")} - {serviceName}
                     </DialogTitle>
                   </DialogHeader>
