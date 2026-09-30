@@ -10,6 +10,38 @@ Rebuild the entire 2–3 minute film so the new narration feels energetic, every
 - Rewrite for shorter, more energetic sentences and intentional pauses, without formulaic or exaggerated language.
 - Time the complete film locally using a scratch read first. Make only one final ElevenLabs narration request after the words and timing are locked.
 
+## Narration for approval
+
+How many times have you walked out of a salon, looked in the mirror, and thought… that is not what I asked for?
+
+You brought a photo. You tried to explain the length, the shape, the color. But somewhere between your idea and the first cut, the picture changed.
+
+That is why I built Mirra.
+
+Meet Maya. She has an appointment in mind, but first, she wants to see the idea on herself.
+
+She adds five private reference photos: front, left, right, back, and top. A single selfie can miss the details. These angles give Mirra a clearer starting point.
+
+Now she describes the look in her own words: a polished, chin-length bob in rich dark brown, with soft, face-framing ends and a natural salon finish.
+
+Mirra turns that idea into realistic options using Maya’s selected photo.
+
+And here is where it gets exciting. She can choose her favorite, then drag across the image to compare before and after. No guessing. No trying to imagine how someone else’s haircut might look on her. She can explore it before anyone picks up the scissors.
+
+Once Maya finds the right look, the image and her exact request stay with the booking. Her stylist can review them before the appointment and open a practical brief with the cut, color, and finish Maya is expecting.
+
+Now they are starting from the same picture.
+
+From there, Maya can compare stylists, browse their work, check ratings, distance, services, prices, and real availability. She chooses the stylist, the service, and the time without losing the look she already created.
+
+At checkout, everything is clear before she confirms: the service total, tip, payment timing, and cancellation terms. Stripe handles the card payment securely, and Mirra keeps the payment status connected to the appointment for both Maya and her stylist.
+
+The stylist sees more than a name on a calendar. They see the visual reference, the request, and the context they need to prepare.
+
+Maya arrives knowing what she chose. Her stylist arrives knowing what she means.
+
+So, how different would your next salon visit feel if you and your stylist walked in with the same picture in mind?
+
 ## Full visual rebuild
 1. **Opening tension:** Fast, polished shots supporting the haircut-disappointment question and the communication problem.
 2. **Meet Maya:** Introduce the synthetic customer and show the five reference angles exactly as they are mentioned.
