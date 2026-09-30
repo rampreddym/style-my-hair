@@ -1,4 +1,4 @@
 # Project architecture decisions
 
-- Mirra Studio Noir "warm editorial" is the sole visual system: cream surfaces, espresso brown for human actions, brown-tinted labelled AI output, DM Serif Display + Fira Sans, floating pill dock nav — one consistent brand.
-- The app ships light-first (no forced .dark); the cream/brown palette is designed for light.
+- Mirra Studio Noir "warm editorial" is the sole visual system: dark chocolate surfaces, cream actions and text, warm taupe accents, DM Serif Display + Fira Sans, and floating pill dock navigation.
+- The app ships dark-first without requiring a `.dark` class; the chocolate-and-cream palette is the default theme.
