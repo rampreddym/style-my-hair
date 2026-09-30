@@ -1,4 +1,4 @@
 # Project architecture decisions
 
-- Mirra Rose Quartz "Luxe Editorial" is the sole visual system: light blush surfaces, plum for human actions, blush-tinted labelled AI output, DM Serif Display + Fira Sans, floating pill dock nav — one consistent brand.
-- The app ships light-first (no forced .dark) because the Rose Quartz palette is designed for light.
+- Mirra Studio Noir "warm editorial" is the sole visual system: cream surfaces, espresso brown for human actions, brown-tinted labelled AI output, DM Serif Display + Fira Sans, floating pill dock nav — one consistent brand.
+- The app ships light-first (no forced .dark); the cream/brown palette is designed for light.
