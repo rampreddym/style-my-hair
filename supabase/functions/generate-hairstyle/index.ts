@@ -88,71 +88,71 @@ serve(async (req) => {
     console.log('Generating hairstyle with prompt:', stylePrompt);
     console.log('Selected source photo:', selectedPhotoUrl);
 
-    // Generate multiple hairstyle variations using the user's photo
-    const variations = [];
+    const sourceResponse = await fetch(selectedPhotoUrl);
+    if (!sourceResponse.ok) {
+      return new Response(JSON.stringify({ error: 'The selected photo could not be loaded.' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const sourceBlob = await sourceResponse.blob();
+    const variations: string[] = [];
     const prompts = [
-      `Transform this person's hairstyle to: ${stylePrompt}. Keep their face exactly the same, only change the hair. Professional salon quality, studio lighting, high resolution.`,
-      `Apply this hairstyle to the person in the image: ${stylePrompt}. Maintain facial features, modern styling, clean professional look.`,
-      `Give this person a ${stylePrompt}. Keep their face and features identical, only modify the hair. Contemporary salon photo, natural lighting.`,
+      `Edit only the hair in this salon consultation photo. Requested look: ${stylePrompt}. Preserve the person's identity, facial features, skin tone, expression, clothing, pose, camera angle, lighting, and background. Create a realistic professional salon preview with natural hair texture.`,
+      `Create a second realistic salon interpretation of this requested hairstyle: ${stylePrompt}. Change only the hair. Keep the same person, face, expression, clothing, framing, lighting, and background exactly recognizable.`,
+      `Create a third polished but natural variation of this hairstyle: ${stylePrompt}. Preserve identity and every non-hair detail from the source image. The result should look like a credible after photo from a professional salon consultation.`,
     ];
 
-    for (const prompt of prompts) {
-      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    for (let index = 0; index < prompts.length; index += 1) {
+      const form = new FormData();
+      form.append('model', 'openai/gpt-image-2.5-sunburst');
+      form.append('prompt', prompts[index]);
+      form.append('image', sourceBlob, `source-${index}.jpg`);
+      form.append('size', '1024x1024');
+      form.append('quality', 'high');
+
+      const response = await fetch('https://ai.gateway.lovable.dev/v1/images/edits', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash-image',
-          messages: [
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: prompt
-                },
-                {
-                  type: 'image_url',
-                  image_url: {
-                    url: selectedPhotoUrl
-                  }
-                }
-              ]
-            }
-          ],
-          modalities: ['image', 'text']
-        }),
+        body: form,
       });
 
       if (!response.ok) {
-        if (response.status === 429) {
-          return new Response(JSON.stringify({ 
-            error: 'Rate limit exceeded. Please try again in a moment.' 
-          }), {
-            status: 429,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-        if (response.status === 402) {
-          return new Response(JSON.stringify({ 
-            error: 'Payment required. Please add credits to continue.' 
-          }), {
-            status: 402,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-        const errorText = await response.text();
-        console.error('AI gateway error:', response.status, errorText);
-        throw new Error(`AI gateway error: ${response.status}`);
+        const errorPayload = await response.json().catch(() => null);
+        const safeMessage = typeof errorPayload?.message === 'string'
+          ? errorPayload.message
+          : typeof errorPayload?.error?.message === 'string'
+            ? errorPayload.error.message
+            : 'The hairstyle preview could not be generated.';
+        console.error('AI gateway error:', response.status, safeMessage);
+        return new Response(JSON.stringify({ error: safeMessage }), {
+          status: response.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
       }
 
       const data = await response.json();
-      const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-      
-      if (imageUrl) {
-        variations.push(imageUrl);
+      const base64Image = data.data?.[0]?.b64_json;
+
+      if (typeof base64Image === 'string') {
+        const imageBytes = Uint8Array.from(atob(base64Image), (character) => character.charCodeAt(0));
+        const outputPath = `${user.id}/generated-styles/${Date.now()}-${index}.png`;
+        const { error: uploadError } = await supabaseClient.storage
+          .from('user-photos')
+          .upload(outputPath, imageBytes, { contentType: 'image/png', upsert: false });
+
+        if (uploadError) {
+          console.error('Generated image upload failed:', uploadError.message);
+          throw new Error('The preview was created but could not be saved.');
+        }
+
+        const { data: publicUrlData } = supabaseClient.storage
+          .from('user-photos')
+          .getPublicUrl(outputPath);
+        variations.push(publicUrlData.publicUrl);
       }
     }
 
