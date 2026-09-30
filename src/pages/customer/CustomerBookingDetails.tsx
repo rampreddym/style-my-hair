@@ -314,7 +314,13 @@ const CustomerBookingDetails = () => {
               stylistName={stylist?.name || ""}
               onSuccess={() => {
                 // Update appointment payment status and show confirmation
-                supabase.from("appointments").update({ payment_status: "paid" }).eq("id", pendingAppointment.id);
+                supabase
+                  .from("appointments")
+                  .update({ payment_status: "paid" })
+                  .eq("id", pendingAppointment.id)
+                  .then(({ error }) => {
+                    if (error) console.error("Failed to update payment status:", error);
+                  });
                 setBookingDetails(pendingAppointment);
                 setShowPaymentForm(false);
                 setPendingAppointment(null);
