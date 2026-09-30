@@ -1,14 +1,15 @@
 # Video production roadmap
-- [ ] Capture customer and stylist mobile journeys
-- [ ] Generate ElevenLabs narration and music
-- [ ] Build and spot-check the motion edit
-- [ ] Render and verify the final MP4
-- [ ] Replace still-only sections with real mobile navigation and tap footage
-- [ ] Rewrite the narration around an intriguing question and sourced dissatisfaction data
-- [ ] Add a concise, evidence-based comparison with competing beauty-booking apps
-- [ ] Deliver and verify a full-HD 1920×1080 replacement edit
-- [ ] Replace personal demo photos with five consistent synthetic head-angle portraits
-- [ ] Record a straight-on customer demo from photo upload through AI preview and before/after dragging
-- [ ] Rewrite the voiceover in natural conversational language without formulaic contrast phrases
-- [ ] Add the shared stylist brief and Stripe payment story to the revised edit
-- [ ] Remove all tilted phone treatments and deliver the replacement at native 1920×1080
+- [x] Capture customer and stylist mobile journeys
+- [x] Generate ElevenLabs narration and music
+- [x] Build and spot-check the motion edit
+- [x] Render and verify the final MP4
+- [x] Replace still-only sections with real mobile navigation and tap footage
+- [x] Rewrite the narration around an intriguing question and sourced dissatisfaction data
+- [x] Add a concise, evidence-based comparison with competing beauty-booking apps
+- [x] Deliver and verify a full-HD 1920×1080 replacement edit
+- [x] Replace personal demo photos with five consistent synthetic head-angle portraits
+- [x] Record a straight-on customer demo from photo upload through AI preview and before/after dragging
+- [x] Rewrite the voiceover in natural conversational language without formulaic contrast phrases
+- [x] Add the shared stylist brief and Stripe payment story to the revised edit
+- [x] Remove all tilted phone treatments and deliver the replacement at native 1920×1080
+- [x] Add a polished upright iPhone frame around every app scene without changing audio or content
