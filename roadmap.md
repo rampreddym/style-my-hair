@@ -14,3 +14,5 @@
 - [x] Remove all tilted phone treatments and deliver the replacement at native 1920×1080
 - [x] Add a polished upright iPhone frame around every app scene without changing audio or content
 - [x] Refinish the film with a white, colorful visual system and a slightly louder music mix
+- [x] Replace the uploaded licensed music and correct the remaining text overlap in the same HD revision
+- [x] Remove spoken and visible references to the Contra Challenge and the video color treatment
