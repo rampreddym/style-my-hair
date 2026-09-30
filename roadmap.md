@@ -7,3 +7,8 @@
 - [ ] Rewrite the narration around an intriguing question and sourced dissatisfaction data
 - [ ] Add a concise, evidence-based comparison with competing beauty-booking apps
 - [ ] Deliver and verify a full-HD 1920×1080 replacement edit
+- [ ] Replace personal demo photos with five consistent synthetic head-angle portraits
+- [ ] Record a straight-on customer demo from photo upload through AI preview and before/after dragging
+- [ ] Rewrite the voiceover in natural conversational language without formulaic contrast phrases
+- [ ] Add the shared stylist brief and Stripe payment story to the revised edit
+- [ ] Remove all tilted phone treatments and deliver the replacement at native 1920×1080
