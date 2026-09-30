@@ -156,7 +156,7 @@ const CustomerHome = () => {
                 {format(new Date(), "EEEE d MMMM")}
               </p>
               <h1 className="font-display text-3xl text-foreground leading-tight">
-                {firstName ? `Hello, ${firstName}` : "Welcome to Mirra"}
+                {firstName ? (<>Welcome,<br /><span className="italic">{firstName}</span></>) : "Welcome to Mirra"}
               </h1>
             </div>
             <div className="flex items-center gap-1 shrink-0">
