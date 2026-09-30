@@ -1,4 +1,4 @@
 # Project architecture decisions
 
-- Studio Noir v3 is the sole visual system: warm near-monochrome surfaces, sapphire for human actions, and vapor only for clearly labelled AI output, keeping hierarchy and meaning consistent.
-- The app ships dark-first by applying `.dark` on the document while retaining a complete light token set for conventional component behavior and accessibility.
+- Mirra Rose Quartz "Luxe Editorial" is the sole visual system: light blush surfaces, plum for human actions, blush-tinted labelled AI output, DM Serif Display + Fira Sans, floating pill dock nav — one consistent brand.
+- The app ships light-first (no forced .dark) because the Rose Quartz palette is designed for light.

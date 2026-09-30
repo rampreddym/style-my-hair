@@ -2,40 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Studio Noir v3 — hair photography leads; chrome stays warm and quiet. */
+/* Mirra Rose Quartz — Luxe Editorial. */
+/* was Studio Noir v3 — hair photography leads; chrome stays warm and quiet. */
 @layer base {
   :root {
-    --background: 39 58.3% 95.3%;
-    --foreground: 27 25.6% 8.4%;
-    --card: 40 100% 98.2%;
-    --card-foreground: 27 25.6% 8.4%;
-    --popover: 38 44% 90.2%;
-    --popover-foreground: 27 25.6% 8.4%;
-    --primary: 30 28.6% 11%;
-    --primary-foreground: 39 58.3% 95.3%;
-    --secondary: 38 44% 90.2%;
-    --secondary-foreground: 27 25.6% 8.4%;
-    --muted: 38 44% 90.2%;
-    --muted-foreground: 30 18.1% 28.2%;
-    --accent: 38 44% 90.2%;
-    --accent-foreground: 27 25.6% 8.4%;
+    --background: 15 57% 97%;
+    --foreground: 325 25% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 325 25% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 325 25% 14%;
+    --primary: 333 40% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 12 45% 93%;
+    --secondary-foreground: 325 25% 14%;
+    --muted: 15 35% 93%;
+    --muted-foreground: 325 10% 38%;
+    --accent: 12 46% 73%;
+    --accent-foreground: 325 25% 14%;
     --destructive: 8 72.8% 41.8%;
     --destructive-foreground: 0 0% 100%;
-    --border: 37 31% 83.5%;
-    --input: 30 17.2% 52.2%;
-    --ring: 223 64% 46.9%;
-    --brand: 223 64% 46.9%;
-    --brand-fill: 223 64% 46.9%;
+    --border: 12 30% 89%;
+    --input: 325 10% 60%;
+    --ring: 333 40% 39%;
+    --brand: 333 40% 39%;
+    --brand-fill: 333 40% 39%;
     --brand-foreground: 0 0% 100%;
-    --vapor: 173 73.3% 26.5%;
+    --vapor: 12 40% 45%;
     --warn: 41 76% 29.4%;
     --ok: 152 60% 27.5%;
-    --surface-2: 38 44% 90.2%;
-    --hairline: 37 31% 83.5%;
-    --hairline-strong: 30 17.2% 52.2%;
-    --dim: 31 15.2% 37.5%;
+    --surface-2: 15 45% 94%;
+    --hairline: 12 30% 89%;
+    --hairline-strong: 325 10% 60%;
+    --dim: 325 8% 42%;
     --radius: 12px;
-    --radius-card: 20px;
+    --radius-card: 24px;
     --radius-sheet: 28px;
     --edge: rgba(255, 255, 255, 0.9);
     --img-edge: rgba(27, 21, 16, 0.12);
@@ -121,7 +122,7 @@
   html { background: hsl(var(--background)); }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: system-ui, -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Fira Sans', system-ui, -apple-system, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
     line-height: var(--lh-body);
     letter-spacing: var(--tr-body);
     font-weight: var(--wt-body);
@@ -187,3 +188,4 @@
 .map-avatar-img { width: 100%; height: 100%; object-fit: cover; }
 .map-avatar-fallback { background: hsl(var(--brand-fill)); }
 .map-avatar-fallback span { color: hsl(var(--brand-foreground)); font-size: 1.25rem; font-weight: 600; }
+.eyebrow-caps{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:hsl(var(--muted-foreground));}
