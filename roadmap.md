@@ -13,3 +13,4 @@
 - [x] Add the shared stylist brief and Stripe payment story to the revised edit
 - [x] Remove all tilted phone treatments and deliver the replacement at native 1920×1080
 - [x] Add a polished upright iPhone frame around every app scene without changing audio or content
+- [ ] Refinish the film with a white, colorful visual system and a slightly louder music mix
