@@ -16,7 +16,7 @@
 - [x] Refinish the film with a white, colorful visual system and a slightly louder music mix
 - [x] Replace the uploaded licensed music and correct the remaining text overlap in the same HD revision
 - [x] Remove spoken and visible references to the Contra Challenge and the video color treatment
-- [ ] Generate the approved narration once with the new ElevenLabs voice within the 4,000-credit limit
-- [ ] Rebuild the full film with word-level visual synchronization and no white text blocks
-- [ ] Keep licensed music level constant under narration, then raise it only after the final question
-- [ ] Verify and deliver the rebuilt 1080p product film
+- [x] Generate the approved narration once with the new ElevenLabs voice within the 4,000-credit limit
+- [x] Rebuild the full film with word-level visual synchronization and no white text blocks
+- [x] Keep licensed music level constant under narration, then raise it only after the final question
+- [x] Verify and deliver the rebuilt 1080p product film
