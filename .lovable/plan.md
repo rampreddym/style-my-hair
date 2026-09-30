@@ -22,7 +22,8 @@ Rebuild the entire 2–3 minute film so the new narration feels energetic, every
 ## Editing direction
 - Build a new edit timeline rather than modifying the current master.
 - Keep all app footage perfectly upright inside a correctly fitted iPhone frame.
-- Use colorful, premium editorial visuals with clear separation between text and the phone; no overlapping content.
+- Remove the current white text block entirely.
+- Place text only in dedicated open space outside the phone, using transparent typography or full-screen interstitial titles; no opaque panel may cover or crowd the app footage.
 - Favor quick, purposeful cuts, restrained motion, and occasional full-screen app details so important interactions are easy to read.
 - Create a word-level cue sheet and align each tap, screen change, generated result, and title transition to the corresponding narration phrase.
 - Use only synthetic demo imagery and remove all Challenge and color-palette commentary.
@@ -36,7 +37,7 @@ Rebuild the entire 2–3 minute film so the new narration feels energetic, every
 
 ## Quality checks
 - Review every scene against the word-level cue sheet for audio/visual synchronization.
-- Inspect key frames and transitions for phone fit, straight alignment, readable text, and zero overlap.
+- Inspect every titled scene at desktop and mobile viewing sizes for phone fit, straight alignment, readable text, zero overlap, and no white text blocks.
 - Confirm music level stays stable before the final question and rises only after it.
 - Confirm the final narration request stayed within the 4,000-credit limit.
 - Export and verify a new 1920×1080, 30 fps, H.264/AAC MP4 without overwriting earlier versions.
