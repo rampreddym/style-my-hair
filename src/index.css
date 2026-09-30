@@ -2,39 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Mirra Rose Quartz — Luxe Editorial. */
-/* was Studio Noir v3 — hair photography leads; chrome stays warm and quiet. */
+/* Mirra Studio Noir — warm brown & cream. */
+/* Layout from Rose Quartz redesign; palette back to espresso brown and cream. */
 @layer base {
   :root {
-    --background: 15 57% 97%;
-    --foreground: 325 25% 14%;
-    --card: 0 0% 100%;
-    --card-foreground: 325 25% 14%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 325 25% 14%;
-    --primary: 333 40% 39%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 12 45% 93%;
-    --secondary-foreground: 325 25% 14%;
-    --muted: 15 35% 93%;
-    --muted-foreground: 325 10% 38%;
-    --accent: 12 46% 73%;
-    --accent-foreground: 325 25% 14%;
+    --background: 36 38% 95%;
+    --foreground: 24 30% 12%;
+    --card: 40 44% 98%;
+    --card-foreground: 24 30% 12%;
+    --popover: 40 44% 98%;
+    --popover-foreground: 24 30% 12%;
+    --primary: 25 42% 26%;
+    --primary-foreground: 38 44% 95%;
+    --secondary: 34 30% 90%;
+    --secondary-foreground: 24 30% 12%;
+    --muted: 34 26% 90%;
+    --muted-foreground: 26 14% 36%;
+    --accent: 30 34% 82%;
+    --accent-foreground: 24 30% 12%;
     --destructive: 8 72.8% 41.8%;
     --destructive-foreground: 0 0% 100%;
-    --border: 12 30% 89%;
-    --input: 325 10% 60%;
-    --ring: 333 40% 39%;
-    --brand: 333 40% 39%;
-    --brand-fill: 333 40% 39%;
-    --brand-foreground: 0 0% 100%;
-    --vapor: 12 40% 45%;
+    --border: 30 22% 84%;
+    --input: 26 14% 44%;
+    --ring: 25 42% 26%;
+    --brand: 25 42% 26%;
+    --brand-fill: 25 42% 26%;
+    --brand-foreground: 38 44% 95%;
+    --vapor: 28 24% 38%;
     --warn: 41 76% 29.4%;
     --ok: 152 60% 27.5%;
-    --surface-2: 15 45% 94%;
-    --hairline: 12 30% 89%;
-    --hairline-strong: 325 10% 60%;
-    --dim: 325 8% 42%;
+    --surface-2: 34 32% 91%;
+    --hairline: 30 22% 84%;
+    --hairline-strong: 26 14% 44%;
+    --dim: 26 12% 40%;
     --radius: 12px;
     --radius-card: 24px;
     --radius-sheet: 28px;
@@ -114,7 +114,7 @@
   }
 
   @media (prefers-contrast: more) {
-    :root { --muted-foreground: 30 19% 22.7%; --border: 35 24.6% 72.9%; --input: 30 19.8% 41.6%; --ring: 224 68.6% 36.3%; --brand: 224 68.6% 36.3%; --vapor: 173 73.7% 19.4%; }
+    :root { --muted-foreground: 26 16% 24%; --border: 30 20% 74%; --input: 26 16% 38%; --ring: 25 48% 20%; --brand: 25 48% 20%; --vapor: 28 26% 30%; }
     .dark { --muted-foreground: 35 24.1% 78.8%; --border: 27 21.5% 26.5%; --input: 29 21.5% 53.5%; --ring: 219 83.5% 81%; --brand: 219 83.5% 81%; --vapor: 171 62.3% 76.1%; }
   }
 
