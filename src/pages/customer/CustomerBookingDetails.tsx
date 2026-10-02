@@ -214,24 +214,9 @@ const CustomerBookingDetails = () => {
 
       if (error) throw error;
 
-      // Send SMS notifications (fire and forget)
-      const serviceNames = selectedServices.map(s => s.name).join(", ");
-      const [customerResult, stylistResult] = await Promise.all([
-        supabase.from("customers").select("name, phone").eq("id", customerId).single(),
-        supabase.from("stylists").select("name, phone").eq("id", stylist.id).single(),
-      ]);
-
+      // Send SMS notifications (fire and forget) — server looks up details itself
       supabase.functions.invoke("send-booking-sms", {
-        body: {
-          appointmentId: appointment.id,
-          customerPhone: customerResult.data?.phone || "",
-          customerName: customerResult.data?.name || "Customer",
-          stylistPhone: stylistResult.data?.phone || "",
-          stylistName: stylistResult.data?.name || stylist.name,
-          serviceName: serviceNames,
-          appointmentDate: appointmentDateTime,
-          price: totalPrice + tip,
-        },
+        body: { appointmentId: appointment.id },
       }).catch((err) => console.error("SMS notification error:", err));
 
       // If Pay Now, show inline payment form
@@ -313,13 +298,11 @@ const CustomerBookingDetails = () => {
               serviceName={serviceNames}
               stylistName={stylist?.name || ""}
               onSuccess={() => {
-                // Update appointment payment status and show confirmation
-                supabase
-                  .from("appointments")
-                  .update({ payment_status: "paid" })
-                  .eq("id", pendingAppointment.id)
+                // Server verifies the charge with Stripe, then marks it paid
+                supabase.functions
+                  .invoke("confirm-payment", { body: { appointmentId: pendingAppointment.id } })
                   .then(({ error }) => {
-                    if (error) console.error("Failed to update payment status:", error);
+                    if (error) console.error("Failed to confirm payment:", error);
                   });
                 setBookingDetails(pendingAppointment);
                 setShowPaymentForm(false);
