@@ -102,16 +102,44 @@ serve(async (req) => {
       );
     }
 
-    const {
-      appointmentId,
-      customerPhone,
-      customerName,
-      stylistPhone,
-      stylistName,
-      serviceName,
-      appointmentDate,
-      price,
-    }: BookingSmsRequest = await req.json();
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const authClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!);
+    const { data: authData, error: authError } = await authClient.auth.getUser(authHeader.replace("Bearer ", ""));
+    if (authError || !authData.user) {
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    const { appointmentId } = await req.json();
+    if (typeof appointmentId !== "string") {
+      return new Response(JSON.stringify({ success: false, error: "Invalid appointment" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: appt } = await admin
+      .from("appointments")
+      .select("id, appointment_date, price, tip_amount, confirmation_sent_at, stylist_notes, customer:customers!inner(user_id, name, phone), stylist:stylists!inner(name, phone), service:stylist_services(name)")
+      .eq("id", appointmentId)
+      .maybeSingle();
+    // deno-lint-ignore no-explicit-any
+    const a = appt as any;
+    if (!a || a.customer?.user_id !== authData.user.id) {
+      return new Response(JSON.stringify({ success: false, error: "Appointment not found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (a.confirmation_sent_at) {
+      return new Response(JSON.stringify({ success: true, alreadySent: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    await admin.from("appointments").update({ confirmation_sent_at: new Date().toISOString() }).eq("id", appointmentId);
+
+    const customerPhone: string = a.customer?.phone || "";
+    const customerName: string = a.customer?.name || "Customer";
+    const stylistPhone: string = a.stylist?.phone || "";
+    const stylistName: string = a.stylist?.name || "your stylist";
+    const serviceName: string = (a.stylist_notes?.startsWith("Services: ") ? a.stylist_notes.slice(10) : a.service?.name) || "Salon service";
+    const appointmentDate: string = a.appointment_date;
+    const price = Number(a.price || 0) + Number(a.tip_amount || 0);
 
     const formattedDate = formatDate(appointmentDate);
     const formattedTime = formatTime(appointmentDate);
