@@ -12,6 +12,15 @@ serve(async (req) => {
   }
 
   try {
+    const __authHeader = req.headers.get("Authorization");
+    if (!__authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const __admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: __auth, error: __authErr } = await __admin.auth.getUser(__authHeader.replace("Bearer ", ""));
+    if (__authErr || !__auth.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const { stylistId, placeId } = await req.json();
 
     if (!stylistId || !placeId) {
@@ -21,6 +30,10 @@ serve(async (req) => {
       );
     }
 
+    const { data: __owned } = await __admin.from("stylists").select("id").eq("id", stylistId).eq("user_id", __auth.user.id).maybeSingle();
+    if (!__owned) {
+      return new Response(JSON.stringify({ error: "You can only import reviews to your own profile" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -116,7 +129,7 @@ serve(async (req) => {
     }
 
     // Fetch reviews from Google Places API
-    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews&key=${apiKey}`;
+    const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(String(placeId))}&fields=reviews&key=${apiKey}`;
     const response = await fetch(detailsUrl);
     const data = await response.json();
 

@@ -11,14 +11,12 @@ const PaymentSuccess = () => {
   const appointmentId = searchParams.get("appointment_id");
 
   useEffect(() => {
-    // Mark payment as paid
+    // Ask the server to verify the charge with Stripe before marking it paid
     if (appointmentId) {
-      supabase
-        .from("appointments")
-        .update({ payment_status: "paid" })
-        .eq("id", appointmentId)
+      supabase.functions
+        .invoke("confirm-payment", { body: { appointmentId } })
         .then(({ error }) => {
-          if (error) console.error("Failed to update payment status:", error);
+          if (error) console.error("Failed to confirm payment:", error);
         });
     }
   }, [appointmentId]);

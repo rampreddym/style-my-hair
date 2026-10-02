@@ -76,6 +76,20 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
+    const allowedPrefix = `${new URL(Deno.env.get('SUPABASE_URL')!).origin}/storage/v1/object/public/user-photos/${user.id}/`;
+    const isOwnPhoto = (u: string) => {
+      try {
+        const parsed = new URL(u);
+        return `${parsed.origin}${parsed.pathname}`.startsWith(allowedPrefix) && !parsed.pathname.includes('..');
+      } catch { return false; }
+    };
+    if (!userPhotoUrls.every(isOwnPhoto)) {
+      return new Response(JSON.stringify({ error: 'Photos must be your own uploaded photos.' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     if (!userPhotoUrls.includes(selectedPhotoUrl)) {
       return new Response(JSON.stringify({
         error: 'selectedPhotoUrl must be one of the provided userPhotoUrls'
@@ -88,7 +102,7 @@ serve(async (req) => {
     console.log('Generating hairstyle with prompt:', stylePrompt);
     console.log('Selected source photo:', selectedPhotoUrl);
 
-    const sourceResponse = await fetch(selectedPhotoUrl);
+    const sourceResponse = await fetch(selectedPhotoUrl, { redirect: 'error' });
     if (!sourceResponse.ok) {
       return new Response(JSON.stringify({ error: 'The selected photo could not be loaded.' }), {
         status: 400,
