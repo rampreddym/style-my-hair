@@ -224,7 +224,10 @@ const StylistOnboarding = () => {
             longitude: location?.lng,
             onboarding_step: nextStep,
           })
-          .select()
+          // Column-level grants hide Stripe/onboarding fields from regular
+          // users, so RETURNING * fails with "permission denied" — read back
+          // only the columns we actually need.
+          .select("id")
           .single();
 
         if (error) throw error;
