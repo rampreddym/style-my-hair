@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Star, MapPin, CheckCircle, Scissors, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ export const EnhancedStylistCard = ({
   onSlotSelect,
   isFavourite = false,
 }: EnhancedStylistCardProps) => {
+  const [slide, setSlide] = useState(0);
   const travelTime = stylist.distance ? Math.round(stylist.distance * 3) : null;
   const isNew = !stylist.total_reviews || stylist.total_reviews === 0;
 
@@ -54,9 +56,9 @@ export const EnhancedStylistCard = ({
   const startingPrice = sortedServices.length > 0 ? sortedServices[0].price : null;
   const topServices = sortedServices.slice(0, 3);
 
-  // Portfolio strip: real work first, fall back to the profile photo
+  // Portfolio: top 3 cuts first, fall back to the profile photo
   const strip = recentWork.length > 0
-    ? recentWork.slice(0, 4)
+    ? recentWork.slice(0, 3)
     : stylist.photo_url
       ? [stylist.photo_url]
       : [];
@@ -69,25 +71,41 @@ export const EnhancedStylistCard = ({
         isSelected ? "border-brand ring-1 ring-brand" : "hover:border-hairline-strong"
       )}
     >
-      {/* Work-first hero strip */}
+      {/* Swipeable portfolio lookbook */}
       {strip.length > 0 && (
-        <div className={cn("grid gap-px bg-border", strip.length === 1 ? "grid-cols-1" : "grid-cols-4")}>
-          {strip.map((src, i) => (
-            <div
-              key={i}
-              className={cn(
-                "bg-secondary overflow-hidden",
-                strip.length === 1 ? "h-40" : "h-24"
-              )}
-            >
-              <img
-                src={src}
-                alt={`${stylist.name} work sample ${i + 1}`}
-                loading="lazy"
-                className="img-ring w-full h-full object-cover"
-              />
+        <div className="relative">
+          <div
+            className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar"
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              setSlide(Math.round(el.scrollLeft / el.clientWidth));
+            }}
+            onClick={(e) => strip.length > 1 && e.stopPropagation()}
+          >
+            {strip.map((src, i) => (
+              <div key={i} className="snap-center shrink-0 w-full h-48 bg-secondary">
+                <img
+                  src={src}
+                  alt={`${stylist.name} work sample ${i + 1}`}
+                  loading="lazy"
+                  className="img-ring w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+          {strip.length > 1 && (
+            <div className="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 pointer-events-none">
+              {strip.map((_, i) => (
+                <span
+                  key={i}
+                  className={cn(
+                    "h-1.5 rounded-full transition-all duration-snappy",
+                    i === slide ? "w-4 bg-primary" : "w-1.5 bg-primary/40"
+                  )}
+                />
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
 
@@ -177,11 +195,15 @@ export const EnhancedStylistCard = ({
           </div>
         )}
 
-        {/* Specialties, quiet */}
+        {/* Craft badges */}
         {stylist.specialties && stylist.specialties.length > 0 && (
-          <p className="text-xs text-muted-foreground truncate">
-            {stylist.specialties.slice(0, 4).join(" · ")}
-          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {stylist.specialties.slice(0, 3).map((s) => (
+              <span key={s} className="inline-flex items-center gap-1 rounded-pill bg-secondary border border-hairline px-2.5 py-1 text-[11px] text-foreground">
+                <Sparkles className="w-3 h-3 text-vapor" /> {s}
+              </span>
+            ))}
+          </div>
         )}
       </div>
     </Card>

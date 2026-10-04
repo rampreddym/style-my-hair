@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { RefreshCw, ArrowRight, ArrowLeft, Check, ChevronLeft, Loader2 } from "lucide-react";
 import { AIPreviewGenerator } from "@/components/ai/AIPreviewGenerator";
+import { LookTicket } from "@/components/ai/LookTicket";
 import { HairStyleSelector } from "@/components/customer/HairStyleSelector";
 import { SkeletonLoader } from "@/components/ui/skeleton-loader";
 import { CustomerLayout } from "@/components/layout/CustomerLayout";
@@ -278,6 +279,15 @@ const CustomerStyle = () => {
             beforeImage={selectedProfilePhoto?.photo_url}
             afterImage={selectedGeneratedImage?.generated_image_url}
           />
+
+          {!generating && selectedGeneratedImage?.generated_image_url && (
+            <LookTicket
+              afterImage={selectedGeneratedImage.generated_image_url}
+              beforeImage={selectedProfilePhoto?.photo_url}
+              prompt={(selectedGeneratedImage as any).style_prompt}
+              referencePhotos={photos.filter((p: any) => p.photo_url !== selectedProfilePhoto?.photo_url).map((p: any) => p.photo_url)}
+            />
+          )}
 
           <Card>
             <CardContent className="p-4 space-y-3">

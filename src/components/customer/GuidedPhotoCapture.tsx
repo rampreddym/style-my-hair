@@ -42,6 +42,36 @@ const triggerHaptic = async (type: 'light' | 'medium' | 'heavy' | 'success' | 'w
   }
 };
 
+
+/** Fine-line head outline guide for each capture angle. */
+const HeadSilhouette = ({ angle }: { angle: string }) => {
+  const stroke = "hsl(var(--vapor))";
+  const common = { fill: "none", stroke, strokeWidth: 1.5, strokeLinecap: "round" as const, strokeDasharray: "4 4" };
+  return (
+    <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full opacity-80" aria-hidden="true">
+      {angle === "front" && (<>
+        <ellipse cx="100" cy="92" rx="44" ry="56" {...common} />
+        <path d="M56 80 Q100 20 144 80" {...common} />
+        <path d="M70 196 Q100 150 130 196" {...common} />
+      </>)}
+      {(angle === "left" || angle === "right") && (
+        <g transform={angle === "right" ? "translate(200 0) scale(-1 1)" : undefined}>
+          <path d="M120 40 Q60 30 58 95 Q56 120 66 128 L60 140 Q70 146 76 150 Q90 160 110 150 L118 196" {...common} />
+          <path d="M120 40 Q150 50 150 95 Q150 130 128 150" {...common} />
+        </g>
+      )}
+      {angle === "back" && (<>
+        <ellipse cx="100" cy="90" rx="48" ry="56" {...common} />
+        <path d="M80 146 L78 196 M120 146 L122 196" {...common} />
+      </>)}
+      {angle === "top" && (<>
+        <ellipse cx="100" cy="100" rx="56" ry="66" {...common} />
+        <path d="M100 40 L100 160" {...common} />
+      </>)}
+    </svg>
+  );
+};
+
 interface GuidedPhotoCaptureProps {
   photos: Record<string, string>;
   onPhotoCapture: (photoType: string, file: File) => Promise<void>;
@@ -227,9 +257,9 @@ export const GuidedPhotoCapture = ({
                   </div>
                 </>
               ) : (
-                <div className="w-full h-full bg-muted/30 flex flex-col items-center justify-center">
-                  <span className="text-5xl sm:text-6xl mb-3">{currentGuide.icon}</span>
-                  <p className="text-sm text-muted-foreground text-center px-4">
+                <div className="relative w-full h-full bg-muted/30 flex flex-col items-center justify-center">
+                  <HeadSilhouette angle={currentGuide.id} />
+                  <p className="relative mt-auto mb-3 text-xs text-muted-foreground text-center px-4">
                     {getGuideInstruction(currentGuide.id)}
                   </p>
                 </div>
