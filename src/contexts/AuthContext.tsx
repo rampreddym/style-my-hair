@@ -149,6 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signUp,
       signIn,
       signInWithGoogle,
+      signInWithApple,
       signOut
     }}>
       {children}
