@@ -5,8 +5,7 @@ const config: CapacitorConfig = {
   appName: 'mirra-hair',
   webDir: 'dist',
   server: {
-    url: 'https://ab421e65-65f0-45e2-8418-14113c15faa5.lovableproject.com?forceHideBadge=true',
-    cleartext: true,
+    url: 'https://mirra-hair.lovable.app',
   },
 };
 
