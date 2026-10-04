@@ -55,7 +55,10 @@ export const AIPreviewGenerator = ({
     progress >= stage.progress ? stage : acc
   , generationStages[0]);
 
-  // Handle comparison slider
+  const [sideBySide, setSideBySide] = useState(false);
+  const lastTick = useRef(50);
+
+  // Handle comparison slider (light haptic tick every 10%)
   const handleSliderMove = (clientX: number) => {
     if (!sliderRef.current) return;
     
@@ -63,6 +66,11 @@ export const AIPreviewGenerator = ({
     const x = clientX - rect.left;
     const percentage = Math.min(100, Math.max(0, (x / rect.width) * 100));
     setSliderPosition(percentage);
+    const tick = Math.round(percentage / 10);
+    if (tick !== lastTick.current) {
+      lastTick.current = tick;
+      import("@capacitor/haptics").then(({ Haptics, ImpactStyle }) => Haptics.impact({ style: ImpactStyle.Light })).catch(() => {});
+    }
   };
 
   if (isGenerating) {
@@ -119,15 +127,35 @@ export const AIPreviewGenerator = ({
     );
   }
 
+  // Side-by-side consultation view
+  if (beforeImage && afterImage && showComparison && sideBySide) {
+    return (
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-2">
+          {[{ src: beforeImage, label: "Before" }, { src: afterImage, label: "After · AI" }].map((p) => (
+            <div key={p.label} className="relative aspect-[3/4] rounded-card overflow-hidden img-ring">
+              <img src={p.src} alt={p.label} className="w-full h-full object-cover" />
+              <div className="media-label absolute top-2 left-2 rounded px-2 py-1 text-xs">{p.label}</div>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <button onClick={() => setSideBySide(false)} className="flex-1 min-h-[44px] rounded-pill border border-hairline text-sm text-foreground">Slider view</button>
+          <button onClick={() => setShowComparison(false)} className="flex-1 min-h-[44px] text-sm font-semibold text-brand">Hide comparison</button>
+        </div>
+      </div>
+    );
+  }
+
   // Show comparison slider when we have before and after
   if (beforeImage && afterImage && showComparison) {
     return (
       <div className="space-y-3">
         <div 
           ref={sliderRef}
-           className="relative aspect-square rounded-card overflow-hidden border border-vapor/40 cursor-ew-resize select-none img-ring"
-          onMouseMove={(e) => e.buttons === 1 && handleSliderMove(e.clientX)}
-          onTouchMove={(e) => handleSliderMove(e.touches[0].clientX)}
+           className="relative aspect-square rounded-card overflow-hidden border border-vapor/40 cursor-ew-resize select-none touch-none img-ring"
+          onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); handleSliderMove(e.clientX); }}
+          onPointerMove={(e) => e.buttons === 1 && handleSliderMove(e.clientX)}
         >
           {/* After image (full) */}
           <img 
@@ -171,12 +199,10 @@ export const AIPreviewGenerator = ({
           </div>
         </div>
 
-        <button
-          onClick={() => setShowComparison(false)}
-            className="w-full py-2 text-sm font-semibold text-brand hover:underline"
-        >
-          Hide comparison
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setSideBySide(true)} className="flex-1 min-h-[44px] rounded-pill border border-hairline text-sm text-foreground">Side-by-side</button>
+          <button onClick={() => setShowComparison(false)} className="flex-1 min-h-[44px] text-sm font-semibold text-brand">Hide comparison</button>
+        </div>
       </div>
     );
   }
