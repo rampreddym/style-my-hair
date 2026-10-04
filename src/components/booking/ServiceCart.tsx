@@ -98,23 +98,23 @@ export const ServiceCart = ({
         })
       )}
 
-      {/* Cart Summary */}
+      {/* Sticky service tray */}
       {selectedServices.length > 0 && (
-        <div className="mt-4 p-4 rounded-lg bg-primary/5 border-2 border-primary">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-primary" />
-              <span className="font-medium">
-                {selectedServices.length} {t("booking.servicesSelected", { count: selectedServices.length })}
-              </span>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold text-primary">${totalPrice.toFixed(2)}</p>
-              <p className="text-xs text-muted-foreground">
-                {totalDuration} {t("customer.bookingDetails.min")} {t("common.total")}
-              </p>
-            </div>
+        <div className="fixed inset-x-3 bottom-[calc(84px+env(safe-area-inset-bottom,0px))] z-40 mx-auto max-w-md glass rim-light border rounded-pill px-4 py-2 flex items-center gap-3 shadow-elevated animate-fade-in">
+          <ShoppingCart className="w-4 h-4 text-vapor shrink-0" />
+          <div className="flex-1 min-w-0 text-sm">
+            <span className="text-foreground">
+              {selectedServices.length} {t("booking.servicesSelected", { count: selectedServices.length })}
+            </span>
+            <span className="text-muted-foreground"> · ${totalPrice.toFixed(0)} · {totalDuration}m</span>
           </div>
+          <button
+            type="button"
+            onClick={() => document.getElementById("booking-step-time")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            className="shrink-0 min-h-[40px] rounded-pill bg-primary px-4 text-sm font-semibold text-primary-foreground"
+          >
+            Continue to time
+          </button>
         </div>
       )}
     </div>

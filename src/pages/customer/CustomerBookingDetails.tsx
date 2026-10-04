@@ -480,7 +480,8 @@ const CustomerBookingDetails = () => {
 
           {/* Step 2: Select Time Slot */}
           {selectedServices.length > 0 && (
-            <Card>
+            <Card id="booking-step-time" className="scroll-mt-4">
+
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">2</span>
