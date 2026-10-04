@@ -194,6 +194,32 @@ const CustomerAppointments = () => {
             </Card>
           )}
 
+          {/* Prep & countdown for the next visit */}
+          {upcomingAppointments.length > 0 && (() => {
+            const next = upcomingAppointments[0];
+            const ms = new Date(next.appointment_date).getTime() - Date.now();
+            const days = Math.floor(ms / 86400000);
+            const hours = Math.max(0, Math.floor((ms % 86400000) / 3600000));
+            const countdown = days > 0 ? `in ${days}d ${hours}h` : `in ${hours}h`;
+            const svc = (next.service?.name || "").toLowerCase();
+            const tip = /colou?r|balayage|highlight|blonde|tint/.test(svc)
+              ? "Arrive with dry hair, unwashed for 24 hours — natural oils protect your scalp during colour."
+              : /curl|perm|texture/.test(svc)
+              ? "Come with hair clean and product-free so your stylist can read your natural curl pattern."
+              : /fade|buzz|taper|beard/.test(svc)
+              ? "Bring your Look Ticket so your stylist can match the fade height and line-up."
+              : "Come with dry, product-free hair and bring your Look Ticket to show the exact look.";
+            return (
+              <div className="editorial-card rim-light p-4 flex gap-3 items-start">
+                <Sparkles className="w-5 h-5 text-vapor shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <p className="eyebrow">Your next visit · {countdown}</p>
+                  <p className="text-sm text-foreground mt-1">{tip}</p>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Upcoming Appointments */}
           {upcomingAppointments.length > 0 && (
             <Card variant="glow" className="border border-primary/20 shadow-card">
