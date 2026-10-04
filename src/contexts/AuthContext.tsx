@@ -13,6 +13,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, role: UserRole) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: (role: UserRole) => Promise<{ error: any }>;
+  signInWithApple: (role: UserRole) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -111,13 +112,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signInWithGoogle = async (role: UserRole) => {
+  const signInWithGoogle = (role: UserRole) => signInWithProvider('google', role);
+  const signInWithApple = (role: UserRole) => signInWithProvider('apple', role);
+
+  const signInWithProvider = async (provider: 'google' | 'apple', role: UserRole) => {
     // Store role to apply after the OAuth round-trip
     if (role) {
       localStorage.setItem('pending_role', role);
     }
 
-    const result = await lovable.auth.signInWithOAuth('google', {
+    const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: `${window.location.origin}/auth/callback`,
     });
 
